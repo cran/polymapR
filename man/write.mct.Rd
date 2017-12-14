@@ -9,10 +9,10 @@ write.mct(maplist, mapdir = "mapping_files_MDSMap",
   filename = "MapFile", precision = 2, showMarkerNames = FALSE)
 }
 \arguments{
-\item{maplist}{A list of maps. In the first column marker names and in the second their position. All map data are 
+\item{maplist}{A list of maps. In the first column marker names and in the second their position. All map data are
 compiled into a single MapChart file.}
 
-\item{mapdir}{Directory to which .mct files are written, by default the same directory 
+\item{mapdir}{Directory to which .mct files are written, by default the same directory
 as for \code{\link{MDSMap_from_list}}}
 
 \item{file_info}{A character string added to the first lines of the .mct file, by default a datestamp is recorded.}

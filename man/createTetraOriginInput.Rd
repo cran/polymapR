@@ -19,7 +19,7 @@ tracked for (e.g.) the development of selectable markers afterwards.}
 
 \item{bin_size}{Numeric. Size (in cM) of the bins to include. If \code{NULL} (by default) then all markers are used (no binning).}
 
-\item{bounds}{Numeric vector. If \code{NULL} (by default) then all positions are included, however if specified then output 
+\item{bounds}{Numeric vector. If \code{NULL} (by default) then all positions are included, however if specified then output
 is limited to a specific region, which is useful for later fine-mapping work.}
 
 \item{remove_markers}{Optional vector of marker names to remove from the maps. Default is \code{NULL}.}

@@ -6,7 +6,7 @@
 \usage{
 marker_data_summary(dosage_matrix, ploidy = 4, pairing = c("random",
   "preferential"), parent1 = "P1", parent2 = "P2",
-  progeny_incompat_cutoff = 0.1, log = NULL)
+  progeny_incompat_cutoff = 0.1, verbose = TRUE, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
@@ -23,7 +23,9 @@ marker_data_summary(dosage_matrix, ploidy = 4, pairing = c("random",
 this genotype as incompatible. Incompatible dosages are greater than maximum number of alleles than can be inherited or
 smaller than the minimum number of alleles that can be inherited.}
 
-\item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
+\item{verbose}{Logical, by default \code{TRUE} - should intermediate messages be written to stout?}
+
+\item{log}{Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.}
 }
 \value{
 Returns a list containing the following components:

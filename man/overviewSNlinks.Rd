@@ -10,7 +10,7 @@ overviewSNlinks(linkage_df, LG_hom_stack, LG_number, LOD_threshold,
 \arguments{
 \item{linkage_df}{A data.frame as output of \code{\link{linkage}} with arguments markertype1=c(1,0) and markertype2=NULL.}
 
-\item{LG_hom_stack}{A data.frame with a column "SxN_Marker" specifying markernames, 
+\item{LG_hom_stack}{A data.frame with a column "SxN_Marker" specifying markernames,
 a column "homologue" specifying homologue cluster and "LG" specifying linkage group.}
 
 \item{LG_number}{Integer. Chromosome (linkage group) number.}

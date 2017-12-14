@@ -4,16 +4,19 @@
 \alias{create_phased_maplist}
 \title{Create a phased homologue map list using the original dosages}
 \usage{
-create_phased_maplist(maplist, dosage_matrix, remove_markers = NULL,
-  N_linkages = 5, lower_bound = 0.05, ploidy = 4, ploidy2 = NULL,
-  marker_assignment.1, marker_assignment.2, original_coding = TRUE,
-  log = NULL, print.removed = TRUE)
+create_phased_maplist(maplist, dosage_matrix.conv, dosage_matrix.orig = NULL,
+  remove_markers = NULL, N_linkages = 2, lower_bound = 0.05, ploidy = 4,
+  ploidy2 = NULL, marker_assignment.1, marker_assignment.2,
+  original_coding = FALSE, log = NULL, verbose = TRUE)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
 
-\item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns. This should
-be the unconverted dosages (i.e. before using the \code{\link{convert_marker_dosages}} function) if \code{original_coding} is desired.}
+\item{dosage_matrix.conv}{Matrix of martker dosage scores with markers in rows and individuals in columns. Note that dosages must be
+in converted form, i.e. after having run the \code{\link{convert_marker_dosages}} function. Errors may result otherwise.}
+
+\item{dosage_matrix.orig}{Optional, by default \code{NULL}.The unconverted dosages (i.e. raw dosage data before using
+the \code{\link{convert_marker_dosages}} function). Required if \code{original_coding} is \code{TRUE}.}
 
 \item{remove_markers}{Optional vector of marker names to remove from the maps. Default is \code{NULL}.}
 
@@ -31,9 +34,9 @@ be the unconverted dosages (i.e. before using the \code{\link{convert_marker_dos
 
 \item{original_coding}{Logical. Should the phased map use the unconverted dosage coding or not?}
 
-\item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
+\item{log}{Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.}
 
-\item{print.removed}{Logical. Should removed markers be printed?}
+\item{verbose}{Logical, by default \code{TRUE}. Should unphased markers be recorded?}
 }
 \description{
 \code{create_phased_maplist} is a function for creating a phased maplist, using
@@ -42,7 +45,7 @@ integrated map positions and original marker dosages.
 \examples{
 data("integrated.maplist", "ALL_dosages", "marker_assignments_P1","marker_assignments_P2")
 create_phased_maplist(integrated.maplist,
-                     dosage_matrix = ALL_dosages,
+                     dosage_matrix.conv = ALL_dosages,
                      marker_assignment.1=marker_assignments_P1,
                      marker_assignment.2=marker_assignments_P2)
 }

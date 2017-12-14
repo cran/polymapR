@@ -16,7 +16,7 @@ linkage(dosage_matrix, markertype1 = c(1, 0), markertype2 = NULL,
 
 \item{markertype1}{A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
 
-\item{markertype2}{A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the funciton will calculate 
+\item{markertype2}{A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the funciton will calculate
 linkage within the markertype as specified by \code{markertype1}.
 The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
 

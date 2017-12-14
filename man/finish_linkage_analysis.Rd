@@ -15,9 +15,9 @@ finish_linkage_analysis(marker_assignment, dosage_matrix,
 
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
 
-\item{marker_combinations}{A matrix with four columns specifying marker combinations to calculate linkage. 
+\item{marker_combinations}{A matrix with four columns specifying marker combinations to calculate linkage.
 If NULL all combinations are used for which there are rf functions.
-Dosages of markers should be in the same order as specified in the names of rf functions. 
+Dosages of markers should be in the same order as specified in the names of rf functions.
 E.g. if using 1.0_2.0 and 1.0_3.0 types use: \code{matrix(c(1,0,2,0,1,0,3,0), byrow = TRUE, ncol = 4)}}
 
 \item{target_parent}{Character string specifying target parent.}

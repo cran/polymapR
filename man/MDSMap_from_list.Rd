@@ -10,17 +10,17 @@ MDSMap_from_list(linkage_list, write_to_file = FALSE,
 \arguments{
 \item{linkage_list}{A named \code{list} with r and LOD of markers within linkage groups.}
 
-\item{write_to_file}{Should output be written to a file? By default \code{FALSE}, if \code{TRUE} then output, 
+\item{write_to_file}{Should output be written to a file? By default \code{FALSE}, if \code{TRUE} then output,
 including plots from \code{MDSMap} are saved in the same directory as the one used for input files. These
 plots are currently saved as pnf images. If a different plot format is required (e.g. for publications),
-then run the \code{MDSMap} function \code{\link[MDSMap]{estimate.map}} (or similar) directly and save the output 
+then run the \code{MDSMap} function \code{\link[MDSMap]{estimate.map}} (or similar) directly and save the output
 with a different plotting function as wrapper around the map function call.}
 
 \item{mapdir}{Directory to which map input files are initially written. Also used for output if \code{write_to_file=TRUE}}
 
 \item{plot_prefix}{prefix for the filenames of output plots.}
 
-\item{log}{Character string specifying the log filename to which standard output should be written. 
+\item{log}{Character string specifying the log filename to which standard output should be written.
 If NULL log is send to stdout.}
 
 \item{\dots}{Arguments passed to \code{\link[MDSMap]{estimate.map}}.}

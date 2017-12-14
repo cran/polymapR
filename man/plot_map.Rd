@@ -14,7 +14,7 @@ plot_map(maplist, highlight = NULL, bg_col = "grey",
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
 
-\item{highlight}{A list of the same length of maplist with vectors of length 2 that specifies the 
+\item{highlight}{A list of the same length of maplist with vectors of length 2 that specifies the
 limits in cM from and to which the plotted chromosomes should be highlighted.}
 
 \item{bg_col}{The background colour of the map.}

@@ -14,7 +14,7 @@ cluster_per_LG(LG, linkage_df, LG_hom_stack, LOD_sequence,
 
 \item{linkage_df}{A data.frame as output of \code{\link{linkage}} with arguments \code{markertype1 = c(1,0)} and \code{markertype2=NULL}.}
 
-\item{LG_hom_stack}{A \code{data.frame} with columns \code{"SxN_Marker"} providing 1.0 markernames and \code{"LG"} 
+\item{LG_hom_stack}{A \code{data.frame} with columns \code{"SxN_Marker"} providing 1.0 markernames and \code{"LG"}
 and \code{"homologue"} providing linkage group and homologue respectively.}
 
 \item{LOD_sequence}{A numeric or vector of numerics giving LOD threshold(s) at which clustering should be performed.}
