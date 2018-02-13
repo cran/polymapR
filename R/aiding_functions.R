@@ -151,6 +151,30 @@ plot_SNlinks <- function(linkage_df,LG_hom_stack,
   }
 } 
 
+#' Add colour bar scale to heatplot
+#' @description Function to generate a scale for heatplots
+#' @param col.data vector of colours
+#' @param min minimum colour
+#' @param max maximum colour
+#' @param cex.ticks size of ticks on colour bar
+#' @param nticks number of ticks on colour bar
+#' @param ticks vector of positions of ticks on colour bar
+#' @param title optional title for colour bar
+#' @param ylab optional y-axis label for colour bar
+#' @param cex.lab size of labels on colour bar
+colour.bar <- function(col.data, min, max=-min, cex.ticks = 1.2, nticks=11, 
+                      ticks=seq(min, max, len=nticks), title='', ylab = '',
+                      cex.lab = 1) {
+  scale <- length(col.data)/(max-min)
+  
+  plot(c(0,10), c(min,max), type='n', bty='n', xaxt='n', xlab='', yaxt='n', ylab=ylab, main=title, cex.lab = cex.lab)
+  axis(2, ticks, las=1, cex.axis = cex.ticks)
+  for (i in 1:length(col.data)) {
+    y = (i-1)/scale + min
+    rect(0,y,10,y+1/scale, col=col.data[i], border=NA)
+  }
+}
+
 #' calc_binning_thresholds
 #' @description Calculate LOD and recombination frequency thresholds for marker binning
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.

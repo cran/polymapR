@@ -1,7 +1,7 @@
-34beaef1463e02d280a30d767fca8da7 *DESCRIPTION
+93674124fffb37dd6e41d7b2c5c9adcd *DESCRIPTION
 c091f71b094af2583175fe89cd5b3951 *NAMESPACE
-bc04fc66bc98fd917856b2b43af0fc88 *R/aiding_functions.R
-21cd490b15794e539dfe9aaa552b0040 *R/exported_functions.R
+d9b39f1033092f123dba7ed8cce21e86 *R/aiding_functions.R
+7e79b8ecf22fc1fe421bce12f9dfed0e *R/exported_functions.R
 f7debfeee997ee9e3ae7023fe513c363 *R/p4_functions.R
 b5c169256a6ec4bc76b1c74ff3705d49 *R/r3_functions.R
 9f52171e188699863bae9d8e2807cdf2 *R/r4_functions.R
@@ -46,7 +46,7 @@ e42532fd70f97436f54ec370c60c20c6 *data/screened_data.rda
 b2f9679c28f0792f5455a84baa0c4149 *data/segregating_data.rda
 2781b07e3afdf5f17930e9d6a63f977b *inst/doc/Vignette_polymapR.R
 7ce027500d5945838a358bf6120d530b *inst/doc/Vignette_polymapR.Rmd
-687bbb4a8578bbc2433084167c1679e4 *inst/doc/Vignette_polymapR.html
+ea71cf9139f3760da549df2ed84dd62d *inst/doc/Vignette_polymapR.html
 4d5f4f9b98c18a2406c903f9fe0adb01 *man/ALL_dosages.Rd
 37a29f084f1bcba21b886edb7c8b037f *man/LGHomDf_P1_1.Rd
 36daf0be6f51f266a69faa9e419a3f99 *man/MDSMap_from_list.Rd
@@ -75,6 +75,7 @@ dd0ab56b21ba6bada86d1f2a270d4f14 *man/check_marker_assignment.Rd
 177655396a5200a17c2caf7a5fa2c5af *man/chk2integer.Rd
 1265615555cc5b25b0f1585559c85d31 *man/cluster_SN_markers.Rd
 bfadede26a469ab3f8110b52e8e5ef2a *man/cluster_per_LG.Rd
+45610946ad478581f081cffcd38bd29f *man/colour.bar.Rd
 005e339e3b1854c1a796c3bacf6aa0da *man/consensus_LG_assignment.Rd
 29e06787bec64b752653f1f82573fad1 *man/consensus_LG_names.Rd
 eed987ae6e981bdf5ca8ce3e1b964f3e *man/convert_marker_dosages.Rd

@@ -2128,7 +2128,7 @@ linkage <- function(dosage_matrix,
         message(paste0("No markers in dosage_matrix of type ",
                        markertype1[1], "x", markertype1[2]))
       }
-      # if(win) snow::stopCluster(cl)
+
       if(win) parallel::stopCluster(cl)
       return(NULL)
     }
@@ -7420,128 +7420,99 @@ add_dup_markers <- function(maplist, bin_list){
 #' }
 #' @export
 check_map <- function(linkage_list,
-                      maplist,
-                      mapfn = "haldane",
-                      lod.thresh = 5) {
-
+                       maplist,
+                       mapfn = "haldane",
+                       lod.thresh = 5) {
+  
   if(length(linkage_list) != length(maplist)) stop("linkage_list and maplist do not correspond.")
-
+  
   mapfn <- match.arg(mapfn,choices = c("haldane","kosambi"))
-
+  
   rev.haldane <- function(d) (1 - exp(-d/50))/2
   rev.kosambi <- function(d) ((exp(d/25) - 1)/(exp(d/25) + 1))/2
-
-  null.dist <- function(x) x
-
-  square_Matrix <- function(pwd){
-    names(pwd)<-c("name1","name2","rfreq","lodscore")
-    nloci<-length(unique(c(pwd$name1, pwd$name2)))
-
-    missing1<-with(pwd,unique(as.character(name1[!name1%in%name2])))
-    missing2<-with(pwd,as.character(unique(name2[!name2%in%name1])))
-
-    if(length(missing1)>1){
-      pwd$name1 <- as.character(pwd$name1)
-      pwd$name2 <- as.character(pwd$name2)
-      for(i in 2:length(missing1))
-        pwd <- rbind(pwd,list(missing1[1],missing1[i],0,0))
-    }
-    if(length(missing2)>1){
-      pwd$name1<-as.character(pwd$name1);pwd$name2<-as.character(pwd$name2)
-      for(i in 2:length(missing2))
-        pwd<-rbind(pwd,list(missing2[i],missing2[1],0,0))
-    }
-    pwd$name1<-factor(pwd$name1,unique(as.character(pwd$name1))) # don't really understand this factor revelling..
-    pwd$name1<-relevel(pwd$name1,missing1[1])
-    pwd$name2<-factor(pwd$name2,
-                      levels=
-                        c(as.character(levels(pwd$name1)[2:length(levels(pwd$name1))]),
-                          as.character(missing2[1])))
-
-    cast_data <- function(nloci, pwd, var, base){
-      mat<-matrix(0,ncol=nloci,nrow=nloci)
-      temp<-reshape2::acast(name1~name2,data=pwd,value.var=var,fill=base,
-                            drop = FALSE)
-      mat[upper.tri(mat)]<-temp[upper.tri(temp,diag=TRUE)]
-      mat<-mat+t(mat)
-      colnames(mat)<-c(rownames(temp)[1],colnames(temp))
-      rownames(mat)<-c(rownames(temp),colnames(temp)[nloci-1])
-      diag(mat) <- NA
-      return(mat)
-    } #cast_data()
-
-    rfmat <- cast_data(nloci, pwd, "rfreq", NA)
-    lodmat <- cast_data(nloci, pwd, "lodscore", NA)
-
-    list(rf=rfmat,lod=lodmat)
-  } #square_Matrix()
-
+  
   orig.mar <- c(5.1,4.1,4.1,2.1)
-
+  colbar.mar <- c(5.1,2,4.1,0.5)
+  
   sapply(seq(length(linkage_list)), function(l){
-    distances <- abs(maplist[[l]][match(linkage_list[[l]]$marker_a,maplist[[l]]$marker),]$position -
-                       maplist[[l]][match(linkage_list[[l]]$marker_b,maplist[[l]]$marker),]$position)
-
+    
+    posmat <- matrix(c(maplist[[l]][match(linkage_list[[l]]$marker_a,maplist[[l]]$marker),]$position,
+                       maplist[[l]][match(linkage_list[[l]]$marker_b,maplist[[l]]$marker),]$position,
+                       linkage_list[[l]]$r,
+                       linkage_list[[l]]$LOD),
+                     ncol = 4)
+    
     if(mapfn == "haldane") {
-      expected.recom <- rev.haldane(distances)
+      expected.recom <- rev.haldane(abs(posmat[,1] - posmat[,2]))
     } else if(mapfn == "kosambi"){
-      expected.recom <- rev.kosambi(distances)
+      expected.recom <- rev.kosambi(abs(posmat[,1] - posmat[,2]))
     }
-
+    
     dev <- abs(linkage_list[[l]]$r - expected.recom)
     wRMSE <- sqrt(mean((dev*linkage_list[[l]]$LOD)^2))
-
-    layout(matrix(c(1,2,2,3,4,5),ncol=3,byrow=TRUE),
-           widths = c(1,5,5,1,5,5))
-
-    par(oma = c(0,0,3,0), mar=c(0,0,0,0))
-    plot(NULL, xlim=c(0,1), ylim=c(0,1), axes=FALSE, xlab=NA, ylab=NA)
-
-    par(mar = orig.mar)
+    
+    layout(matrix(c(1,1,1,1,2,3,4,5),ncol=4,byrow=TRUE),
+           widths = c(1,0.2,1,0.2))
+    
+    par(oma = c(0,0,3,0))
+    
     plot(dev, linkage_list[[l]]$LOD,
          ylab = "LOD", xlab = expression(delta(r)),cex.lab=1.25,
          main = expression("|r"["pairwise"]~"- r"["map"]~"|")
     )
-
+    
     legend("topright", legend = paste("Weighted RMSE =",round(wRMSE,3)), bty = "n")
-
-    sorted.linkages <- prepare_pwd(linkage_list[[l]])
-    matched.linkages1 <- match(sorted.linkages$marker_a,maplist[[l]]$marker)
-    matched.linkages2 <- match(sorted.linkages$marker_b,maplist[[l]]$marker)
-
-    reord <- order(matched.linkages1,matched.linkages2)
-    pwd <- sorted.linkages[reord,]
-
-    MATlist <- square_Matrix(pwd)
-    reord2 <- match(maplist[[l]]$marker,rownames(MATlist$rf))
-    MATlist$rf <- MATlist$rf[reord2,reord2]
-    MATlist$lod <- MATlist$lod[reord2,reord2]
-
-    MATlist$lod[MATlist$lod < lod.thresh] <- NA
-
-    par(mar = c(0.75,3,0,0))
-    maxcM <- max(maplist[[l]]$position)
-    plot(NULL,xlim=c(0,1),ylim=c(0,maxcM),
-         xlab="",ylab="",axes=FALSE)
-    axis(side=2, las = 1)
-
-    hmcols <- colorRampPalette(c("green", "yellow", "orange", "red"))(50)
-
-    par(mar = c(0,0,0,0))
-    NMF::aheatmap(MATlist$rf,Rowv=NA,Colv=NA,color = hmcols,revC = FALSE,
-                  distfun = null.dist,labRow = NA,labCol = NA,
-                  main = "r")
-
-    NMF::aheatmap(MATlist$lod,Rowv=NA,Colv=NA,color = rev(hmcols),revC = FALSE,#scale="none",
-                  distfun = null.dist,labRow = NA,labCol = NA,
-                  main = paste("LOD >", lod.thresh))
-
+    
+    colours <- colorRampPalette(c("green", "yellow", "orange", "red"))(100)
+    
+    rcolmin <- min(posmat[,3])
+    rcolmax <- max(posmat[,3])
+    
+    LODcolmin <- lod.thresh #this is the minimum LOD to be visualised
+    LODcolmax <- max(posmat[,4])
+    
+    rcolbreaks <- seq(rcolmin, rcolmax, (rcolmax - rcolmin)/100)
+    rcols <- colours[findInterval(x = posmat[,3],vec = rcolbreaks)]
+    rcols[is.na(rcols)] <- colours[100] #the max is undefined.
+    
+    LODcolbreaks <- seq(LODcolmin, LODcolmax, (LODcolmax - LODcolmin)/100)
+    LODcols <- colours[findInterval(x = posmat[,4],vec = LODcolbreaks)]
+    LODcols[is.na(LODcols)] <- colours[100] #the max is undefined.
+    
+    
+    plot(posmat[,1],posmat[,2],pch=".",col=rcols,main="r",cex=3,
+         xlab="cM",ylab="cM")
+    
+    par(mar= colbar.mar)
+    colour.bar(col.data = colours,
+               min = rcolmin, max = rcolmax,
+               nticks=8,
+               ticks=round(seq(rcolmin, rcolmax, len=8),2),
+               cex.ticks=0.8)
+    
+    par(mar = orig.mar)
+    plot(posmat[posmat[,4]>lod.thresh,1],
+         posmat[posmat[,4]>lod.thresh,2],
+         pch=".",col=LODcols,main="LOD",cex=3,
+         xlab="cM",ylab="cM")
+    
+    par(mar = colbar.mar)
+    colour.bar(col.data = colours,
+               min = LODcolmin, max = LODcolmax,
+               nticks=8,
+               ticks=round(seq(LODcolmin, LODcolmax, len=8),2),
+               cex.ticks=0.8)
+    
     mtext(text = paste("LG",l,"map diagnostics"),side = 3, outer = TRUE, cex = 2)
+    
+    par(mfrow=c(1,1),
+        oma = c(0,0,0,0),
+        mar = orig.mar) #return to defaults
+    
+    return(NULL)
+    
   }
   )
-
-  par(mfrow=c(1,1),
-      oma = c(0,0,0,0),
-      mar = orig.mar) #return to defaults
-}
+  
+} #check_map
 
