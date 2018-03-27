@@ -1083,7 +1083,7 @@ marker_data_summary <- function(dosage_matrix,
                                 verbose = TRUE,
                                 log = NULL) {
 
-  dosage_matrix <-test_dosage_matrix(dosage_matrix)
+  dosage_matrix <- test_dosage_matrix(dosage_matrix)
 
   if (is.null(log)) {
     log.conn <- stdout()
@@ -1163,7 +1163,8 @@ marker_data_summary <- function(dosage_matrix,
   })
 
   rownames(lu_min_max) <- c("min", "max")
-  lu <- Matrix::cBind(segpar, t(lu_min_max))
+  # lu <- Matrix::cBind(segpar, t(lu_min_max)) #deprecated
+  lu <- cbind(segpar, t(lu_min_max))
 
   expected_dosage <-
     apply(dosage_matrix, 1, test_row, lu = lu, parpos = parpos)
@@ -1216,21 +1217,6 @@ marker_data_summary <- function(dosage_matrix,
 
   if (!is.null(log))
     close(log.conn)
-
-
-  #######################################################################################################
-  ## Write out the summary information in a general summary file:
-  #   spacer_lines <- c("Marker segregation breakdown:","___________________________________________________")
-  #   write(spacer_lines,file="Marker_data_summary.txt",append=T)
-  #   suppressWarnings(write.table(parental_info,"Marker_data_summary.txt",sep="\t",
-  #                                quote=FALSE,col.names=NA,append=T))
-  #   spacer_lines <- c("___________________________________________________","Percentage incompatible offspring dosages per marker type:",
-  #                     "___________________________________________________")
-  #   write(spacer_lines,file="Marker_data_summary.txt",append=TRUE)
-  #   suppressWarnings(write.table(offspring_incompat,"Marker_data_summary.txt",quote = FALSE, col.names=NA,
-  #                                row.names = TRUE, append = TRUE, sep = "\t"))
-  #
-  #   write("Marker summary complete. Please check your working directory.", stdout())
 
   return(summary)
 } #marker_data_summary()
@@ -6641,7 +6627,7 @@ test_prefpairing <- function(dosage_matrix,
 #' @description \code{create_phased_maplist} is a function for creating a phased maplist, using
 #' integrated map positions and original marker dosages.
 #' @param maplist A list of maps. In the first column marker names and in the second their position.
-#' @param dosage_matrix.conv Matrix of martker dosage scores with markers in rows and individuals in columns. Note that dosages must be
+#' @param dosage_matrix.conv Matrix of marker dosage scores with markers in rows and individuals in columns. Note that dosages must be
 #' in converted form, i.e. after having run the \code{\link{convert_marker_dosages}} function. Errors may result otherwise.
 #' @param dosage_matrix.orig Optional, by default \code{NULL}.The unconverted dosages (i.e. raw dosage data before using
 #' the \code{\link{convert_marker_dosages}} function). Required if \code{original_coding} is \code{TRUE}.

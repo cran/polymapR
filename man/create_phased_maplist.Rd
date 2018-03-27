@@ -12,7 +12,7 @@ create_phased_maplist(maplist, dosage_matrix.conv, dosage_matrix.orig = NULL,
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
 
-\item{dosage_matrix.conv}{Matrix of martker dosage scores with markers in rows and individuals in columns. Note that dosages must be
+\item{dosage_matrix.conv}{Matrix of marker dosage scores with markers in rows and individuals in columns. Note that dosages must be
 in converted form, i.e. after having run the \code{\link{convert_marker_dosages}} function. Errors may result otherwise.}
 
 \item{dosage_matrix.orig}{Optional, by default \code{NULL}.The unconverted dosages (i.e. raw dosage data before using
