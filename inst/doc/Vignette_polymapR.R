@@ -572,3 +572,6 @@ knitr::include_graphics("figures/map_diagnostics.png")
 #  )
 #  
 
+## ----eval = FALSE--------------------------------------------------------
+#  write.TSNPM(phased.maplist = phased.maplist,ploidy=4)
+

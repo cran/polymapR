@@ -31,8 +31,9 @@ In this tutorial, we will go step by step through the basic steps of performing 
 15. [Plotting a map](#sect15)
 16. [Evaluating map quality](#sect16)
 17. [Preferential pairing](#sect17)
-18. [Concluding remarks](#sect18)
-19. [References](#sect19)
+18. [QTL analysis](#sect18)
+19. [Concluding remarks](#sect19)
+20. [References](#sect20)
   
 <a name="sect1"></a>
 
@@ -923,9 +924,21 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
 
 <a name="sect18"></a>
 
-##18. Concluding remarks
-We hope you have been able to successfully create an integrated map using the methods described here. We anticipate `polymapR` will improve over the coming years (in terms of applicability as well as finding and removing bugs). Feedback on performance including bug reporting is most welcome; please refer to the package information on CRAN for details on who to contact regarding maintenance issues.
+##18. QTL analysis
+Currently it is not possible to conduct QTL analysis within `polymapR`, although extensions in this direction are planned (either within the package or as a separate package). However, for tetraploid populations the TetraploidSNPMap software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 14.2](#sect14)).
+
+To generate these files, use the `write.TSNPM` function as follows:
+
+```{r eval = FALSE}
+write.TSNPM(phased.maplist = phased.maplist,ploidy=4)
+```
+
 
 <a name="sect19"></a>
 
-##19. References
+##19. Concluding remarks
+We hope you have been able to successfully create an integrated map using the methods described here. We anticipate `polymapR` will improve over the coming years (in terms of applicability as well as finding and removing bugs). Feedback on performance including bug reporting is most welcome; please refer to the package information on CRAN for details on who to contact regarding maintenance issues.
+
+<a name="sect20"></a>
+
+##20. References

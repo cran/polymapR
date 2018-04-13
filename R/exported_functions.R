@@ -1910,7 +1910,7 @@ screen_for_duplicate_markers <- function(dosage_matrix,
 
 
 
-  if(plot_cluster_size)plot(sapply(gcl_nw, length),
+  if(plot_cluster_size) plot(sapply(gcl_nw, length),
                             ylab = "Cluster size",
                             cex.lab = 1.2, cex.axis = 1.2,
                             col = rgb(1,0,0, alpha = 0.5),
@@ -1937,7 +1937,9 @@ screen_for_duplicate_markers <- function(dosage_matrix,
   }
 
   nwdos_list <- list()
-  pb <- txtProgressBar(min = 1, max = length(gcl_nw), style = 3)
+  
+  if(length(gcl_nw) > 1) pb <- txtProgressBar(min = 1, max = length(gcl_nw), style = 3)
+  
   for(i in seq(length(gcl_nw))){
     sub <- ddo[as.integer(gcl_nw[[i]]),]
     narate <- apply(sub, 1, function(x) sum(is.na(x)))
@@ -1945,7 +1947,7 @@ screen_for_duplicate_markers <- function(dosage_matrix,
     nwdos <- mergeFun(sub, repr)
     nwdos_list[[repr]] <- nwdos
     bin_list[[repr]] <- names(narate)[-(which.min(narate))]
-    setTxtProgressBar(pb, i)
+    if(length(gcl_nw) > 1) setTxtProgressBar(pb, i)
   }
 
   nwdos_mat <- do.call(rbind, nwdos_list)
@@ -2420,8 +2422,6 @@ linkage <- function(dosage_matrix,
 
       r_LOD$LOD[r_LOD$LOD < 0] <- 0
 
-      r_LOD <- r_LOD[r_LOD$LOD >= LOD_threshold,]
-
       if(G2_test){
         r_LOD <-
           cbind(r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")], LOD_independence)
@@ -2429,7 +2429,9 @@ linkage <- function(dosage_matrix,
         r_LOD <-
           r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")]
       }
-
+      
+      r_LOD <- r_LOD[r_LOD$LOD >= LOD_threshold,]
+      
       if(full_output)
         r_LOD <-
         cbind(r_LOD,
@@ -6610,6 +6612,8 @@ test_prefpairing <- function(dosage_matrix,
   p.adj <- p.adjust(p.val, method = adj.method)
 
   pref.p <- (2*(count_mat[,"n_00"] + count_mat[,"n_11"]) - 4*(count_mat[,"n_01"] + count_mat[,"n_10"])) / (3*n_tot)
+  ## It could also be useful to calculate the alternative, the correct estimator across homoeologues instead:
+  ## pref.p2 <- (5*(count_mat[,"n_00"] + count_mat[,"n_11"]) - (count_mat[,"n_01"] + count_mat[,"n_10"])) / (3*n_tot)
 
   output <- cbind(assignment_data[combs[,1],],
                   assignment_data[combs[,2],],
@@ -7122,6 +7126,66 @@ write.mct <- function(maplist,
 
   }
 }
+
+#' Write TetraploidSNPMap input file
+#' @description Output the phased linkage map files into format readable by TetraploidSNPMap (Hackett et al. 2017) to perform QTL analysis.
+#' @param phased.maplist Phased maps in list format, the output of \code{\link{create_phased_maplist}}
+#' @param outputdir Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTL" folder
+#' @param filename Character string of filename stem to write the output files to, by default "TSNPM" with linkage groups names appended
+#' @param ploidy The ploidy of the species, currently only 4 is supported by TetraploidSNPMap
+#' @param verbose Should messages be send to stdout?
+#' @return \code{NULL}
+#' @examples
+#' data("phased.maplist")
+#' write.TSNPM(phased.maplist,ploidy=4)
+#' @export
+write.TSNPM <- function(phased.maplist,
+                        outputdir = "TetraploidSNPMap_QTLfiles",
+                        filename = "TSNPM",
+                        ploidy,
+                        verbose=FALSE) {
+  
+  if(ploidy != 4) stop("Currently only tetraploid data supported by TetraploidSNPMap!")
+  
+  if(!dir.exists(outputdir)) dir.create(outputdir)
+    
+  for(lg in seq(length(phased.maplist))){
+    
+      nr.mapped <- nrow(phased.maplist[[lg]])
+      
+      fileConn <- file(file.path(outputdir,paste0(filename,"_LG",lg,".txt")))
+      
+      temp.phase <- phased.maplist[[lg]][,paste0("h",1:(2*ploidy))] + 1
+      
+      ## Very specific spacing requirements for the input, has to be decimal point of position at col 31. Use writelines function
+      outlines <- rep("n",nr.mapped)
+      
+      for(i in 1:nr.mapped){
+        spacers <- 30 - nchar(as.character(phased.maplist[[lg]][i,"marker"])) - nchar(floor(phased.maplist[[lg]][i,"position"]))
+        
+        if(spacers <= 0) stop(paste("Currently marker names as long as:",
+                                    as.character(phased.maplist[[lg]][i,"marker"]),
+                                    "are unacceptable in TetraploidSNPMap. Please shorten!"))
+        
+        outlines[i] <- paste0(phased.maplist[[lg]][i,"marker"],
+                              paste0(rep(" ",spacers),collapse=""),
+                              format(round(phased.maplist[[lg]][i,"position"],2),nsmall=2),
+                              "  ",
+                              paste0(temp.phase[i,1:ploidy],collapse=""),
+                              " ",
+                              paste0(temp.phase[i,(ploidy+1):(2*ploidy)],collapse=""),
+                              collapse="")
+      }
+      
+      if(verbose) print(outlines)
+      
+      writeLines(c(nr.mapped,outlines),con = fileConn)
+      
+      close(fileConn)
+    }
+    
+  return(NULL)
+  }
 
 #' Plot linkage maps
 #' @description Makes a simple plot of a list of generated linkage maps
