@@ -4,7 +4,7 @@ author: "Peter Bourke, Geert van Geest"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic functionality}
+  %\VignetteIndexEntry{How to use polymapR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: bibliography.bib
@@ -925,7 +925,7 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
 <a name="sect18"></a>
 
 ##18. QTL analysis
-Currently it is not possible to conduct QTL analysis within `polymapR`, although extensions in this direction are planned (either within the package or as a separate package). However, for tetraploid populations the TetraploidSNPMap software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 14.2](#sect14)).
+Currently it is not possible to conduct QTL analysis within `polymapR`, although extensions in this direction are planned (either within the package or as a separate package). However, for tetraploid populations the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 14.2](#sect14)).
 
 To generate these files, use the `write.TSNPM` function as follows:
 

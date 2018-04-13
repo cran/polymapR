@@ -32,7 +32,10 @@ Align homologues to the same orientation and integrates maps using LPmerge
 \examples{
 data("maplist_P1_subset")
 data("maplist_P2_subset")
-integrated_map_LG2 <- orient_and_merge_maps(maplist_P1=maplist_P1_subset[["LG4"]],
+\dontrun{
+## Example temporarily suspended (April 2018): LPmerge CRAN issues
+integrated_map_LG2<-orient_and_merge_maps(maplist_P1=maplist_P1_subset[["LG4"]],
                                             maplist_P2=maplist_P2_subset[["LG4"]],
                                             plot_graph = TRUE)
+}
 }

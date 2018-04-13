@@ -10,7 +10,7 @@ write.TSNPM(phased.maplist, outputdir = "TetraploidSNPMap_QTLfiles",
 \arguments{
 \item{phased.maplist}{Phased maps in list format, the output of \code{\link{create_phased_maplist}}}
 
-\item{outputdir}{Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTL" folder}
+\item{outputdir}{Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTLfiles" folder}
 
 \item{filename}{Character string of filename stem to write the output files to, by default "TSNPM" with linkage groups names appended}
 

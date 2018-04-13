@@ -1163,7 +1163,6 @@ marker_data_summary <- function(dosage_matrix,
   })
 
   rownames(lu_min_max) <- c("min", "max")
-  # lu <- Matrix::cBind(segpar, t(lu_min_max)) #deprecated
   lu <- cbind(segpar, t(lu_min_max))
 
   expected_dosage <-
@@ -6253,9 +6252,12 @@ MDSMap_from_list <- function(linkage_list,
 #' @examples
 #' data("maplist_P1_subset")
 #' data("maplist_P2_subset")
-#' integrated_map_LG2 <- orient_and_merge_maps(maplist_P1=maplist_P1_subset[["LG4"]],
+#' \dontrun{
+#' ## Example temporarily suspended (April 2018): LPmerge CRAN issues
+#' integrated_map_LG2<-orient_and_merge_maps(maplist_P1=maplist_P1_subset[["LG4"]],
 #'                                             maplist_P2=maplist_P2_subset[["LG4"]],
 #'                                             plot_graph = TRUE)
+#'}
 #' @export
 orient_and_merge_maps <- function(maplist_P1,
                                   maplist_P2,
@@ -7130,7 +7132,7 @@ write.mct <- function(maplist,
 #' Write TetraploidSNPMap input file
 #' @description Output the phased linkage map files into format readable by TetraploidSNPMap (Hackett et al. 2017) to perform QTL analysis.
 #' @param phased.maplist Phased maps in list format, the output of \code{\link{create_phased_maplist}}
-#' @param outputdir Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTL" folder
+#' @param outputdir Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTLfiles" folder
 #' @param filename Character string of filename stem to write the output files to, by default "TSNPM" with linkage groups names appended
 #' @param ploidy The ploidy of the species, currently only 4 is supported by TetraploidSNPMap
 #' @param verbose Should messages be send to stdout?
