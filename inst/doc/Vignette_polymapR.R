@@ -492,9 +492,18 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 #  integrated.maplist <- MDSMap_from_list(linkages)
 #  
 
+## ---- eval = FALSE-------------------------------------------------------
+#  complete_mapdata <- add_dup_markers(maplist = integrated.maplist,
+#                                      bin_list = screened_data4$bin_list,
+#                                      marker_assignments = marker_assignments)
+
+## ---- eval = FALSE-------------------------------------------------------
+#  integrated.maplist_complete <- complete_mapdata$maplist
+#  marker_assignments_complete <- complete_mapdata$marker_assignments
+
 ## ---- eval=FALSE---------------------------------------------------------
 #  phased.maplist <- create_phased_maplist(maplist = integrated.maplist,
-#                                          dosage_matrix = filtered_data,
+#                                          dosage_matrix.conv = filtered_data,
 #                                          N_linkages = 5,
 #                                          ploidy = 4,
 #                                          marker_assignment.1 = marker_assignments$P1,

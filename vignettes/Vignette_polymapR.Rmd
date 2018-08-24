@@ -1,6 +1,6 @@
 ---
 title: "polymapR: linkage mapping in outcrossing polyploids"
-author: "Peter Bourke, Geert van Geest"
+author: "Peter M. Bourke, Geert van Geest"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -11,7 +11,7 @@ bibliography: bibliography.bib
 csl: biomed-central.csl
 ---
   
-In this tutorial, we will go step by step through the basic steps of performing linkage analysis in polyploids using `polymapR`. Most of the theory behind the functions described here can be found in a bioRXiv preprint manuscript of Bourke et al. (2017) at https://doi.org/10.1101/228817. The example dataset is a simulated dataset of an hypothetical tetraploid outcrossing plant species with five chromosomes. Chromosomes have random pairing behaviour. The population consists of 207 individuals originating from an F1 cross between two non-inbred parents. Frequently occurring data imperfections like missing values, genotyping errors and duplicated individuals are taken into account. 
+In this tutorial, we will go step by step through the basic steps of performing linkage analysis in polyploids using `polymapR`. Most of the theory behind the functions described here can be found in a recent *Bioinformatics* publication of Bourke et al. (2018) at https://doi.org/10.1093/bioinformatics/bty371. The example dataset is a simulated dataset of an hypothetical tetraploid outcrossing plant species with five chromosomes. Chromosomes have random pairing behaviour. The population consists of 207 individuals originating from an F1 cross between two non-inbred parents. Frequently occurring data imperfections like missing values, genotyping errors and duplicated individuals are taken into account. 
 
 ##Table of Contents
 1. [A (very) short introduction to R and the `polymapR` package.](#sect1)
@@ -239,7 +239,7 @@ screened_data3 <- screen_for_duplicate_individuals(dosage_matrix = screened_data
 Here we see that there were a number of duplicate pairs of individuals identified (red points in the output graph). Each duplicate pair is merged into a consensus individual (conflicts are made missing), keeping the name of the first individual. This is summarised in the output as well.
 
 ###7.4 Duplicated markers
-Finally, we can also check for duplicated markers (those which give us no extra information about a locus) and remove these from the dataset before mapping, using the `screen_for_duplicate_markers` function:
+Finally, we can also check for duplicated markers (those which give us no extra information about a locus) and remove these from the dataset before mapping, using the `screen_for_duplicate_markers` function. This function returns a list with 2 items - the filtered_dosage_matrix which we are interested in now, and bin_list, which we are possibily interested in again [later](#sect14.2). It is a good idea to save the output of this function, as you might like to add back the duplicate markers after mapping. 
 
 ```{r}
 screened_data4 <- screen_for_duplicate_markers(dosage_matrix = screened_data3)
@@ -716,7 +716,7 @@ write_nested_list(nested_list = all_linkages_list_P1, directory = "linkages_P1")
 
 <a name="sect12"></a>
 
-##12. *Optional*: Marker binning
+##12. *Optional:* Marker binning
 If you are using JoinMap to do the ordering, the number of markers than can be used per homologue is limited. If the number of markers per homologue approaches or exceeds 100, we first need to perform some sort of binning strategy, putting co-segregating markers into “bins” and only using one of them as a representative marker for the others in the bin. 
 
 Marker binning can be done on one `linkage_df` separately, using the `marker_binning` function, or by using its wrapper `marker_binning_list` which performs binning across all linkage groups:
@@ -737,7 +737,7 @@ all_linkages_list_P2.binned <- marker_binning_list(dosage_matrix = filtered_data
 
 <a name="sect13"></a>
 
-##13. *Optional*: Writing to a .pwd file
+##13. *Optional:* Writing to a .pwd file
 If the marker ordering is to be done by the JoinMap GUI, the linkage data can be written to JoinMap compatible .pwd files using `write.pwd` or its wrapper `write_pwd_list`:
 ```{r, eval = FALSE}
 write_pwd_list(linkages_list = all_linkages_list_P1$linkage_list, 
@@ -781,12 +781,33 @@ integrated.maplist <- MDSMap_from_list(linkages)
 
 ```
 
-##14.2 Phasing an integrated map
+
+<a name="sect14.2"></a>
+
+##14.2 *Optional:* Adding back duplicated markers
+If you ran the function `screen_for_duplicate_markers` before mapping, you may want to add back the duplicate markers to the map. This can be achieved using the `add_dup_markers` function. If you also want to include the duplicate markers on a phased map file (next section), then you also need to update the marker_assignments as well (otherwise, just leave the marker_assignments argument out). This is done as follows:
+
+```{r, eval = FALSE}
+complete_mapdata <- add_dup_markers(maplist = integrated.maplist,
+                                    bin_list = screened_data4$bin_list,
+                                    marker_assignments = marker_assignments)
+```
+
+Note that the output of this function is again a list, which we might like to re-assign as follows:
+
+```{r, eval = FALSE}
+integrated.maplist_complete <- complete_mapdata$maplist
+marker_assignments_complete <- complete_mapdata$marker_assignments
+```
+
+Note that if we are producing a phased maplist, we also need the marker dosages matrix to be present (in order to check whether the phasing corresponds with the parental scores). Therefore it is no longer appropriate to use `filtered_data` if we have added back duplicates (where the duplicate markers have been removed). Using `screened_data3` from earlier would be the correct choice.
+
+##14.3 Phasing an integrated map
 One final step that is useful is to generate phased linkage maps from the integrated linkage map and marker assignments. This provides information on the coverage of markers across the parental homologues. To phase the markers, we use the `create_phased_maplist` function as follows:
 
 ```{r, eval=FALSE}
 phased.maplist <- create_phased_maplist(maplist = integrated.maplist,
-                                        dosage_matrix = filtered_data,
+                                        dosage_matrix.conv = filtered_data,
                                         N_linkages = 5,
                                         ploidy = 4,
                                         marker_assignment.1 = marker_assignments$P1,
@@ -798,7 +819,7 @@ data("phased.maplist")
 
 The `N_linkages` option specifies the minimum number of significant linkages of a marker to a chromosomal linkage group to be confident of its assignment. Note that this level of significance (e.g. LOD > 3) was already defined in the `homologue_lg_assignment` function earlier. There are a number of other arguments with `create_phased_maplist`, including `original_coding` which produces a phased mapfile in the original, uncoverted format. This may have advantages for tracking marker alleles, although it has the disadvantage that the homologues appear to be more saturated with markers than they actually are! 
 
-##14.3 *Optional*: Independent homologue map integration
+##14.4 *Optional*: Independent homologue map integration
 In some situations it may be desirable to independently integrate homologue maps rather than directly generating integrated chromosomal maps as we did in the previous section. For example, there may be cases where the rate of recombination is different between parents and you would like to compare integrated chromosomal maps using different methods. 
 
 The `LPMerge` package [@Endelman2014] in `R` is able to integrate homologue maps in a polyploid but has a number of limitations, one of them being that it is unable to recognise when the maps to be integrated are not orientated correctly. A genetic position of 0 cM merely means we are at the outermost marker position in a linkage group – it does not correspond to a “0” position in any real sense. We therefore have to first test whether the homologue maps are consistently ordered before proceeding with the integration step. 

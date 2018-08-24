@@ -1,14 +1,14 @@
-604962522e7dfee6a23debf529295a7d *DESCRIPTION
+9461b1de7e77396ea8e33838e225984e *DESCRIPTION
 753c7ba259fd7b8394cc421eac49350d *NAMESPACE
 d9b39f1033092f123dba7ed8cce21e86 *R/aiding_functions.R
-4c3af5e20028853bbe936d7ecc2abb3b *R/exported_functions.R
+0e92a89d10e13ed3be0cc24311a9a78d *R/exported_functions.R
 f7debfeee997ee9e3ae7023fe513c363 *R/p4_functions.R
 b5c169256a6ec4bc76b1c74ff3705d49 *R/r3_functions.R
 9f52171e188699863bae9d8e2807cdf2 *R/r4_functions.R
 509041802ccb80a39e67dec24a6670b1 *R/r6_functions.R
 71f27b563c67dce6b0279c5a2064fa19 *R/roxygen_datasets.R
 a2a8c40dd247fc8dd8334c5181308800 *R/sysdata.rda
-5129be0d3541c42bbb75dcc0596cce58 *build/vignette.rds
+21e72520949107a76dad7b6b663fba74 *build/vignette.rds
 2e017d9d11d73c2d111f37daf2f8edad *data/ALL_dosages.rda
 875baa62048b4ccbe6d5d99ea36ce30c *data/LGHomDf_P1_1.rda
 e24dd9040a6224689e156171e73221af *data/LGHomDf_P2_1.rda
@@ -44,9 +44,9 @@ e42532fd70f97436f54ec370c60c20c6 *data/screened_data.rda
 43ac32cfa93eecfe4a70f98e3a11ff82 *data/screened_data2.rda
 8df63499b0b88f760be1ef610799c053 *data/screened_data3.rda
 b2f9679c28f0792f5455a84baa0c4149 *data/segregating_data.rda
-cb5a3c651c3876d0a8a1a3c633135bc5 *inst/doc/Vignette_polymapR.R
-01a47d7864d0dc34075ed58a1428fe6c *inst/doc/Vignette_polymapR.Rmd
-9cd8c25f2bfaf941e77565c1cbc66c5e *inst/doc/Vignette_polymapR.html
+5669f9db338a10520e8b15cf3ee98080 *inst/doc/Vignette_polymapR.R
+1bdd655b280f8c09315f265375e63760 *inst/doc/Vignette_polymapR.Rmd
+aa81e89199399c504e7370005bf4e0a1 *inst/doc/Vignette_polymapR.html
 4d5f4f9b98c18a2406c903f9fe0adb01 *man/ALL_dosages.Rd
 37a29f084f1bcba21b886edb7c8b037f *man/LGHomDf_P1_1.Rd
 36daf0be6f51f266a69faa9e419a3f99 *man/MDSMap_from_list.Rd
@@ -56,7 +56,7 @@ c0be7e3e00cfe60a7ff87da080ac6379 *man/P1_homologues.Rd
 3af615e99581a4db4359ab279bda0079 *man/PCA_progeny.Rd
 bea2f10481ba421e6a201f5919fa4645 *man/SNSN_LOD_deviations.Rd
 fc33f1e9af3b292f86e1fc1f759ae5d9 *man/SN_SN_P1.Rd
-f8b2e16329dc55673f56d5b3df292fed *man/add_dup_markers.Rd
+ed730a7f4dc08bae7761a693e16fa13c *man/add_dup_markers.Rd
 eac827267103477669ef2648828b14fe *man/all_linkages_list_P1.Rd
 d3300843952ba9b22471deeb0044e2c1 *man/assign_SN_SN.Rd
 073c3c3dbffc38af93d3297564b60e25 *man/assign_linkage_group.Rd
@@ -83,7 +83,7 @@ eed987ae6e981bdf5ca8ce3e1b964f3e *man/convert_marker_dosages.Rd
 8092cd797389aacbdd969a9eb65a9e9c *man/createChmHomList.Rd
 647c80078c574a65647b73eb9c162b81 *man/createMap.Rd
 2a3303cbe62908be0e323f32f6bba854 *man/createTetraOriginInput.Rd
-2ea7823807f2566dff4e38bb8435dcf8 *man/create_phased_maplist.Rd
+8fd300b73bc0f6666b0ac82f4a9500b1 *man/create_phased_maplist.Rd
 1dccaaefa95c97423128c2fd34c29165 *man/define_LG_structure.Rd
 2e0ba6ca33860fc1c92fede6be739351 *man/digamfrq.Rd
 c9c2a21a07bd55acface0935230b6040 *man/finish_linkage_analysis.Rd
@@ -141,7 +141,7 @@ d3478b21d05fb56ca42034edb1a34a11 *man/write.mct.Rd
 b7d3655956e32050adef55c18b58023d *man/write.pwd.Rd
 1a20ae4dfed7dffeedab9d51d15af1bd *man/write_nested_list.Rd
 d984318d9aa2557748bde56687225438 *man/write_pwd_list.Rd
-01a47d7864d0dc34075ed58a1428fe6c *vignettes/Vignette_polymapR.Rmd
+1bdd655b280f8c09315f265375e63760 *vignettes/Vignette_polymapR.Rmd
 5125ad19a7cabfc9914d8dbc4dc262e0 *vignettes/bibliography.bib
 2a525a4d0bfde9865b47c532ce586782 *vignettes/biomed-central.csl
 6b4955e241d15d48f601b17efb676552 *vignettes/figures/figure2.png

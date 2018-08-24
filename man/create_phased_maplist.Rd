@@ -6,8 +6,8 @@
 \usage{
 create_phased_maplist(maplist, dosage_matrix.conv, dosage_matrix.orig = NULL,
   remove_markers = NULL, N_linkages = 2, lower_bound = 0.05, ploidy = 4,
-  ploidy2 = NULL, marker_assignment.1, marker_assignment.2,
-  original_coding = FALSE, log = NULL, verbose = TRUE)
+  ploidy2 = NULL, marker_assignment.1, marker_assignment.2, parent1 = "P1",
+  parent2 = "P2", original_coding = FALSE, log = NULL, verbose = TRUE)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
@@ -32,6 +32,10 @@ the \code{\link{convert_marker_dosages}} function). Required if \code{original_c
 
 \item{marker_assignment.2}{A marker assignment matrix for parent 2 with markernames as rownames and at least containing the column \code{"Assigned_LG"}.}
 
+\item{parent1}{character vector with names of the samples of parent 1}
+
+\item{parent2}{character vector with names of the samples of parent 2}
+
 \item{original_coding}{Logical. Should the phased map use the unconverted dosage coding or not?}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.}
@@ -43,9 +47,9 @@ the \code{\link{convert_marker_dosages}} function). Required if \code{original_c
 integrated map positions and original marker dosages.
 }
 \examples{
-data("integrated.maplist", "ALL_dosages", "marker_assignments_P1","marker_assignments_P2")
+data("integrated.maplist", "screened_data3", "marker_assignments_P1","marker_assignments_P2")
 create_phased_maplist(integrated.maplist,
-                     dosage_matrix.conv = ALL_dosages,
+                     dosage_matrix.conv = screened_data3,
                      marker_assignment.1=marker_assignments_P1,
                      marker_assignment.2=marker_assignments_P2)
 }

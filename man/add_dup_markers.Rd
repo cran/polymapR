@@ -2,18 +2,24 @@
 % Please edit documentation in R/exported_functions.R
 \name{add_dup_markers}
 \alias{add_dup_markers}
-\title{Add duplicate markers to a map}
+\title{Add back duplicate markers after mapping}
 \usage{
-add_dup_markers(maplist, bin_list)
+add_dup_markers(maplist, bin_list, marker_assignments = NULL)
 }
 \arguments{
 \item{maplist}{A list of maps. Output of MDSMap_from_list.}
 
-\item{bin_list}{A list of marker bins containing marker duplicates. Output of screen_for_duplicate_markers.}
+\item{bin_list}{A list of marker bins containing marker duplicates. One of the list outputs of \code{\link{screen_for_duplicate_markers}}}
+
+\item{marker_assignments}{Optional argument to include the marker_assignments (output of \code{\link{check_marker_assignment}}). If included, marker assignment information will also be copied.}
 }
 \value{
-A maplist with added markers.
+A list with the following items:
+\itemize{
+\item{maplist: List of maps, now with duplicate markers added}
+\item{marker_assignments: If required, marker assignment list with duplicate markers added}
+}
 }
 \description{
-Add duplicate markers to a map
+Often there will be duplicate markers that can be put aside to speed up mapping. These may be added back to the maps afterwards.
 }
