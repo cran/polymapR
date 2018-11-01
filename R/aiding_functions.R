@@ -2,6 +2,7 @@
 #' @description Functionalized writing of function name and arguments as start for log paragraph.
 #' @param matc A object of class \code{call}
 #' @param log A character string specifying the log file
+#' @noRd
 write.logheader <- function(matc, log){
   args <- as.list(matc)
   #args.df <- data.frame(names=names(args), values=as.character(args))
@@ -40,6 +41,7 @@ write.logheader <- function(matc, log){
 #' @description Turns a vector in a matrix with fixed number of columns
 #' @param x A vector
 #' @param n.columns Integer, number of columns
+#' @noRd
 vector.to.matrix <- function(x, n.columns){
   if(length(x)>n.columns){
     x<-c(x, rep("", n.columns-length(x)%%n.columns))
@@ -54,6 +56,7 @@ vector.to.matrix <- function(x, n.columns){
 #' User interface for specifying linkage group for a homologue
 #' @param LG_hom_stack A data.frame defining clusters
 #' @param LG_number Number of chromosomes (linkage groups)
+#' @noRd
 createChmHomList <- function(LG_hom_stack, LG_number=12){
   ## This is intended to allow the user to define which cluster elements should be
   ## put together into a single file. The user defines how many chromosomes are identified
@@ -124,6 +127,7 @@ createChmHomList <- function(LG_hom_stack, LG_number=12){
 #' @param h1 Homologue to be compared.
 #' @param h2 Homologue to be compared against h1
 #' @param ymax Maximum limit of y-axis
+#' @noRd
 plot_SNlinks <- function(linkage_df,LG_hom_stack,
                          LG_number, h1, h2, ymax=NULL){
   
@@ -162,6 +166,7 @@ plot_SNlinks <- function(linkage_df,LG_hom_stack,
 #' @param title optional title for colour bar
 #' @param ylab optional y-axis label for colour bar
 #' @param cex.lab size of labels on colour bar
+#' @noRd
 colour.bar <- function(col.data, min, max=-min, cex.ticks = 1.2, nticks=11, 
                       ticks=seq(min, max, len=nticks), title='', ylab = '',
                       cex.lab = 1) {
@@ -178,6 +183,7 @@ colour.bar <- function(col.data, min, max=-min, cex.ticks = 1.2, nticks=11,
 #' calc_binning_thresholds
 #' @description Calculate LOD and recombination frequency thresholds for marker binning
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @noRd
 calc_binning_thresholds <- function(dosage_matrix){
   Ntot <- ncol(dosage_matrix) #exclude marker name and 2 parent cols
   the_na_rate <-
@@ -194,6 +200,7 @@ calc_binning_thresholds <- function(dosage_matrix){
 
 #' Error and warning handling for dosage_matrix 
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @noRd
 test_dosage_matrix <- function(dosage_matrix){
   if(class(dosage_matrix) == "data.frame"){
     warning("dosage_matrix should be a matrix, now it's a data.frame.")
@@ -219,6 +226,7 @@ test_dosage_matrix <- function(dosage_matrix){
 
 #' Error and warning handling for linkage_df 
 #' @param linkage_df A linkage data.frame as output of \code{\link{linkage}} calculating linkage between 1.0 markers.
+#' @noRd
 test_linkage_df <- function(linkage_df){
   if(!is.data.frame(linkage_df)){ 
     stop("linkage_df should be an object of class data.frame")
@@ -249,6 +257,7 @@ test_linkage_df <- function(linkage_df){
 #' Error and warning handling for cluster_stack 
 #' @param cluster_stack A data.frame with a column "marker" specifying markernames, 
 #' and a column "cluster" specifying marker cluster.
+#' @noRd
 test_cluster_stack <- function(cluster_stack){
   cn <- colnames(cluster_stack)
   cnw <- c("marker", "cluster")
@@ -263,6 +272,7 @@ test_cluster_stack <- function(cluster_stack){
 #' Error and warning handling for LG_hom_stack 
 #' @param LG_hom_stack A data.frame with a column "SxN_Marker" specifying markernames, 
 #' a column "homologue" specifying homologue cluster and "LG" specifying linkage group.
+#' @noRd
 test_LG_hom_stack <- function(LG_hom_stack){
   cn <- colnames(LG_hom_stack)
   cnw <- c("SxN_Marker", "homologue", "LG")
@@ -277,6 +287,7 @@ test_LG_hom_stack <- function(LG_hom_stack){
 #' Prepare pwd for mapping scripts e.g. MDSmap
 #' @description Prepare a dataframe with pairwise recombination frequency and LOD score for mapping by re-ordering
 #' @param pwd A pwd data.frame
+#' @noRd
 prepare_pwd <- function(pwd) {
   pwd[,c("marker_a", "marker_b")]  <-
     t(apply(pwd[,c("marker_a", "marker_b")], 1, function(x)
@@ -293,6 +304,7 @@ prepare_pwd <- function(pwd) {
 
 #' Calculate the mode of a vector
 #' @param x Vector input, can be numeric, character or factor
+#' @noRd
 Mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
@@ -315,6 +327,7 @@ Mode <- function(x) {
 #'those segtypes all parental dosage combinations with parmode[,3] TRUE
 #'@return A list like segtypeInfo, modified as specified by parameters polysomic,
 #'disomic and mixed
+#'@noRd
 selSegtypeInfo <- function(segtypeInfo, polysomic, disomic, mixed) {
   result <- list()
   selected <- integer(0)
@@ -342,6 +355,7 @@ selSegtypeInfo <- function(segtypeInfo, polysomic, disomic, mixed) {
 #'the result can be converted to fractions by y <- x/(sum(x))
 #'@param ploidy The ploidy level of the parent
 #'@param dosage The parental dosage
+#'@noRd
 polygamfrq <- function(ploidy, dosage) {
   gp <- ploidy/2 #gamete ploidy
   
@@ -364,6 +378,7 @@ polygamfrq <- function(ploidy, dosage) {
 #'from an allopolyploid parent (disomic inheritance) with given ploidy and dosage
 #'@param ploidy The ploidy level of the parent
 #'@param dosage The parental dosage
+#'@noRd
 digamfrq <- function(ploidy, dosage) {
   gp <- ploidy/2 #gamete ploidy
   #first step: calculate all possible compositions of diploid parental genomes
@@ -400,6 +415,7 @@ digamfrq <- function(ploidy, dosage) {
 #'@description  Return the greatest common divisor of two integers (vectorized: x and y may be vectors)
 #'@param x integer (or vector of integers)
 #'@param y integer (or vector of integers)
+#'@noRd
 gcd <- function(x,y) {
   r <- x %% y;
   return(ifelse(r, gcd(y, r), y))
@@ -408,6 +424,7 @@ gcd <- function(x,y) {
 #'gcd_all ***********************************************************
 #'@description Return the greatest common divisor of all elements of vector x
 #'@param x Input vector
+#'@noRd
 gcd_all <- function(x) {
   if (length(x) == 1) x else {
     if (length(x) == 2) gcd(x[1], x[2]) else
@@ -419,6 +436,7 @@ gcd_all <- function(x) {
 #'@description Returns a vector with the integer ratios of the F1 progeny
 #'@param gametes1 vector of the integer ratios of the gametes produced by parent 1
 #'@param gametes2 vector of the integer ratios of the gametes produced by parent 2
+#'@noRd
 makeProgeny <- function(gametes1, gametes2) {
   gp1 <- length(gametes1)-1 #gametes1 ploidy
   gp2 <- length(gametes2)-1 #gametes2 ploidy
@@ -453,6 +471,7 @@ makeProgeny <- function(gametes1, gametes2) {
 #\item{segtype.poly, segtype.di, segtype.mixed: whether this segtype does occur
 #under polysomic, disomic and/or mixed inheritance}
 #'}
+#'@noRd
 segtypeInfoSummary <- function(segtypeInfo) {
   totrows <- 0
   for (i in 1:length(segtypeInfo))
@@ -493,6 +512,7 @@ segtypeInfoSummary <- function(segtypeInfo) {
 #'@param filename The filename to check
 #'@param overwrite if TRUE (default) an existing file of that name will be deleted (if it is not
 #' protected by being locked, read-only, owned by another user etc)
+#' @noRd
 checkFilename <- function(filename, overwrite=TRUE) {
   filename <- filename[1] # we test only the first filename
   if (!overwrite && file.exists(filename)) return(FALSE)
@@ -531,6 +551,7 @@ checkFilename <- function(filename, overwrite=TRUE) {
 #'\item{NAfrac}{ 
 #'The fraction NA in geno (0.5 if length(geno)==0)
 #'}
+#'@noRd
 getConsensusGeno <- function(geno, 
                              maxNAfrac=0.499,
                              lowconf.NAfrac=0.751) {
@@ -556,6 +577,7 @@ getConsensusGeno <- function(geno,
 #'@description Does the specified segtype match the parental genotypes?
 #'@param parGeno integer vector of length 2 with the two parental (consensus) dosages (can each be NA)
 #'@param seginfoItem one of the items (segtypes) of a list as returned by \code{\link{calcSegtypeInfo}}
+#'@noRd
 getMatchParents <- function(parGeno, 
                             seginfoItem) {
   p <- which(!is.na(parGeno))
@@ -581,6 +603,7 @@ getMatchParents <- function(parGeno,
 #'@param x x-coordinate for which corresponding y-coordinate is sought. 
 #'@param pnt1 Point 1
 #'@param pnt2 Point 2
+#'@noRd
 linterpol <- function(x, pnt1, pnt2) {
   a <- (pnt2[2] - pnt1[2]) / (pnt2[1] - pnt1[1])
   b <- pnt1[2] - a * pnt1[1]
@@ -598,6 +621,7 @@ linterpol <- function(x, pnt1, pnt2) {
 #'@param Pvalue_threshold Threshold P-value of bestParentfit segtype
 #'@param fracInvalid_threshold a maximum threshold for the fracInvalid of the bestParentfit segtype
 #' (with a larger fraction of invalid dosages in the F1 the q1 quality parameter will be set to 0)
+#' @noRd
 calc_q1 <- function(Pvalue, 
                     fracInvalid, 
                     bestfit, 
@@ -637,6 +661,7 @@ calc_q1 <- function(Pvalue,
 #'by the amount of conflicts and missing values in the parents. If \code{FALSE}, par.conflicts and 
 #'par.NAfrac are not used and the information on the match between parents and F1 segtype has to come 
 #'from matchParents.
+#'@noRd
 calc_q2 <- function(par.conflicts, 
                     par.NAfrac, 
                     matchParents,
@@ -667,6 +692,7 @@ calc_q2 <- function(par.conflicts,
 #'else q3 depends on the fraction scored F1's
 #'@param F1.NAfrac Fraction of missing values in the F1
 #'@param fracNA_threshold Threshold for fraction missing values
+#'@noRd
 calc_q3 <- function(F1.NAfrac, 
                     fracNA_threshold) {
 
@@ -706,6 +732,7 @@ calc_q3 <- function(F1.NAfrac,
 #'@return vector of length 4 or 5. The last (two) components of the vector are qall_mult 
 #'(obtained by multiplication of q1..q3), and if critweights is supplied, qall_weights 
 #'(a weighted average of q1..q3)
+#'@noRd
 calc_qall <- function(Pvalue_threshold, 
                       fracInvalid_threshold,
                       fracNA_threshold,
@@ -739,6 +766,7 @@ calc_qall <- function(Pvalue_threshold,
 #'@return the same data frame, but with all columns from Parent1 to last ancestor 
 #'converted to integer (as these are sometimes factors with levels not equal to values 
 #'after reading checkF1 from file)
+#'@noRd
 chk2integer <- function(chk) {
   #find out the ploidy:
   F1cap <- names(chk)[which(names(chk) == "F1_NA") - 1]
@@ -775,7 +803,7 @@ chk2integer <- function(chk) {
 #'@param n a single  number: if n>=0, the leftmost n characters of each element
 #'of x are selected, if n<0 the (-n) rightmost characters are omitted
 #'@return character vector with leftside substrings of x
-#'@export
+#'@noRd
 leftstr <- function(x, n) {
   #vectorized for x, not n
   #n>=0: take the leftmost n characters
@@ -797,7 +825,7 @@ leftstr <- function(x, n) {
 #'@param n a single  number: if n>=0, the rightmost n characters of each element
 #'of x are selected, if n<0 the (-n) leftmost characters are omitted
 #'@return character vector with rightside substrings of x
-#'@export
+#'@noRd
 rightstr <- function(x, n) {
   #vectorized for x, not n
   #n>=0: take the rightmost n characters
@@ -826,6 +854,7 @@ rightstr <- function(x, n) {
 #'should be tried or not (0) (only when number of dosages in segtype in <= ploidy-2 and 
 #'min.dosage==1 or max.dosage==ploidy-1)
 #'}
+#'@noRd
 calcPotShifts <- function(segtypes, ploidy) {
   shift <- rep(0, length(segtypes))
   segtypes[is.na(segtypes) | segtypes==""] <- "x_0" #avoid problems with strsplit

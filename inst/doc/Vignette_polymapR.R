@@ -554,14 +554,14 @@ knitr::include_graphics("figures/map_diagnostics.png")
 #  P1.prefPairing <- test_prefpairing(dosage_matrix = ALL_dosages,
 #                                     maplist = integrated.maplist,
 #                                     LG_hom_stack = LGHomDf_P1_1,
-#                                     min_cM = 1,
+#                                     min_cM = 1, #changed from default of 0.5 cM
 #                                     ploidy = 4)
 #  
 #  head(P1.prefPairing)
 #  
 
 ## ----eval = FALSE--------------------------------------------------------
-#  mean(P1.prefPairing[P1.prefPairing$LG_a == 1,]$pref.p)
+#  mean(P1.prefPairing[P1.prefPairing$P_value.adj < 0.01 & P1.prefPairing$LG_a == 1,]$pref.p)
 
 ## ----eval = FALSE--------------------------------------------------------
 #  lg1_markers <- unique(c(rownames(marker_assignments_P1[marker_assignments_P1[,"Assigned_LG"] == 1,]),
@@ -576,7 +576,7 @@ knitr::include_graphics("figures/map_diagnostics.png")
 #                                                      convert_palindrome_markers = FALSE,
 #                                                      ploidy = 4,
 #                                                      pairing = "preferential",
-#                                                      prefPars = c(0.25,0),
+#                                                      prefPars = c(0.25,0), #just for example!
 #                                                      LG_number = 1 #interested in just 1 chm.
 #  )
 #  

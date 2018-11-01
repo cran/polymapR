@@ -20,7 +20,8 @@
 #' @name p4_functions
 NULL
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.0_1.0 <- function(x,p1,p2,ncores=1){
 
 
@@ -49,7 +50,8 @@ possible_phases = c("coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd 
 p4_1.0_1.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -78,7 +80,8 @@ possible_phases = c("coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd 
 p4_1.0_1.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -170,7 +173,8 @@ possible_phases = c("coupling","coupling","repulsion","repulsion","repulsion","r
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.0_1.3 <- function(x,p1,p2,ncores=1){
 
 
@@ -199,7 +203,8 @@ possible_phases = c("coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.0_2.0 <- function(x,p1,p2,ncores=1){
 
 
@@ -233,7 +238,8 @@ possible_phases = c("coupling","coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.0_2.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -299,7 +305,8 @@ possible_phases = c("coupling","coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.0_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -418,7 +425,8 @@ possible_phases = c("coupling","coupling","coupling","coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.1_1.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -576,7 +584,8 @@ possible_phases = c("coupling coupling","coupling repulsion","coupling repulsion
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.1_1.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -782,7 +791,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling repulsion"
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.1_1.3 <- function(x,p1,p2,ncores=1){
 
 
@@ -942,7 +952,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling repulsion"
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.1_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -1212,7 +1223,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.2_1.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -1514,7 +1526,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling mixed","co
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.2_2.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -1784,7 +1797,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.2_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -2182,7 +2196,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.3_1.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -2388,7 +2403,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling mixed","co
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.3_1.3 <- function(x,p1,p2,ncores=1){
 
 
@@ -2546,7 +2562,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling mixed","coupl
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.3_2.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -2752,7 +2769,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_1.3_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -3022,7 +3040,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_1.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -3056,7 +3075,8 @@ possible_phases = c("coupling","coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_1.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -3174,7 +3194,8 @@ possible_phases = c("coupling","coupling","coupling","coupling","repulsion","rep
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_1.3 <- function(x,p1,p2,ncores=1){
 
 
@@ -3208,7 +3229,8 @@ possible_phases = c("coupling","coupling","repulsion","repulsion","unknown")
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_2.0 <- function(x,p1,p2,ncores=1){
 
 
@@ -3318,7 +3340,8 @@ possible_phases = c("coupling","coupling","mixed","mixed","repulsion","repulsion
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_2.1 <- function(x,p1,p2,ncores=1){
 
 
@@ -3428,7 +3451,8 @@ possible_phases = c("coupling","coupling","mixed","mixed","repulsion","repulsion
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.0_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -3634,7 +3658,8 @@ possible_phases = c("coupling","coupling","coupling","coupling","mixed","mixed",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.1_2.2 <- function(x,p1,p2,ncores=1){
 
 
@@ -4032,7 +4057,8 @@ possible_phases = c("coupling coupling","coupling coupling","coupling coupling",
 )
 }
 
-#' @rdname p4_functions
+#' @rdname p4_functions 
+#' @noRd
 p4_2.2_2.2 <- function(x,p1,p2,ncores=1){
 
 

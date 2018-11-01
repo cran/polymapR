@@ -19,6 +19,7 @@
 NULL
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_1.0<-function(x, ncores=1){
   # I have disabled the disomic scripts as they are not appropriate here (these are functions for polysomic behaviour)
 
@@ -53,6 +54,7 @@ r4_1.0_1.0<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_2.0<-function(x, ncores=1){
   
   #attach(x)
@@ -90,6 +92,7 @@ r4_1.0_2.0<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_1.1<-function(x, ncores=1){
   r_c <- (x[,"n_02"] + x[,"n_10"])/(x[,"n_00"]+x[,"n_02"]+x[,"n_10"]+x[,"n_12"])
   r_r <- (2*x[,"n_00"]-x[,"n_02"]-x[,"n_10"]+2*x[,"n_12"])/(x[,"n_00"]+x[,"n_02"]+x[,"n_10"]+x[,"n_12"])
@@ -111,6 +114,7 @@ r4_1.0_1.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_1.3<-function(x, ncores=1){
   r_c <- (x[,"n_03"] + x[,"n_11"])/(x[,"n_01"]+x[,"n_03"]+x[,"n_11"]+x[,"n_13"])
   r_r <- (2*x[,"n_01"]-x[,"n_03"]-x[,"n_11"]+2*x[,"n_13"])/(x[,"n_01"]+x[,"n_03"]+x[,"n_11"]+x[,"n_13"])
@@ -132,6 +136,7 @@ r4_1.0_1.3<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_2.1<-function(x, ncores=1){
 
   logLc <- function(r,n00,n01,n02,n03,n10,n11,n12,n13){ 
@@ -169,6 +174,7 @@ r4_1.0_2.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_1.2<-function(x, ncores=1){
   
   ############################
@@ -225,6 +231,7 @@ r4_1.0_1.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.0_2.2<-function(x, ncores=1){
   
   logLc <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14){ 
@@ -268,6 +275,7 @@ r4_1.0_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.0_1.1<-function(x, ncores=1){
   
   common_sum <- x[,"n_00"] + x[,"n_02"] + x[,"n_20"] + x[,"n_22"] 
@@ -294,6 +302,7 @@ r4_2.0_1.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.0_2.1<-function(x, ncores=1){
   logLc <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23){ 
     L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - n10 - n11 - n12 - n13 - 2*n20 - 2*n21 - 2*n22 - 2*n23)*log(2) + 
@@ -381,6 +390,7 @@ r4_2.0_2.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.2_2.2 <- function(x,ncores=1){
   ## Function re-written Aug 2016 because of bug in older version. Should be correct now.
   
@@ -538,8 +548,8 @@ r4_2.2_2.2 <- function(x,ncores=1){
   )
 }
 
-
 #' @rdname r4_functions
+#' @noRd
 r4_2.0_1.2<-function(x, ncores=1){
   logLc <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23){ 
     L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - n10 - n11 - n12 - n13 - 2*n20 - 2*n21 - 2*n22 - 2*n23)*log(2) + 
@@ -583,6 +593,7 @@ r4_2.0_1.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.0_1.3<-function(x, ncores=1){
   common_sum <- x[,"n_01"] + x[,"n_03"] + x[,"n_21"] + x[,"n_23"]
   
@@ -611,6 +622,8 @@ r4_2.0_1.3<-function(x, ncores=1){
                                 "repulsion")))
 }
 
+#' @rdname r4_functions
+#' @noRd
 r4_2.0_2.2<-function(x, ncores=1){
   logLc <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24){ 
     L <- (-2*n00 - n01 - 2*n02 - n03 - 2*n04 - n10 - n14 - 2*n20 - n21 - 2*n22 - n23 - 2*n24)*log(2) + 
@@ -706,6 +719,7 @@ r4_2.0_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.1_1.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -829,6 +843,7 @@ r4_1.1_1.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.1_1.3<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -949,6 +964,7 @@ r4_1.1_1.3<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.1_2.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1074,6 +1090,7 @@ r4_1.1_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.2_2.1<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1188,6 +1205,7 @@ r4_1.2_2.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.3_2.1<-function(x, ncores=1){ # simplex triplex does not give nulliplex progeny?
   ############################
   ## COUPLING COUPLING
@@ -1310,6 +1328,7 @@ r4_1.3_2.1<-function(x, ncores=1){ # simplex triplex does not give nulliplex pro
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.1_2.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1525,6 +1544,7 @@ r4_2.1_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.3_1.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1649,6 +1669,7 @@ r4_1.3_1.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.2_2.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1863,6 +1884,7 @@ r4_1.2_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.3_2.2<-function(x, ncores=1){
   ############################
   ## COUPLING COUPLING
@@ -1988,6 +2010,7 @@ r4_1.3_2.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.0_2.0<-function(x, ncores=1){
   #########################
   ## COUPLING
@@ -2084,6 +2107,7 @@ r4_2.0_2.0<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.1_1.1<-function(x, ncores=1){
   #########################
   ## COUPLING COUPLING
@@ -2180,6 +2204,7 @@ r4_1.1_1.1<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.2_1.2<-function(x, ncores=1){
   #########################
   ## COUPLING COUPLING
@@ -2371,6 +2396,7 @@ r4_1.2_1.2<-function(x, ncores=1){
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_2.1_2.1<-function(x, ncores=1){ # copy of r_1.2_1.2.. Only with different phases
   #########################
   ## COUPLING COUPLING
@@ -2562,6 +2588,7 @@ r4_2.1_2.1<-function(x, ncores=1){ # copy of r_1.2_1.2.. Only with different pha
 }
 
 #' @rdname r4_functions
+#' @noRd
 r4_1.3_1.3<-function(x, ncores=1){
   
   #########################

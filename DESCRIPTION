@@ -1,8 +1,8 @@
 Package: polymapR
 Type: Package
 Title: Linkage Analysis in Outcrossing Polyploids
-Version: 1.0.17
-Date: 2018-08-21
+Version: 1.0.18
+Date: 2018-11-01
 Authors@R: c(person("Peter","Bourke", email = "pbourkey@gmail.com", role = c("aut","cre")),
              person("Geert","van Geest", role = "aut"))
 Description: Creation of linkage maps in polyploid species from marker dosage
@@ -15,9 +15,9 @@ RoxygenNote: 6.0.1
 Suggests: rmarkdown, Hmisc, LPmerge, reshape2, RColorBrewer
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-08-21 10:38:56 UTC; bourk001
+Packaged: 2018-11-01 17:28:32 UTC; bourk001
 Author: Peter Bourke [aut, cre],
   Geert van Geest [aut]
 Maintainer: Peter Bourke <pbourkey@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-08-24 14:30:07 UTC
+Date/Publication: 2018-11-01 22:20:03 UTC

@@ -18,7 +18,8 @@
 #' @name r6_functions
 NULL
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.0 <- function(x){
 r_c <- (x[,"n_01"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_01"] + x[,"n_10"] + x[,"n_11"])
 logL_c <- (-x[,"n_00"] - x[,"n_01"] - x[,"n_10"] - x[,"n_11"])*log(2) + (x[,"n_00"] + x[,"n_11"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_01"] + x[,"n_10"])*log(pmax(1e-6,r_c))
@@ -37,7 +38,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.1 <- function(x){
 r_c <- (x[,"n_02"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_02"] + x[,"n_10"] + x[,"n_12"])
 logL_c <- 2*(-x[,"n_00"] - x[,"n_01"] - x[,"n_02"] - x[,"n_10"] - x[,"n_11"] - x[,"n_12"])*log(2) + (x[,"n_00"] + x[,"n_12"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_02"] + x[,"n_10"])*log(pmax(1e-6,r_c))
@@ -56,7 +58,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.2 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n10,n11,n12,n13) {
 L <- (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13)*(log(2) + log(5)) + (n01 + n12)*log(3 - 2*r) + (n00 + n13)*log(pmax(1e-6,1 - r)) + (n03 + n10)*log(pmax(1e-6,r)) + (n02 + n11)*log(1 + 2*r)
@@ -85,7 +88,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.3 <- function(x){
 logL_c <- function(r,n02,n12,n00,n01,n03,n04,n10,n11,n13,n14) {
 L <- 2*(n02 + n12)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14)*(3*log(2) + log(5)) + (n01 + n13)*log(9 - 8*r) + (n00 + n14)*log(pmax(1e-6,1 - r)) + (n04 + n10)*log(pmax(1e-6,r)) + (n03 + n11)*log(1 + 8*r)
@@ -114,7 +118,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.4 <- function(x){
 logL_c <- function(r,n01,n02,n03,n04,n11,n12,n13,n14) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14)*(log(2) + log(5)) + (n02 + n13)*log(3 - 2*r) + (n01 + n14)*log(pmax(1e-6,1 - r)) + (n04 + n11)*log(pmax(1e-6,r)) + (n03 + n12)*log(1 + 2*r)
@@ -143,7 +148,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_1.5 <- function(x){
 r_c <- (x[,"n_04"] + x[,"n_12"])/(x[,"n_02"] + x[,"n_04"] + x[,"n_12"] + x[,"n_14"])
 logL_c <- 2*(-x[,"n_02"] - x[,"n_03"] - x[,"n_04"] - x[,"n_12"] - x[,"n_13"] - x[,"n_14"])*log(2) + (x[,"n_02"] + x[,"n_14"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_04"] + x[,"n_12"])*log(pmax(1e-6,r_c))
@@ -162,7 +168,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_2.0 <- function(x){
 r_c <- (x[,"n_02"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_02"] + x[,"n_10"] + x[,"n_12"])
 logL_c <- -((-x[,"n_01"] - x[,"n_11"])*(-log(2) + log(3))) + (-x[,"n_00"] - x[,"n_01"] - x[,"n_02"] - x[,"n_10"] - x[,"n_11"] - x[,"n_12"])*log(5) + (x[,"n_00"] + x[,"n_12"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_02"] + x[,"n_10"])*log(pmax(1e-6,r_c))
@@ -181,7 +188,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_2.1 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n10,n11,n12,n13) {
 L <- (-n00 - 2*n01 - 2*n02 - n03 - n10 - 2*n11 - 2*n12 - n13)*log(2) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13)*log(5) + (n01 + n12)*log(5 - 2*r) + (n00 + n13)*log(pmax(1e-6,1 - r)) + (n03 + n10)*log(pmax(1e-6,r)) + (n02 + n11)*log(3 + 2*r)
@@ -210,7 +218,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_2.2 <- function(x){
 logL_c <- function(r,n01,n02,n03,n11,n12,n13,n00,n04,n10,n14) {
 L <- (-n01 - n02 - n03 - n11 - n12 - n13)*log(2) + (n01 + n03 + n11 + n13)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14)*log(5) + (n02 + n12)*log(11) + (n01 + n13)*log(3 - 2*r) + (n00 + n14)*log(pmax(1e-6,1 - r)) + (n04 + n10)*log(pmax(1e-6,r)) + (n03 + n11)*log(1 + 2*r)
@@ -239,7 +248,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_2.3 <- function(x){
 logL_c <- function(r,n00,n01,n03,n04,n05,n10,n11,n12,n14,n15,n02,n13) {
 L <- (-2*n00 - 3*n01 - 3*n03 - 3*n04 - 2*n05 - 2*n10 - 3*n11 - 3*n12 - 3*n14 - 2*n15)*log(2) + (n01 + n04 + n11 + n14)*log(3) + 2*(-n00 - n01 - n03 - n04 - n05 - n10 - n11 - n12 - n14 - n15)*log(5) + (n01 + n14)*log(7 - 6*r) + (n00 + n15)*log(pmax(1e-6,1 - r)) + (n02 + n13)*log(9/40 - (2*r)/25) + (n05 + n10)*log(pmax(1e-6,r)) + (n04 + n11)*log(1 + 6*r) + (n03 + n12)*log(29 + 16*r)
@@ -268,7 +278,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_2.4 <- function(x){
 logL_c <- function(r,n02,n03,n04,n12,n13,n14,n01,n05,n11,n15) {
 L <- (-n02 - n03 - n04 - n12 - n13 - n14)*log(2) + (n02 + n04 + n12 + n14)*log(3) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15)*log(5) + (n03 + n13)*log(11) + (n02 + n14)*log(3 - 2*r) + (n01 + n15)*log(pmax(1e-6,1 - r)) + (n05 + n11)*log(pmax(1e-6,r)) + (n04 + n12)*log(1 + 2*r)
@@ -297,7 +308,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_3.0 <- function(x){
 logL_c <- function(r,n01,n02,n11,n12,n00,n03,n10,n13) {
 L <- (n01 + n02 + n11 + n12)*log(3) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13)*(2*log(2) + log(5)) + (n00 + n13)*log(pmax(1e-6,1 - r)) + (n01 + n12)*log(2 - r) + (n03 + n10)*log(pmax(1e-6,r)) + (n02 + n11)*log(1 + r)
@@ -326,7 +338,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_3.1 <- function(x){
 logL_c <- function(r,n02,n12,n00,n01,n03,n04,n10,n11,n13,n14) {
 L <- 2*(n02 + n12)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14)*(3*log(2) + log(5)) + (n01 + n13)*log(7 - 4*r) + (n00 + n14)*log(pmax(1e-6,1 - r)) + (n04 + n10)*log(pmax(1e-6,r)) + (n03 + n11)*log(3 + 4*r)
@@ -355,7 +368,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_3.2 <- function(x){
 logL_c <- function(r,n01,n04,n11,n14,n00,n02,n03,n05,n10,n12,n13,n15) {
 L <- (n01 + n04 + n11 + n14)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15)*(2*log(2) + 2*log(5)) + (n02 + n13)*log(22 - 7*r) + (n01 + n14)*log(3 - 2*r) + (n00 + n15)*log(pmax(1e-6,1 - r)) + (n05 + n10)*log(pmax(1e-6,r)) + (n04 + n11)*log(1 + 2*r) + (n03 + n12)*log(15 + 7*r)
@@ -384,7 +398,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_3.3 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16) {
 L <- (-4*n00 - 4*n01 - 4*n02 - 3*n03 - 4*n04 - 4*n05 - 4*n06 - 4*n10 - 4*n11 - 4*n12 - 3*n13 - 4*n14 - 4*n15 - 4*n16)*log(2) + (n01 + n02 + n04 + n05 + n11 + n12 + n14 + n15)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16)*log(5) + (n02 + n04 + n12 + n14)*log(11) + (n03 + n13)*log(41) + (n01 + n15)*log(5 - 4*r) + (n00 + n16)*log(pmax(1e-6,1 - r)) + (n02 + n14)*log(2 - r) + (n06 + n10)*log(pmax(1e-6,r)) + (n04 + n12)*log(1 + r) + (n05 + n11)*log(1 + 4*r)
@@ -413,7 +428,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.0_4.1 <- function(x){
 logL_c <- function(r,n01,n02,n03,n04,n11,n12,n13,n14) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14)*(3*log(2) + log(5)) + (n01 + n14)*log(3 - 2*r) + (n02 + n13)*log(9 - 2*r) + (n04 + n11)*log(1 + 2*r) + (n03 + n12)*log(7 + 2*r)
@@ -442,7 +458,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_1.1 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n10,n12,n20,n21,n22,n11) {
 L <- (-2*n00 - n01 - 2*n02 - n10 - n12 - 2*n20 - n21 - 2*n22)*log(2) + 2*(n00 + n22)*log(pmax(1e-6,1 - r)) + 2*(n02 + n20)*log(pmax(1e-6,r)) + (n01 + n10 + n12 + n21)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + n11*log(1/2 - r + r^2)
@@ -479,7 +496,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion repulsio
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_1.2 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n11,n12,n20,n21,n22,n23,n10,n13) {
 L <- (-n00 - 2*n01 - 2*n02 - n03 - 2*n11 - 2*n12 - n20 - 2*n21 - 2*n22 - n23)*log(2) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*log(5) + 2*(n00 + n23)*log(pmax(1e-6,1 - r)) + 2*(n03 + n20)*log(pmax(1e-6,r)) + (n02 + n21)*(log(5 - 2*r) + log(pmax(1e-6,r))) + (n10 + n13)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n01 + n22)*log(3 - r - 2*r^2) + (n11 + n12)*log(5 - 4*r + 4*r^2)
@@ -524,7 +542,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_1.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24) {
 L <- (-3*n00 - 2*n01 - 3*n02 - 2*n03 - 3*n04 - 2*n10 - n11 - n12 - n13 - 2*n14 - 3*n20 - 2*n21 - 3*n22 - 2*n23 - 3*n24)*log(2) + (n02 + n12 + n22)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24)*log(5) + 2*(n00 + n24)*log(pmax(1e-6,1 - r)) + 2*(n04 + n20)*log(pmax(1e-6,r)) + (n10 + n14)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n21)*(log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n22)*log(1 + 2*r - 2*r^2) + (n11 + n13)*log(1 + r - r^2) + (n01 + n23)*log(3 - 4*r + r^2) + n12*log(1 - r + r^2)
@@ -569,7 +588,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_1.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n11,n12,n13,n14,n21,n22,n23,n24) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24)*(3*log(2) + log(5)) + (n01 + n24)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n04 + n21)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n11 + n14)*log(1 + 4*r - 4*r^2) + (n02 + n23)*log(6 - 3*r - 2*r^2) + (n03 + n22)*log(1 + 7*r - 2*r^2) + (n12 + n13)*log(9 - 4*r + 4*r^2)
@@ -614,7 +634,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_1.5 <- function(x){
 logL_cc <- function(r,n02,n03,n04,n12,n13,n14,n22,n23,n24) {
 L <- (-2*n02 - n03 - 2*n04 - n12 - n13 - n14 - 2*n22 - n23 - 2*n24)*log(2) + (-n02 - n03 - n04 - n12 - n13 - n14 - n22 - n23 - n24)*log(5) + (n02 + n24)*(log(pmax(1e-6,1 - r)) + log(3 - r)) + (n04 + n22)*(log(pmax(1e-6,r)) + log(2 + r)) + (n03 + n12 + n14 + n23)*log(1 + r - r^2) + n13*log(3 - 2*r + 2*r^2)
@@ -659,7 +680,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_2.0 <- function(x){
 logL_c <- function(r,n00,n01,n02,n10,n11,n12,n20,n21,n22) {
 L <- (-n00 - 2*n01 - n02 - n10 - n11 - n12 - n20 - 2*n21 - n22)*log(2) + (n01 + n11 + n21)*log(3) + (-n00 - n01 - n02 - n10 - n11 - n12 - n20 - n21 - n22)*log(5) + (n00 + n22)*log(pmax(1e-6,1 - r)) + (n02 + n20)*log(pmax(1e-6,r))
@@ -688,7 +710,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_2.2 <- function(x){
 logL_cc <- function(r,n02,n10,n12,n14,n22,n01,n03,n11,n13,n21,n23,n00,n04,n20,n24) {
 L <- (-2*n02 + n10 - n12 + n14 - 2*n22)*log(2) + (n01 + n03 + n11 + n13 + n21 + n23)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24)*log(5) + (n01 + n23)*log(pmax(1e-6,1 - r)) + 2*(n00 + n24)*log(pmax(1e-6,1 - r)) + 2*(n04 + n20)*log(pmax(1e-6,r)) + (n03 + n21)*log(pmax(1e-6,r)) + (n10 + n14)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n22)*log(9 + 8*r - 8*r^2) + n12*log(13 - 8*r + 8*r^2)
@@ -725,7 +748,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion repulsio
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_2.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25) {
 L <- (-2*n00 - 3*n01 - 3*n02 - 3*n03 - 3*n04 - 2*n05 - n10 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - n15 - 2*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n25)*log(2) + (n01 + n04 + n11 + n14 + n21 + n24)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25)*log(5) + 2*(n00 + n25)*log(pmax(1e-6,1 - r)) + 2*(n05 + n20)*log(pmax(1e-6,r)) + (n10 + n15)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n21)*(log(pmax(1e-6,r)) + log(3 + 2*r)) + (n02 + n23)*log(24 - 7*r - 8*r^2) + (n03 + n22)*log(9 + 23*r - 8*r^2) + (n11 + n14)*log(3 + 4*r - 4*r^2) + (n01 + n24)*log(5 - 7*r + 2*r^2) + (n12 + n13)*log(41 - 16*r + 16*r^2)
@@ -770,7 +794,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n05,n11,n13,n15,n21,n22,n23,n24,n25,n12,n14) {
 L <- (-2*n01 - 3*n02 - n03 - 3*n04 - 2*n05 - 2*n11 + n13 - 2*n15 - 2*n21 - 3*n22 - n23 - 3*n24 - 2*n25)*log(2) + (n02 + n04 + n12 + n14 + n22 + n24)*log(3) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25)*log(5) + (n02 + n24)*log(7 - 6*r) + (n01 + n25)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n05 + n21)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n04 + n22)*log(1 + 6*r) + (n11 + n15)*log(1 + 4*r - 4*r^2) + (n03 + n23)*log(5 + 2*r - 2*r^2) + n13*log(3 - r + r^2)
@@ -815,7 +840,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_3.0 <- function(x){
 logL_c <- function(r,n01,n02,n11,n12,n21,n22,n00,n03,n10,n13,n20,n23) {
 L <- (n01 + n02 + 2*n11 + 2*n12 + n21 + n22)*log(3) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*(3*log(2) + log(5)) + (n00 + n23)*log(pmax(1e-6,1 - r)) + (n01 + n22)*log(2 - r) + (n03 + n20)*log(pmax(1e-6,r)) + (n02 + n21)*log(1 + r)
@@ -844,7 +870,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.1_3.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26) {
 L <- (-4*n00 - 3*n01 - 4*n02 - 2*n03 - 4*n04 - 3*n05 - 4*n06 - 3*n10 - 3*n11 - 3*n12 - 2*n13 - 3*n14 - 3*n15 - 3*n16 - 4*n20 - 3*n21 - 4*n22 - 2*n23 - 4*n24 - 3*n25 - 4*n26)*log(2) + (n01 + n02 + n04 + n05 + n11 + n12 + n14 + n15 + n21 + n22 + n24 + n25)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26)*log(5) + 2*(n00 + n26)*log(pmax(1e-6,1 - r)) + (n01 + n25)*(log(pmax(1e-6,1 - r)) + log(2 - r)) + 2*(n06 + n20)*log(pmax(1e-6,r)) + (n10 + n16)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n05 + n21)*(log(pmax(1e-6,r)) + log(1 + r)) + (n03 + n23)*log(9 + 5*r - 5*r^2) + (n11 + n15)*log(1 + 2*r - 2*r^2) + (n12 + n14)*log(8 + r - r^2) + (n02 + n24)*log(14 - 12*r + r^2) + (n04 + n22)*log(3 + 10*r + r^2) + n13*log(23 - 10*r + 10*r^2)
@@ -881,7 +908,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion repulsio
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_1.2 <- function(x){
 logL_cc <- function(r,n01,n02,n10,n13,n20,n23,n31,n32,n00,n03,n11,n12,n21,n22,n30,n33) {
 L <- (n01 + n02 + n10 + n13 + n20 + n23 + n31 + n32)*log(3) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32 - n33)*(log(2) + log(5)) + 3*(n00 + n33)*log(pmax(1e-6,1 - r)) + 3*(n03 + n30)*log(pmax(1e-6,r)) + (n01 + n10 + n23 + n32)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n13 + n20 + n31)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n12 + n21)*(log(pmax(1e-6,r)) + log(7 - 12*r + 9*r^2)) + (n11 + n22)*log(4 - 10*r + 15*r^2 - 9*r^3)
@@ -942,7 +970,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_1.3 <- function(x){
 logL_cc <- function(r,n10,n14,n20,n24,n00,n01,n02,n03,n04,n11,n12,n13,n21,n22,n23,n30,n31,n32,n33,n34) {
 L <- (n10 + n14 + n20 + n24)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*(3*log(2) + log(5)) + (n02 + n32)*log(7) + 3*(n00 + n34)*log(pmax(1e-6,1 - r)) + 3*(n04 + n30)*log(pmax(1e-6,r)) + (n02 + n32)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n10 + n24)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n31)*(log(5 - 2*r) + 2*log(pmax(1e-6,r))) + (n14 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n01 + n33)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r)) + (n13 + n21)*(log(pmax(1e-6,r)) + log(12 - 11*r + 6*r^2)) + (n12 + n22)*log(9 - 7*r + 7*r^2) + (n11 + n23)*log(7 - 8*r + 7*r^2 - 6*r^3)
@@ -1003,7 +1032,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_1.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34)*(2*log(2) + log(3) + log(5)) + (n04 + n31)*(2*log(pmax(1e-6,r)) + log(2 + r)) + (n03 + n14 + n21 + n32)*(log(pmax(1e-6,r)) + log(5 + r - 3*r^2)) + (n01 + n34)*(log(pmax(1e-6,1 - r)) + log(3 - 4*r + r^2)) + (n12 + n23)*log(15 - 17*r + 17*r^2 - 9*r^3) + (n02 + n11 + n24 + n33)*log(3 + 2*r - 8*r^2 + 3*r^3) + (n13 + n22)*log(6 + 10*r - 10*r^2 + 9*r^3)
@@ -1064,7 +1094,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_1.5 <- function(x){
 logL_cc <- function(r,n02,n03,n04,n12,n13,n14,n22,n23,n24,n32,n33,n34) {
 L <- (-n02 - n03 - n04 - n12 - n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34)*(3*log(2) + log(5)) + (n02 + n34)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n04 + n32)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n03 + n33)*log(1 + 4*r - 4*r^2) + (n12 + n24)*log(6 - 3*r - 2*r^2) + (n14 + n22)*log(1 + 7*r - 2*r^2) + (n13 + n23)*log(9 - 4*r + 4*r^2)
@@ -1109,7 +1140,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion coupling","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_2.1 <- function(x){
 logL_cc <- function(r,n01,n02,n10,n11,n12,n13,n20,n21,n22,n23,n31,n32,n00,n03,n30,n33) {
 L <- (-n01 - n02 - n10 - 2*n11 - 2*n12 - n13 - n20 - 2*n21 - 2*n22 - n23 - n31 - n32)*log(2) + 2*(-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32 - n33)*log(5) + 2*(n00 + n33)*log(pmax(1e-6,1 - r)) + 2*(n03 + n30)*log(pmax(1e-6,r)) + (n02 + n13 + n20 + n31)*(log(5 - 2*r) + log(pmax(1e-6,r))) + (n01 + n10 + n23 + n32)*log(3 - r - 2*r^2) + (n11 + n22)*log(21 - 12*r + 4*r^2) + (n12 + n21)*log(13 + 4*r + 4*r^2)
@@ -1154,7 +1186,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_2.2 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n11,n12,n13,n21,n22,n23,n31,n32,n33,n10,n14,n20,n24,n00,n04,n30,n34) {
 L <- (-n01 + 2*n02 - n03 - n11 - n12 - n13 - n21 - n22 - n23 - n31 + 2*n32 - n33)*log(2) + (n10 + n14 + n20 + n24)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*log(5) + 3*(n00 + n34)*log(pmax(1e-6,1 - r)) + 3*(n04 + n30)*log(pmax(1e-6,r)) + (n02 + n32)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n10 + n24)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n31)*(log(7 - 4*r) + 2*log(pmax(1e-6,r))) + (n14 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n01 + n33)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r)) + (n12 + n22)*log(11 - 8*r + 8*r^2) + (n13 + n21)*(log(pmax(1e-6,r)) + log(16 - 19*r + 12*r^2)) + (n11 + n23)*log(9 - 14*r + 17*r^2 - 12*r^3)
@@ -1215,7 +1248,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_2.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35) {
 L <- (-2*n00 - 3*n01 - 3*n02 - 3*n03 - 3*n04 - 2*n05 - 2*n10 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - 2*n15 - 2*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n25 - 2*n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 2*n35)*log(2) + (n10 + n15 + n20 + n25)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35)*log(5) + 3*(n00 + n35)*log(pmax(1e-6,1 - r)) + 3*(n05 + n30)*log(pmax(1e-6,r)) + (n10 + n25)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n31)*(log(11 - 2*r) + 2*log(pmax(1e-6,r))) + (n15 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n01 + n34)*(2*log(pmax(1e-6,1 - r)) + log(9 + 2*r)) + (n03 + n32)*(log(pmax(1e-6,r)) + log(18 - 5*r - 4*r^2)) + (n14 + n21)*(log(pmax(1e-6,r)) + log(26 - 17*r + 6*r^2)) + (n12 + n23)*log(41 - 34*r + 29*r^2 - 12*r^3) + (n11 + n24)*log(15 - 10*r + r^2 - 6*r^3) + (n02 + n33)*log(9 + 4*r - 17*r^2 + 4*r^3) + (n13 + n22)*log(24 + 12*r - 7*r^2 + 12*r^3)
@@ -1276,7 +1310,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35) {
 L <- (-n01 - 2*n02 - 2*n03 - 2*n04 - n05 - n11 - 2*n12 - 2*n13 - 2*n14 - n15 - n21 - 2*n22 - 2*n23 - 2*n24 - n25 - n31 - 2*n32 - 2*n33 - 2*n34 - n35)*log(2) + (-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35)*(log(3) + 2*log(5)) + (n05 + n31)*(2*log(pmax(1e-6,r)) + log(2 + r)) + (n03 + n33)*log(9 + 16*r - 16*r^2) + (n04 + n32)*(log(pmax(1e-6,r)) + log(12 + 7*r - 4*r^2)) + (n15 + n21)*(log(pmax(1e-6,r)) + log(5 + r - 3*r^2)) + (n01 + n35)*(log(pmax(1e-6,1 - r)) + log(3 - 4*r + r^2)) + (n13 + n23)*log(57 - 16*r + 16*r^2) + (n12 + n24)*log(42 - 32*r + 17*r^2 - 12*r^3) + (n11 + n25)*log(3 + 2*r - 8*r^2 + 3*r^3) + (n02 + n34)*log(15 - 14*r - 5*r^2 + 4*r^3) + (n14 + n22)*log(15 + 34*r - 19*r^2 + 12*r^3)
@@ -1337,7 +1372,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_3.0 <- function(x){
 logL_c <- function(r,n01,n02,n11,n12,n21,n22,n31,n32,n00,n03,n10,n13,n20,n23,n30,n33) {
 L <- (n01 + n02 + n11 + n12 + n21 + n22 + n31 + n32)*log(3) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32 - n33)*(2*log(2) + 2*log(5)) + (n10 + n23)*log(3 - 2*r) + (n11 + n22)*log(7 - 2*r) + (n00 + n33)*log(pmax(1e-6,1 - r)) + (n01 + n32)*log(2 - r) + (n03 + n30)*log(pmax(1e-6,r)) + (n02 + n31)*log(1 + r) + (n13 + n20)*log(1 + 2*r) + (n12 + n21)*log(5 + 2*r)
@@ -1366,7 +1402,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_3.1 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n30,n31,n32,n33,n34) {
 L <- (-2*n00 - n01 - 2*n02 - n03 - 2*n04 - 3*n10 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - 3*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n30 - n31 - 2*n32 - n33 - 2*n34)*log(2) + (n02 + n12 + n22 + n32)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*log(5) + 2*(n00 + n34)*log(pmax(1e-6,1 - r)) + 2*(n04 + n30)*log(pmax(1e-6,r)) + (n14 + n20)*(log(5 - 2*r) + log(pmax(1e-6,r))) + (n03 + n31)*(log(pmax(1e-6,r)) + log(2 + r)) + (n11 + n23)*log(27 - 12*r - 4*r^2) + (n13 + n21)*log(11 + 20*r - 4*r^2) + (n10 + n24)*log(3 - r - 2*r^2) + (n02 + n32)*log(1 + 2*r - 2*r^2) + (n01 + n33)*log(3 - 4*r + r^2) + (n12 + n22)*log(13 - 4*r + 4*r^2)
@@ -1411,7 +1448,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_3.2 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35) {
 L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n05 - 2*n10 - 2*n11 - n12 - n13 - 2*n14 - 2*n15 - 2*n20 - 2*n21 - n22 - n23 - 2*n24 - 2*n25 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35)*log(2) + (n10 + n15 + n20 + n25)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35)*log(5) + 3*(n00 + n35)*log(pmax(1e-6,1 - r)) + (n01 + n34)*(2*log(pmax(1e-6,1 - r)) + log(6 - r)) + 3*(n05 + n30)*log(pmax(1e-6,r)) + (n10 + n25)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n15 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n04 + n31)*(2*log(pmax(1e-6,r)) + log(5 + r)) + (n03 + n32)*(log(pmax(1e-6,r)) + log(7 + 4*r - 8*r^2)) + (n14 + n21)*(log(pmax(1e-6,r)) + log(11 - 2*r - 3*r^2)) + (n12 + n23)*log(12 - 17*r + 22*r^2 - 12*r^3) + (n11 + n24)*log(6 + 2*r - 11*r^2 + 3*r^3) + (n02 + n33)*log(3 + 9*r - 20*r^2 + 8*r^3) + (n13 + n22)*log(5 + 9*r - 14*r^2 + 12*r^3)
@@ -1472,7 +1510,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_3.3 <- function(x){
 logL_cc <- function(r,n10,n16,n20,n26,n00,n01,n02,n03,n04,n05,n06,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n36) {
 L <- (n10 + n16 + n20 + n26)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26 - n30 - n31 - n32 - n33 - n34 - n35 - n36)*(4*log(2) + 2*log(5)) + 3*(n00 + n36)*log(pmax(1e-6,1 - r)) + (n01 + n35)*(log(9 - 2*r) + 2*log(pmax(1e-6,1 - r))) + 3*(n06 + n30)*log(pmax(1e-6,r)) + (n10 + n26)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n16 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n05 + n31)*(2*log(pmax(1e-6,r)) + log(7 + 2*r)) + (n03 + n33)*log(9 + 28*r - 28*r^2) + (n04 + n32)*(log(pmax(1e-6,r)) + log(15 + 13*r - 7*r^2)) + (n15 + n21)*(log(pmax(1e-6,r)) + log(16 - r - 6*r^2)) + (n13 + n23)*log(73 - 28*r + 28*r^2) + (n12 + n24)*log(57 - 44*r + 29*r^2 - 21*r^3) + (n11 + n25)*log(9 + 4*r - 19*r^2 + 6*r^3) + (n02 + n34)*log(21 - 20*r - 8*r^2 + 7*r^3) + (n14 + n22)*log(21 + 49*r - 34*r^2 + 21*r^3)
@@ -1533,7 +1572,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.2_4.1 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34) {
 L <- (-2*n01 - 2*n02 - 2*n03 - 2*n04 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n31 - 2*n32 - 2*n33 - 2*n34)*log(2) + 2*(-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34)*log(5) + (n01 + n34)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n04 + n31)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n11 + n24)*log(11 - 4*r - 4*r^2) + (n14 + n21)*log(3 + 12*r - 4*r^2) + (n02 + n33)*log(6 - 3*r - 2*r^2) + (n03 + n32)*log(1 + 7*r - 2*r^2) + (n12 + n23)*log(39 - 16*r + 4*r^2) + (n13 + n22)*log(27 + 8*r + 4*r^2)
@@ -1578,7 +1618,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_1.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n10,n11,n13,n14,n20,n22,n24,n30,n31,n33,n34,n40,n41,n42,n43,n44,n12,n21,n23,n32) {
 L <- (-3*n00 - n01 - 2*n02 - n03 - 3*n04 - n10 - 2*n11 - 2*n13 - n14 - 2*n20 - 2*n22 - 2*n24 - n30 - 2*n31 - 2*n33 - n34 - 3*n40 - n41 - 2*n42 - n43 - 3*n44)*log(2) + (n02 + n12 + n20 + n21 + n22 + n23 + n24 + n32 + n42)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*log(5) + 4*(n00 + n44)*log(pmax(1e-6,1 - r)) + 4*(n04 + n40)*log(pmax(1e-6,r)) + (n01 + n10 + n34 + n43)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n20 + n24 + n42)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n03 + n14 + n30 + n41)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n13 + n31)*(2*log(pmax(1e-6,r)) + log(9 - 12*r + 8*r^2)) + (n11 + n33)*(2*log(pmax(1e-6,1 - r)) + log(5 - 4*r + 8*r^2)) + (n12 + n21 + n23 + n32)*(log(pmax(1e-6,r)) + log(1 - 2*r + 2*r^2 - r^3)) + n22*log(3 - 8*r + 14*r^2 - 12*r^3 + 6*r^4)
@@ -1655,7 +1696,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_1.4 <- function(x){
 logL_cc <- function(r,n02,n03,n42,n43,n01,n04,n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34,n41,n44) {
 L <- (n02 + n03 + n42 + n43)*log(3) + (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34 - n41 - n42 - n43 - n44)*(3*log(2) + log(5)) + (n21 + n24)*log(7) + 3*(n01 + n44)*log(pmax(1e-6,1 - r)) + 3*(n04 + n41)*log(pmax(1e-6,r)) + (n21 + n24)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n14 + n31)*(log(5 - 2*r) + 2*log(pmax(1e-6,r))) + (n03 + n42)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n11 + n34)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r)) + (n13 + n32)*(log(pmax(1e-6,r)) + log(12 - 11*r + 6*r^2)) + (n22 + n23)*log(9 - 7*r + 7*r^2) + (n12 + n33)*log(7 - 8*r + 7*r^2 - 6*r^3)
@@ -1716,7 +1758,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_1.5 <- function(x){
 logL_cc <- function(r,n02,n03,n04,n12,n13,n14,n22,n23,n24,n32,n33,n34,n42,n43,n44) {
 L <- (-3*n02 - 2*n03 - 3*n04 - 2*n12 - n13 - 2*n14 - 3*n22 - n23 - 3*n24 - 2*n32 - n33 - 2*n34 - 3*n42 - 2*n43 - 3*n44)*log(2) + (n22 + n23 + n24)*log(3) + (-n02 - n03 - n04 - n12 - n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34 - n42 - n43 - n44)*log(5) + 2*(n02 + n44)*log(pmax(1e-6,1 - r)) + 2*(n04 + n42)*log(pmax(1e-6,r)) + (n03 + n43)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n14 + n32)*(log(pmax(1e-6,r)) + log(2 + r)) + (n22 + n24)*log(1 + 2*r - 2*r^2) + (n13 + n33)*log(1 + r - r^2) + (n12 + n34)*log(3 - 4*r + r^2) + n23*log(1 - r + r^2)
@@ -1761,7 +1804,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","repulsion coupling",
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_2.2 <- function(x){
 logL_cc <- function(r,n00,n01,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n30,n31,n32,n33,n34,n40,n41,n43,n44,n02,n42) {
 L <- (-2*n00 - 3*n01 - 3*n03 - 2*n04 - 2*n10 - n11 - n12 - n13 - 2*n14 - 2*n20 - 3*n21 + n22 - 3*n23 - 2*n24 - 2*n30 - n31 - n32 - n33 - 2*n34 - 2*n40 - 3*n41 - 3*n43 - 2*n44)*log(2) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*log(5) + (n20 + n24)*log(7) + 3*(n00 + n44)*log(pmax(1e-6,1 - r)) + 3*(n04 + n40)*log(pmax(1e-6,r)) + (n02 + n20 + n24 + n42)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n41)*(log(7 - 4*r) + 2*log(pmax(1e-6,r))) + (n14 + n30)*(log(5 - 2*r) + 2*log(pmax(1e-6,r))) + (n10 + n34)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r)) + (n01 + n43)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r)) + (n12 + n32)*log(5 + 2*r - 2*r^2) + (n21 + n23)*log(21 + 2*r - 2*r^2) + (n13 + n31)*(log(pmax(1e-6,r)) + log(7 - 3*r + 2*r^2)) + n22*log(3 - 2*r + 2*r^2) + (n11 + n33)*log(6 - 7*r + 3*r^2 - 2*r^3)
@@ -1822,7 +1866,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_2.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n11,n12,n13,n14,n20,n21,n22,n23,n24,n25,n31,n32,n33,n34,n40,n41,n42,n43,n44,n45,n10,n15,n30,n35) {
 L <- (-2*n00 - 3*n01 - 3*n02 - 3*n03 - 3*n04 - 2*n05 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - n25 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 2*n40 - 3*n41 - 3*n42 - 3*n43 - 3*n44 - 2*n45)*log(2) + (n01 + n04 + n11 + n14 + n20 + n21 + n22 + n23 + n24 + n25 + n31 + n34 + n41 + n44)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + 4*(n00 + n45)*log(pmax(1e-6,1 - r)) + 4*(n05 + n40)*log(pmax(1e-6,r)) + (n10 + n35)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n20 + n25)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n04 + n41)*(log(3 - 2*r) + 3*log(pmax(1e-6,r))) + (n15 + n30)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n01 + n44)*(3*log(pmax(1e-6,1 - r)) + log(1 + 2*r)) + (n02 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(11 + 4*r)) + (n03 + n42)*(2*log(pmax(1e-6,r)) + log(15 - 19*r + 4*r^2)) + (n14 + n31)*(2*log(pmax(1e-6,r)) + log(13 - 14*r + 8*r^2)) + (n11 + n34)*(2*log(pmax(1e-6,1 - r)) + log(7 - 2*r + 8*r^2)) + (n13 + n32)*(log(pmax(1e-6,r)) + log(60 - 69*r + 54*r^2 - 16*r^3)) + (n21 + n24)*(log(pmax(1e-6,r)) + log(17 - 29*r + 24*r^2 - 12*r^3)) + (n12 + n33)*log(29 - 20*r - 3*r^2 + 10*r^3 - 16*r^4) + (n22 + n23)*log(15 - 17*r + 25*r^2 - 16*r^3 + 8*r^4)
@@ -1899,7 +1944,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n04,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35,n41,n42,n44,n45,n03,n43) {
 L <- (-2*n01 - 3*n02 - 3*n04 - 2*n05 - 2*n11 - n12 - n13 - n14 - 2*n15 - 2*n21 - 3*n22 + n23 - 3*n24 - 2*n25 - 2*n31 - n32 - n33 - n34 - 2*n35 - 2*n41 - 3*n42 - 3*n44 - 2*n45)*log(2) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45)*log(5) + (n21 + n25)*log(7) + 3*(n01 + n45)*log(pmax(1e-6,1 - r)) + 3*(n05 + n41)*log(pmax(1e-6,r)) + (n03 + n21 + n25 + n43)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n42)*(log(7 - 4*r) + 2*log(pmax(1e-6,r))) + (n15 + n31)*(log(5 - 2*r) + 2*log(pmax(1e-6,r))) + (n11 + n35)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r)) + (n02 + n44)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r)) + (n13 + n33)*log(5 + 2*r - 2*r^2) + (n22 + n24)*log(21 + 2*r - 2*r^2) + (n14 + n32)*(log(pmax(1e-6,r)) + log(7 - 3*r + 2*r^2)) + n23*log(3 - 2*r + 2*r^2) + (n12 + n34)*log(6 - 7*r + 3*r^2 - 2*r^3)
@@ -1960,7 +2006,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_3.1 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n30,n31,n32,n33,n34,n40,n41,n42,n43,n44) {
 L <- (-4*n00 - 3*n01 - 4*n02 - 3*n03 - 4*n04 - 3*n10 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - 4*n20 - 3*n21 - 3*n22 - 3*n23 - 4*n24 - 3*n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 4*n40 - 3*n41 - 4*n42 - 3*n43 - 4*n44)*log(2) + (n02 + n12 + n20 + n21 + 2*n22 + n23 + n24 + n32 + n42)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*log(5) + 2*(n00 + n44)*log(pmax(1e-6,1 - r)) + 2*(n04 + n40)*log(pmax(1e-6,r)) + (n03 + n14 + n30 + n41)*(log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n20 + n24 + n42)*log(1 + 2*r - 2*r^2) + (n12 + n21 + n23 + n32)*log(7 + 2*r - 2*r^2) + (n01 + n10 + n34 + n43)*log(3 - 4*r + r^2) + (n11 + n33)*log(21 - 18*r + 2*r^2) + n22*log(5 - 2*r + 2*r^2) + (n13 + n31)*log(5 + 14*r + 2*r^2)
@@ -2005,7 +2052,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_3.2 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45) {
 L <- 4*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(2) + (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n05 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n20 - n21 - 2*n22 - 2*n23 - n24 - 2*n25 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 2*n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - 2*n45)*log(5) + (n20 + n25)*log(7) + 3*(n00 + n45)*log(pmax(1e-6,1 - r)) + (n01 + n44)*(2*log(pmax(1e-6,1 - r)) + log(6 - r)) + 3*(n05 + n40)*log(pmax(1e-6,r)) + (n20 + n25)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n15 + n30)*(log(5 - 2*r) + 2*log(pmax(1e-6,r))) + (n04 + n41)*(2*log(pmax(1e-6,r)) + log(5 + r)) + (n10 + n35)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r)) + (n03 + n42)*(log(pmax(1e-6,r)) + log(7 + 4*r - 8*r^2)) + (n21 + n24)*log(3 + 5*r - 5*r^2) + (n14 + n31)*(log(pmax(1e-6,r)) + log(20 + 9*r - 2*r^2)) + (n22 + n23)*log(75 - 32*r + 32*r^2) + (n12 + n33)*log(51 - 32*r + 16*r^2 - 16*r^3) + (n11 + n34)*log(27 - 32*r + 3*r^2 + 2*r^3) + (n02 + n43)*log(3 + 9*r - 20*r^2 + 8*r^3) + (n13 + n32)*log(19 + 48*r - 32*r^2 + 16*r^3)
@@ -2066,7 +2114,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_3.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26,n30,n31,n32,n33,n34,n35,n36,n40,n41,n42,n43,n44,n45,n46) {
 L <- (-4*n00 - 3*n01 - 4*n02 - 3*n03 - 4*n04 - 3*n05 - 4*n06 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n16 - 3*n20 - 3*n21 - 3*n22 - 2*n23 - 3*n24 - 3*n25 - 3*n26 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 2*n36 - 4*n40 - 3*n41 - 4*n42 - 3*n43 - 4*n44 - 3*n45 - 4*n46)*log(2) + (n01 + n02 + n04 + n05 + n11 + n12 + n14 + n15 + n20 + n21 + n22 + n23 + n24 + n25 + n26 + n31 + n32 + n34 + n35 + n41 + n42 + n44 + n45)*log(3) + (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n05 - 2*n06 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n16 - 2*n20 - n21 - 2*n22 - 2*n23 - 2*n24 - n25 - 2*n26 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 2*n36 - 2*n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - 2*n45 - 2*n46)*log(5) + 3*(n01 + n45)*log(pmax(1e-6,1 - r)) + 4*(n00 + n46)*log(pmax(1e-6,1 - r)) + 4*(n06 + n40)*log(pmax(1e-6,r)) + 3*(n05 + n41)*log(pmax(1e-6,r)) + (n21 + n25)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n10 + n36)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n20 + n26)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n15 + n31)*(log(2 - r) + 2*log(pmax(1e-6,r))) + (n16 + n30)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n11 + n35)*(2*log(pmax(1e-6,1 - r)) + log(1 + r)) + (n04 + n42)*(2*log(pmax(1e-6,r)) + log(4 - 3*r^2)) + (n02 + n44)*(2*log(pmax(1e-6,1 - r)) + log(1 + 6*r - 3*r^2)) + (n14 + n32)*(log(pmax(1e-6,r)) + log(4 + r - 3*r^2 + 3*r^3)) + (n03 + n43)*(log(pmax(1e-6,r)) + log(5 + 3*r - 16*r^2 + 8*r^3)) + (n13 + n33)*log(7 + 17*r - 33*r^2 + 32*r^3 - 16*r^4) + (n22 + n24)*log(6 + 8*r - 17*r^2 + 18*r^3 - 9*r^4) + (n12 + n34)*log(5 - 9*r + 10*r^2 - 9*r^3 + 3*r^4) + n23*log(9 - 13*r + 21*r^2 - 16*r^3 + 8*r^4)
@@ -2143,7 +2192,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.3_4.1 <- function(x){
 logL_cc <- function(r,n21,n22,n23,n24,n01,n02,n03,n04,n11,n12,n13,n14,n31,n32,n33,n34,n41,n42,n43,n44) {
 L <- (n21 + n22 + n23 + n24)*log(3) + (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34 - n41 - n42 - n43 - n44)*(4*log(2) + 2*log(5)) + (n01 + n44)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n04 + n41)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n12 + n33)*log(51 - 20*r - 4*r^2) + (n21 + n24)*log(5 + 4*r - 4*r^2) + (n13 + n32)*log(27 + 28*r - 4*r^2) + (n02 + n43)*log(6 - 3*r - 2*r^2) + (n03 + n42)*log(1 + 7*r - 2*r^2) + (n11 + n34)*log(19 - 20*r + 4*r^2) + (n22 + n23)*log(25 - 4*r + 4*r^2) + (n14 + n31)*log(3 + 12*r + 4*r^2)
@@ -2188,7 +2238,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_1.4 <- function(x){
 logL_cc <- function(r,n12,n13,n21,n24,n31,n34,n42,n43,n11,n14,n22,n23,n32,n33,n41,n44) {
 L <- (n12 + n13 + n21 + n24 + n31 + n34 + n42 + n43)*log(3) + (-n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34 - n41 - n42 - n43 - n44)*(log(2) + log(5)) + 3*(n11 + n44)*log(pmax(1e-6,1 - r)) + 3*(n14 + n41)*log(pmax(1e-6,r)) + (n12 + n21 + n34 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n13 + n24 + n31 + n42)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n23 + n32)*(log(pmax(1e-6,r)) + log(7 - 12*r + 9*r^2)) + (n22 + n33)*log(4 - 10*r + 15*r^2 - 9*r^3)
@@ -2249,7 +2300,8 @@ possible_phases = c("coupling coupling","coupling mixed3c","coupling mixed2c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_1.5 <- function(x){
 logL_cc <- function(r,n12,n14,n22,n23,n24,n32,n33,n34,n42,n44,n13,n43) {
 L <- (-n12 - n14 - 2*n22 - 2*n23 - 2*n24 - 2*n32 - 2*n33 - 2*n34 - n42 - n44)*log(2) + (-n12 - n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34 - n42 - n43 - n44)*log(5) + 2*(n12 + n44)*log(pmax(1e-6,1 - r)) + 2*(n14 + n42)*log(pmax(1e-6,r)) + (n24 + n32)*(log(5 - 2*r) + log(pmax(1e-6,r))) + (n13 + n43)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n22 + n34)*log(3 - r - 2*r^2) + (n23 + n33)*log(5 - 4*r + 4*r^2)
@@ -2294,7 +2346,8 @@ possible_phases = c("coupling coupling","coupling mixed3c","repulsion coupling",
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_2.2 <- function(x){
 logL_cc <- function(r,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n30,n31,n32,n33,n34,n40,n41,n42,n43,n44) {
 L <- (-n10 - 2*n11 - 2*n12 - 2*n13 - n14 - n20 - 2*n21 - 2*n22 - 2*n23 - n24 - n30 - 2*n31 - 2*n32 - 2*n33 - n34 - n40 - 2*n41 - 2*n42 - 2*n43 - n44)*log(2) + (-n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*(log(3) + 2*log(5)) + (n14 + n40)*(2*log(pmax(1e-6,r)) + log(2 + r)) + (n12 + n42)*log(9 + 16*r - 16*r^2) + (n13 + n41)*(log(pmax(1e-6,r)) + log(12 + 7*r - 4*r^2)) + (n24 + n30)*(log(pmax(1e-6,r)) + log(5 + r - 3*r^2)) + (n10 + n44)*(log(pmax(1e-6,1 - r)) + log(3 - 4*r + r^2)) + (n22 + n32)*log(57 - 16*r + 16*r^2) + (n21 + n33)*log(42 - 32*r + 17*r^2 - 12*r^3) + (n20 + n34)*log(3 + 2*r - 8*r^2 + 3*r^3) + (n11 + n43)*log(15 - 14*r - 5*r^2 + 4*r^3) + (n23 + n31)*log(15 + 34*r - 19*r^2 + 12*r^3)
@@ -2355,7 +2408,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_2.3 <- function(x){
 logL_cc <- function(r,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45) {
 L <- (-2*n10 - 3*n11 - 3*n12 - 3*n13 - 3*n14 - 2*n15 - 2*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n25 - 2*n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 2*n35 - 2*n40 - 3*n41 - 3*n42 - 3*n43 - 3*n44 - 2*n45)*log(2) + (n20 + n25 + n30 + n35)*log(3) + 2*(-n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + 3*(n10 + n45)*log(pmax(1e-6,1 - r)) + 3*(n15 + n40)*log(pmax(1e-6,r)) + (n20 + n35)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n14 + n41)*(log(11 - 2*r) + 2*log(pmax(1e-6,r))) + (n25 + n30)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n11 + n44)*(2*log(pmax(1e-6,1 - r)) + log(9 + 2*r)) + (n13 + n42)*(log(pmax(1e-6,r)) + log(18 - 5*r - 4*r^2)) + (n24 + n31)*(log(pmax(1e-6,r)) + log(26 - 17*r + 6*r^2)) + (n22 + n33)*log(41 - 34*r + 29*r^2 - 12*r^3) + (n21 + n34)*log(15 - 10*r + r^2 - 6*r^3) + (n12 + n43)*log(9 + 4*r - 17*r^2 + 4*r^3) + (n23 + n32)*log(24 + 12*r - 7*r^2 + 12*r^3)
@@ -2416,7 +2470,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_2.4 <- function(x){
 logL_cc <- function(r,n12,n13,n14,n22,n23,n24,n32,n33,n34,n42,n43,n44,n21,n25,n31,n35,n11,n15,n41,n45) {
 L <- (-n12 + 2*n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34 - n42 + 2*n43 - n44)*log(2) + (n21 + n25 + n31 + n35)*log(3) + 2*(-n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45)*log(5) + 3*(n11 + n45)*log(pmax(1e-6,1 - r)) + 3*(n15 + n41)*log(pmax(1e-6,r)) + (n13 + n43)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n21 + n35)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n14 + n42)*(log(7 - 4*r) + 2*log(pmax(1e-6,r))) + (n25 + n31)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n12 + n44)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r)) + (n23 + n33)*log(11 - 8*r + 8*r^2) + (n24 + n32)*(log(pmax(1e-6,r)) + log(16 - 19*r + 12*r^2)) + (n22 + n34)*log(9 - 14*r + 17*r^2 - 12*r^3)
@@ -2477,7 +2532,8 @@ possible_phases = c("coupling coupling","coupling mixed3c","coupling mixed2c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_3.2 <- function(x){
 logL_cc <- function(r,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45) {
 L <- (-n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*(3*log(2) + log(3) + 2*log(5)) + (n15 + n40)*(2*log(pmax(1e-6,r)) + log(2 + r)) + (n25 + n30)*(log(pmax(1e-6,r)) + log(5 + r - 3*r^2)) + (n10 + n45)*(log(pmax(1e-6,1 - r)) + log(3 - 4*r + r^2)) + (n14 + n41)*(log(pmax(1e-6,r)) + log(9 + 11*r + r^2)) + (n22 + n33)*log(111 - 64*r + 52*r^2 - 24*r^3) + (n13 + n42)*log(9 + 30*r - 4*r^2 - 8*r^3) + (n24 + n31)*log(12 + 38*r - 8*r^2 - 3*r^3) + (n11 + n44)*log(21 - 34*r + 14*r^2 - r^3) + (n21 + n34)*log(39 - 13*r - 17*r^2 + 3*r^3) + (n20 + n35)*log(3 + 2*r - 8*r^2 + 3*r^3) + (n12 + n43)*log(27 + 2*r - 28*r^2 + 8*r^3) + (n23 + n32)*log(75 + 32*r - 20*r^2 + 24*r^3)
@@ -2538,7 +2594,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_3.3 <- function(x){
 logL_cc <- function(r,n20,n26,n30,n36,n10,n11,n12,n13,n14,n15,n16,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45,n46) {
 L <- (n20 + n26 + n30 + n36)*log(3) + (-n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26 - n30 - n31 - n32 - n33 - n34 - n35 - n36 - n40 - n41 - n42 - n43 - n44 - n45 - n46)*(4*log(2) + 2*log(5)) + 3*(n10 + n46)*log(pmax(1e-6,1 - r)) + (n11 + n45)*(log(9 - 2*r) + 2*log(pmax(1e-6,1 - r))) + 3*(n16 + n40)*log(pmax(1e-6,r)) + (n20 + n36)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n26 + n30)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n15 + n41)*(2*log(pmax(1e-6,r)) + log(7 + 2*r)) + (n13 + n43)*log(9 + 28*r - 28*r^2) + (n14 + n42)*(log(pmax(1e-6,r)) + log(15 + 13*r - 7*r^2)) + (n25 + n31)*(log(pmax(1e-6,r)) + log(16 - r - 6*r^2)) + (n23 + n33)*log(73 - 28*r + 28*r^2) + (n22 + n34)*log(57 - 44*r + 29*r^2 - 21*r^3) + (n21 + n35)*log(9 + 4*r - 19*r^2 + 6*r^3) + (n12 + n44)*log(21 - 20*r - 8*r^2 + 7*r^3) + (n24 + n32)*log(21 + 49*r - 34*r^2 + 21*r^3)
@@ -2599,7 +2656,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.4_4.1 <- function(x){
 logL_cc <- function(r,n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34,n41,n42,n43,n44) {
 L <- (-n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34 - n41 - n42 - n43 - n44)*(4*log(2) + 2*log(5)) + 2*(n11 + n44)*log(3 - 2*r) + 2*(n14 + n41)*log(1 + 2*r) + (n12 + n21 + n34 + n43)*log(21 - 8*r - 4*r^2) + (n13 + n24 + n31 + n42)*log(9 + 16*r - 4*r^2) + (n22 + n33)*log(73 - 20*r + 4*r^2) + (n23 + n32)*log(57 + 12*r + 4*r^2)
@@ -2644,7 +2702,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_1.5 <- function(x){
 logL_cc <- function(r,n22,n23,n24,n32,n34,n42,n43,n44,n33) {
 L <- (-2*n22 - n23 - 2*n24 - n32 - n34 - 2*n42 - n43 - 2*n44)*log(2) + 2*(n22 + n44)*log(pmax(1e-6,1 - r)) + 2*(n24 + n42)*log(pmax(1e-6,r)) + (n23 + n32 + n34 + n43)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + n33*log(1/2 - r + r^2)
@@ -2681,7 +2740,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion mixed","unkn
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_2.2 <- function(x){
 logL_cc <- function(r,n20,n21,n22,n23,n24,n30,n32,n34,n40,n41,n42,n43,n44,n31,n33) {
 L <- (-2*n20 - 3*n21 - n22 - 3*n23 - 2*n24 - 2*n30 + n32 - 2*n34 - 2*n40 - 3*n41 - n42 - 3*n43 - 2*n44)*log(2) + (n21 + n23 + n31 + n33 + n41 + n43)*log(3) + 2*(-n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*log(5) + (n21 + n43)*log(7 - 6*r) + (n20 + n44)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n24 + n40)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n23 + n41)*log(1 + 6*r) + (n30 + n34)*log(1 + 4*r - 4*r^2) + (n22 + n42)*log(5 + 2*r - 2*r^2) + n32*log(3 - r + r^2)
@@ -2726,7 +2786,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion coupling","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_2.3 <- function(x){
 logL_cc <- function(r,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45) {
 L <- (-2*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 2*n25 - n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - n35 - 2*n40 - 3*n41 - 3*n42 - 3*n43 - 3*n44 - 2*n45)*log(2) + (n21 + n24 + n31 + n34 + n41 + n44)*log(3) + 2*(-n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + 2*(n20 + n45)*log(pmax(1e-6,1 - r)) + 2*(n25 + n40)*log(pmax(1e-6,r)) + (n30 + n35)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n24 + n41)*(log(pmax(1e-6,r)) + log(3 + 2*r)) + (n22 + n43)*log(24 - 7*r - 8*r^2) + (n23 + n42)*log(9 + 23*r - 8*r^2) + (n31 + n34)*log(3 + 4*r - 4*r^2) + (n21 + n44)*log(5 - 7*r + 2*r^2) + (n32 + n33)*log(41 - 16*r + 16*r^2)
@@ -2771,7 +2832,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion coupling","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_2.4 <- function(x){
 logL_cc <- function(r,n23,n31,n33,n35,n43,n22,n24,n32,n34,n42,n44,n21,n25,n41,n45) {
 L <- (-2*n23 + n31 - n33 + n35 - 2*n43)*log(2) + (n22 + n24 + n32 + n34 + n42 + n44)*log(3) + 2*(-n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45)*log(5) + (n22 + n44)*log(pmax(1e-6,1 - r)) + 2*(n21 + n45)*log(pmax(1e-6,1 - r)) + 2*(n25 + n41)*log(pmax(1e-6,r)) + (n24 + n42)*log(pmax(1e-6,r)) + (n31 + n35)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n23 + n43)*log(9 + 8*r - 8*r^2) + n33*log(13 - 8*r + 8*r^2)
@@ -2808,7 +2870,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion mixed","unkn
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_3.2 <- function(x){
 logL_cc <- function(r,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45) {
 L <- (-4*n20 - 4*n21 - 3*n22 - 3*n23 - 4*n24 - 4*n25 - 4*n30 - 4*n31 - 3*n32 - 3*n33 - 4*n34 - 4*n35 - 4*n40 - 4*n41 - 3*n42 - 3*n43 - 4*n44 - 4*n45)*log(2) + (n21 + n24 + n31 + n34 + n41 + n44)*log(3) + 2*(-n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + (n20 + n45)*(log(3 - 2*r) + log(pmax(1e-6,1 - r))) + (n25 + n40)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n22 + n43)*log(23 - 7*r - 4*r^2) + (n30 + n35)*log(1 + 4*r - 4*r^2) + (n31 + n34)*log(7 + 4*r - 4*r^2) + (n23 + n42)*log(12 + 15*r - 4*r^2) + (n21 + n44)*log(8 - 9*r + 2*r^2) + (n24 + n41)*log(1 + 5*r + 2*r^2) + (n32 + n33)*log(39 - 8*r + 8*r^2)
@@ -2853,7 +2916,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion coupling","r
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_1.5_3.3 <- function(x){
 logL_cc <- function(r,n20,n21,n22,n23,n24,n25,n26,n30,n31,n32,n33,n34,n35,n36,n40,n41,n42,n43,n44,n45,n46) {
 L <- (-4*n20 - 3*n21 - 4*n22 - 2*n23 - 4*n24 - 3*n25 - 4*n26 - 3*n30 - 3*n31 - 3*n32 - 2*n33 - 3*n34 - 3*n35 - 3*n36 - 4*n40 - 3*n41 - 4*n42 - 2*n43 - 4*n44 - 3*n45 - 4*n46)*log(2) + (n21 + n22 + n24 + n25 + n31 + n32 + n34 + n35 + n41 + n42 + n44 + n45)*log(3) + 2*(-n20 - n21 - n22 - n23 - n24 - n25 - n26 - n30 - n31 - n32 - n33 - n34 - n35 - n36 - n40 - n41 - n42 - n43 - n44 - n45 - n46)*log(5) + 2*(n20 + n46)*log(pmax(1e-6,1 - r)) + (n21 + n45)*(log(pmax(1e-6,1 - r)) + log(2 - r)) + 2*(n26 + n40)*log(pmax(1e-6,r)) + (n30 + n36)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n25 + n41)*(log(pmax(1e-6,r)) + log(1 + r)) + (n23 + n43)*log(9 + 5*r - 5*r^2) + (n31 + n35)*log(1 + 2*r - 2*r^2) + (n32 + n34)*log(8 + r - r^2) + (n22 + n44)*log(14 - 12*r + r^2) + (n24 + n42)*log(3 + 10*r + r^2) + n33*log(23 - 10*r + 10*r^2)
@@ -2890,7 +2954,8 @@ possible_phases = c("coupling coupling","coupling mixed","repulsion mixed","unkn
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_1.2 <- function(x){
 logL_c <- function(r,n10,n11,n12,n13,n00,n01,n02,n03,n20,n21,n22,n23) {
 L <- (-n10 + n11 + n12 - n13)*log(2) + (n10 + n11 + n12 + n13)*log(3) + 2*(-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*log(5) + (n01 + n22)*log(3 - 2*r) + (n00 + n23)*log(pmax(1e-6,1 - r)) + (n03 + n20)*log(pmax(1e-6,r)) + (n02 + n21)*log(1 + 2*r)
@@ -2919,7 +2984,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_1.3 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24) {
 L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 3*n10 - 2*n11 - 2*n12 - 2*n13 - 3*n14 - 2*n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24)*log(2) + (2*n02 + n10 + n11 + 3*n12 + n13 + n14 + 2*n22)*log(3) + (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n10 - n11 - 2*n12 - n13 - 2*n14 - 2*n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24)*log(5) + (n01 + n23)*log(9 - 8*r) + (n00 + n24)*log(pmax(1e-6,1 - r)) + (n04 + n20)*log(pmax(1e-6,r)) + (n03 + n21)*log(1 + 8*r)
@@ -2948,7 +3014,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_1.4 <- function(x){
 logL_c <- function(r,n11,n12,n13,n14,n01,n02,n03,n04,n21,n22,n23,n24) {
 L <- (-n11 + n12 + n13 - n14)*log(2) + (n11 + n12 + n13 + n14)*log(3) + 2*(-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24)*log(5) + (n02 + n23)*log(3 - 2*r) + (n01 + n24)*log(pmax(1e-6,1 - r)) + (n04 + n21)*log(pmax(1e-6,r)) + (n03 + n22)*log(1 + 2*r)
@@ -2977,7 +3044,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_1.5 <- function(x){
 r_c <- (x[,"n_04"] + x[,"n_22"])/(x[,"n_02"] + x[,"n_04"] + x[,"n_22"] + x[,"n_24"])
 logL_c <- (-x[,"n_02"] - x[,"n_03"] - x[,"n_04"] - 2*x[,"n_12"] - x[,"n_13"] - 2*x[,"n_14"] - x[,"n_22"] - x[,"n_23"] - x[,"n_24"])*log(2) + (x[,"n_12"] + x[,"n_13"] + x[,"n_14"])*log(3) + (-x[,"n_02"] - x[,"n_03"] - x[,"n_04"] - x[,"n_12"] - x[,"n_13"] - x[,"n_14"] - x[,"n_22"] - x[,"n_23"] - x[,"n_24"])*log(5) + (x[,"n_02"] + x[,"n_24"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_04"] + x[,"n_22"])*log(pmax(1e-6,r_c))
@@ -2996,7 +3064,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_2.0 <- function(x){
 logL_c <- function(r,n01,n10,n12,n21,n00,n02,n11,n20,n22) {
 L <- (n01 + n10 + n12 + n21)*log(2) + (-n00 - n01 - n02 - n10 - n11 - n12 - n20 - n21 - n22)*log(5) + 2*(n00 + n22)*log(pmax(1e-6,1 - r)) + 2*(n02 + n20)*log(pmax(1e-6,r)) + (n01 + n10 + n12 + n21)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + n11*log(3 - 4*r + 4*r^2)
@@ -3033,7 +3102,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_2.1 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n11,n12,n20,n21,n22,n23,n10,n13) {
 L <- (-n00 - n01 - n02 - n03 - n11 - n12 - n20 - n21 - n22 - n23)*log(2) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*log(5) + 2*(n00 + n23)*log(pmax(1e-6,1 - r)) + 2*(n03 + n20)*log(pmax(1e-6,r)) + (n10 + n13)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n21)*(log(2 - r) + log(pmax(1e-6,r))) + (n01 + n22)*log(1 - r^2) + (n11 + n12)*log(3 - 2*r + 2*r^2)
@@ -3070,7 +3140,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_2.2 <- function(x){
 logL_c <- function(r,n10,n14,n00,n01,n02,n03,n04,n11,n12,n13,n20,n21,n22,n23,n24) {
 L <- (n10 + n14)*log(2) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24)*log(5) + 2*(n00 + n24)*log(pmax(1e-6,1 - r)) + 2*(n04 + n20)*log(pmax(1e-6,r)) + (n10 + n14)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n21)*(log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n22)*log(1 + 4*r - 4*r^2) + (n11 + n13)*log(3 + 2*r - 2*r^2) + (n01 + n23)*log(3 - 4*r + r^2) + n12*log(9 - 8*r + 8*r^2)
@@ -3107,7 +3178,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_2.3 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25) {
 L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n05 - n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - n15 - 2*n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - 2*n25)*log(2) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25)*log(5) + 2*(n00 + n25)*log(pmax(1e-6,1 - r)) + 2*(n05 + n20)*log(pmax(1e-6,r)) + (n10 + n15)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n21)*(log(pmax(1e-6,r)) + log(2 + 7*r)) + (n11 + n14)*log(3 + 14*r - 14*r^2) + (n02 + n23)*log(9 - 8*r^2) + (n03 + n22)*log(1 + 16*r - 8*r^2) + (n01 + n24)*log(9 - 16*r + 7*r^2) + (n12 + n13)*log(27 - 16*r + 16*r^2)
@@ -3144,7 +3216,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_2.4 <- function(x){
 logL_c <- function(r,n11,n15,n01,n02,n03,n04,n05,n12,n13,n14,n21,n22,n23,n24,n25) {
 L <- (n11 + n15)*log(2) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25)*log(5) + 2*(n01 + n25)*log(pmax(1e-6,1 - r)) + 2*(n05 + n21)*log(pmax(1e-6,r)) + (n11 + n15)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n22)*(log(pmax(1e-6,r)) + log(2 + r)) + (n03 + n23)*log(1 + 4*r - 4*r^2) + (n12 + n14)*log(3 + 2*r - 2*r^2) + (n02 + n24)*log(3 - 4*r + r^2) + n13*log(9 - 8*r + 8*r^2)
@@ -3181,7 +3254,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_3.0 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23) {
 L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - n10 - n11 - n12 - n13 - 2*n20 - 2*n21 - 2*n22 - 2*n23)*log(2) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*log(5) + 2*(n00 + n23)*log(pmax(1e-6,1 - r)) + 2*(n03 + n20)*log(pmax(1e-6,r)) + (n10 + n13)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n21)*(log(4 - r) + log(pmax(1e-6,r))) + (n01 + n22)*log(3 - 2*r - r^2) + (n11 + n12)*log(3 - r + r^2)
@@ -3218,7 +3292,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_3.1 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24) {
 L <- (-3*n00 - n01 - 3*n02 - n03 - 3*n04 - 2*n10 - 2*n11 - n12 - 2*n13 - 2*n14 - 3*n20 - n21 - 3*n22 - n23 - 3*n24)*log(2) + (n11 + n13)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24)*log(5) + (n01 + n23)*log(pmax(1e-6,1 - r)) + 2*(n00 + n24)*log(pmax(1e-6,1 - r)) + 2*(n04 + n20)*log(pmax(1e-6,r)) + (n03 + n21)*log(pmax(1e-6,r)) + (n10 + n14)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n22)*log(3 + 2*r - 2*r^2) + n12*log(3 - r + r^2)
@@ -3255,7 +3330,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_3.2 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25) {
 L <- (-2*n00 - n01 - 2*n02 - 2*n03 - n04 - 2*n05 - n10 - n11 - n12 - n13 - n14 - n15 - 2*n20 - n21 - 2*n22 - 2*n23 - n24 - 2*n25)*log(2) + (n12 + n13)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25)*log(5) + 2*(n00 + n25)*log(pmax(1e-6,1 - r)) + 2*(n05 + n20)*log(pmax(1e-6,r)) + (n10 + n15)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n04 + n21)*(log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n23)*log(10 - 4*r - 3*r^2) + (n03 + n22)*log(3 + 10*r - 3*r^2) + (n11 + n14)*log(3 + 2*r - 2*r^2) + (n01 + n24)*log(3 - 4*r + r^2) + (n12 + n13)*log(4 - r + r^2)
@@ -3292,7 +3368,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_3.3 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26) {
 L <- (-4*n00 - 2*n01 - 4*n02 - 2*n03 - 4*n04 - 2*n05 - 4*n06 - 3*n10 - 3*n11 - 3*n12 - 2*n13 - 3*n14 - 3*n15 - 3*n16 - 4*n20 - 2*n21 - 4*n22 - 2*n23 - 4*n24 - 2*n25 - 4*n26)*log(2) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26)*log(5) + 2*(n00 + n26)*log(pmax(1e-6,1 - r)) + 2*(n06 + n20)*log(pmax(1e-6,r)) + (n10 + n16)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n05 + n21)*(log(pmax(1e-6,r)) + log(1 + 2*r)) + (n11 + n15)*log(3 + 8*r - 8*r^2) + (n03 + n23)*log(7 + 4*r - 4*r^2) + (n02 + n24)*log(36 - 32*r - r^2) + (n04 + n22)*log(3 + 34*r - r^2) + (n12 + n14)*log(30 - r + r^2) + (n01 + n25)*log(3 - 5*r + 2*r^2) + n13*log(27 - 8*r + 8*r^2)
@@ -3329,7 +3406,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.0_4.1 <- function(x){
 logL_c <- function(r,n01,n02,n03,n04,n11,n12,n13,n14,n21,n22,n23,n24) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24)*(2*log(2) + log(3) + log(5)) + (n04 + n21)*(log(pmax(1e-6,r)) + log(2 + r)) + (n11 + n14)*log(3 + 2*r - 2*r^2) + (n02 + n23)*log(6 - 2*r - r^2) + (n03 + n22)*log(3 + 4*r - r^2) + (n01 + n24)*log(3 - 4*r + r^2) + (n12 + n13)*log(15 - 2*r + 2*r^2)
@@ -3366,7 +3444,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.1_1.5 <- function(x){
 logL_cc <- function(r,n02,n04,n12,n13,n14,n22,n23,n24,n32,n34,n03,n33) {
 L <- (-n02 - n04 - 2*n12 - 2*n13 - 2*n14 - 2*n22 - 2*n23 - 2*n24 - n32 - n34)*log(2) + 2*(-n02 - n03 - n04 - n12 - n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34)*log(5) + (n02 + n34)*(log(pmax(1e-6,1 - r)) + log(3 - r)) + (n04 + n32)*(log(pmax(1e-6,r)) + log(2 + r)) + (n12 + n24)*log(13 - 5*r - 2*r^2) + (n14 + n22)*log(6 + 9*r - 2*r^2) + (n03 + n33)*log(1 + r - r^2) + (n13 + n23)*log(21 - 4*r + 4*r^2)
@@ -3411,7 +3490,8 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.1_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35) {
 L <- (-2*n01 - n02 - 2*n03 - n04 - 2*n05 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - 2*n25 - 2*n31 - n32 - 2*n33 - n34 - 2*n35)*log(2) + (n13 + n23)*log(3) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35)*log(5) + (n01 + n35)*(log(3 - 2*r) + 2*log(pmax(1e-6,1 - r))) + (n05 + n31)*(2*log(pmax(1e-6,r)) + log(1 + 2*r)) + (n03 + n33)*log(1 + 12*r - 12*r^2) + (n15 + n21)*(log(pmax(1e-6,r)) + log(2 + 5*r - 6*r^2)) + (n13 + n23)*log(7 - 4*r + 4*r^2) + (n12 + n24)*log(15 - 16*r + 16*r^2 - 12*r^3) + (n04 + n32)*log(r + 4*r^2 - 2*r^3) + (n02 + n34)*log(3 - 3*r - 2*r^2 + 2*r^3) + (n11 + n25)*log(1 + 6*r - 13*r^2 + 6*r^3) + (n14 + n22)*log(3 + 20*r - 20*r^2 + 12*r^3)
@@ -3472,7 +3552,8 @@ possible_phases = c("coupling coupling","coupling repulsion","mixed coupling","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.1_3.0 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33) {
 L <- (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32 - n33)*(3*log(2) + log(5)) + 2*(n00 + n33)*log(pmax(1e-6,1 - r)) + 2*(n03 + n30)*log(pmax(1e-6,r)) + (n13 + n20)*(log(2 - r) + log(pmax(1e-6,r))) + (n02 + n31)*(log(4 - r) + log(pmax(1e-6,r))) + (n10 + n23)*log(1 - r^2) + (n01 + n32)*log(3 - 2*r - r^2) + (n11 + n22)*log(9 - 4*r + r^2) + (n12 + n21)*log(6 + 2*r + r^2)
@@ -3509,7 +3590,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.2_2.2 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n10,n11,n12,n13,n14,n20,n21,n23,n24,n30,n31,n32,n33,n34,n41,n42,n43,n00,n04,n22,n40,n44) {
 L <- (2*n01 + n02 + 2*n03 + 2*n10 + n11 + 3*n12 + n13 + 2*n14 + n20 + 3*n21 + 3*n23 + n24 + 2*n30 + n31 + 3*n32 + n33 + 2*n34 + 2*n41 + n42 + 2*n43)*log(2) + (n02 + n20 + n24 + n42)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34 - n40 - n41 - n42 - n43 - n44)*log(5) + 4*(n00 + n44)*log(pmax(1e-6,1 - r)) + 4*(n04 + n40)*log(pmax(1e-6,r)) + (n01 + n10 + n34 + n43)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n20 + n24 + n42)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n03 + n14 + n30 + n41)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n13 + n31)*(2*log(pmax(1e-6,r)) + log(7 - 12*r + 8*r^2)) + (n11 + n33)*(2*log(pmax(1e-6,1 - r)) + log(3 - 4*r + 8*r^2)) + (n12 + n21 + n23 + n32)*(log(pmax(1e-6,r)) + log(2 - 5*r + 6*r^2 - 3*r^3)) + n22*log(11 - 32*r + 68*r^2 - 72*r^3 + 36*r^4)
@@ -3572,7 +3654,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.2_2.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n11,n12,n13,n14,n20,n21,n22,n23,n24,n25,n31,n32,n33,n34,n40,n41,n42,n43,n44,n45,n10,n15,n30,n35) {
 L <- (-2*n00 - 2*n01 - n02 - n03 - 2*n04 - 2*n05 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - n20 - n21 - n22 - n23 - n24 - n25 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n40 - 2*n41 - n42 - n43 - 2*n44 - 2*n45)*log(2) + (n01 + n04 + n11 + n14 + n20 + n21 + n24 + n25 + n31 + n34 + n41 + n44)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + 4*(n00 + n45)*log(pmax(1e-6,1 - r)) + 4*(n05 + n40)*log(pmax(1e-6,r)) + (n10 + n35)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n20 + n25)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n15 + n30)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n04 + n41)*(log(2 - r) + 3*log(pmax(1e-6,r))) + (n01 + n44)*(3*log(pmax(1e-6,1 - r)) + log(1 + r)) + (n02 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(5 + r)) + (n03 + n42)*(2*log(pmax(1e-6,r)) + log(6 - 7*r + r^2)) + (n11 + n34)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r^2)) + (n14 + n31)*(2*log(pmax(1e-6,r)) + log(7 - 8*r + 4*r^2)) + (n13 + n32)*(log(pmax(1e-6,r)) + log(32 - 45*r + 36*r^2 - 8*r^3)) + (n21 + n24)*(log(pmax(1e-6,r)) + log(4 - 7*r + 6*r^2 - 3*r^3)) + (n12 + n33)*log(15 - 18*r + 15*r^2 - 4*r^3 - 8*r^4) + (n22 + n23)*log(11 - 12*r + 18*r^2 - 12*r^3 + 6*r^4)
@@ -3657,7 +3740,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.2_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n04,n05,n11,n12,n13,n14,n15,n22,n24,n31,n32,n33,n34,n35,n41,n42,n44,n45,n03,n21,n23,n25,n43) {
 L <- (-n01 - n02 - n04 - n05 - n11 - n12 + n13 - n14 - n15 + n22 + n24 - n31 - n32 + n33 - n34 - n35 - n41 - n42 - n44 - n45)*log(2) + (-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45)*(log(3) + 2*log(5)) + (n05 + n41)*(3*log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n11 + n35 + n44)*(2*log(pmax(1e-6,1 - r)) + log(3 + 8*r - 4*r^2)) + (n01 + n45)*(2*log(pmax(1e-6,1 - r)) + log(3 - 4*r + r^2)) + (n03 + n21 + n25 + n43)*(log(pmax(1e-6,r)) + log(4 - r - 6*r^2 + 3*r^3)) + (n14 + n32)*(log(pmax(1e-6,r)) + log(18 + 3*r - 16*r^2 + 16*r^3)) + (n13 + n22 + n24 + n33)*log(3 + 5*r - 11*r^2 + 12*r^3 - 6*r^4) + (n04 + n15 + n31 + n42)*log(7*r^2 - 4*r^4) + (n12 + n34)*log(21 - 40*r + 51*r^2 - 48*r^3 + 16*r^4) + n23*log(21 - 28*r + 46*r^2 - 36*r^3 + 18*r^4)
@@ -3742,7 +3826,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.2_3.2 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n11,n12,n13,n14,n20,n21,n22,n23,n24,n25,n31,n32,n33,n34,n40,n41,n42,n43,n44,n45,n10,n15,n30,n35) {
 L <- (-2*n00 - 2*n01 - n02 - n03 - 2*n04 - 2*n05 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - n20 - n21 - n22 - n23 - n24 - n25 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n40 - 2*n41 - n42 - n43 - 2*n44 - 2*n45)*log(2) + (n01 + n04 + n11 + n14 + n20 + n21 + n24 + n25 + n31 + n34 + n41 + n44)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45)*log(5) + 4*(n00 + n45)*log(pmax(1e-6,1 - r)) + 4*(n05 + n40)*log(pmax(1e-6,r)) + (n10 + n35)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n20 + n25)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n15 + n30)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n04 + n41)*(log(2 - r) + 3*log(pmax(1e-6,r))) + (n01 + n44)*(3*log(pmax(1e-6,1 - r)) + log(1 + r)) + (n02 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(5 + r)) + (n03 + n42)*(2*log(pmax(1e-6,r)) + log(6 - 7*r + r^2)) + (n11 + n34)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r^2)) + (n14 + n31)*(2*log(pmax(1e-6,r)) + log(7 - 8*r + 4*r^2)) + (n13 + n32)*(log(pmax(1e-6,r)) + log(32 - 45*r + 36*r^2 - 8*r^3)) + (n21 + n24)*(log(pmax(1e-6,r)) + log(4 - 7*r + 6*r^2 - 3*r^3)) + (n12 + n33)*log(15 - 18*r + 15*r^2 - 4*r^3 - 8*r^4) + (n22 + n23)*log(11 - 12*r + 18*r^2 - 12*r^3 + 6*r^4)
@@ -3827,7 +3912,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.2_3.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26,n30,n31,n32,n33,n34,n35,n36,n40,n41,n42,n43,n44,n45,n46) {
 L <- (-4*n00 - 3*n01 - 4*n02 - 2*n03 - 4*n04 - 3*n05 - 4*n06 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n16 - 3*n20 - 2*n21 - 3*n22 - 2*n23 - 3*n24 - 2*n25 - 3*n26 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 2*n36 - 4*n40 - 3*n41 - 4*n42 - 2*n43 - 4*n44 - 3*n45 - 4*n46)*log(2) + (n20 + n26)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26 - n30 - n31 - n32 - n33 - n34 - n35 - n36 - n40 - n41 - n42 - n43 - n44 - n45 - n46)*log(5) + 4*(n00 + n46)*log(pmax(1e-6,1 - r)) + 4*(n06 + n40)*log(pmax(1e-6,r)) + (n10 + n36)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n20 + n26)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n16 + n30)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n05 + n41)*(log(4 - r) + 3*log(pmax(1e-6,r))) + (n04 + n42)*(2*log(pmax(1e-6,r)) + log(22 - 12*r - r^2)) + (n01 + n45)*(2*log(pmax(1e-6,1 - r)) + log(3 - 2*r - r^2)) + (n02 + n44)*(2*log(pmax(1e-6,1 - r)) + log(9 + 14*r - r^2)) + (n15 + n31)*(2*log(pmax(1e-6,r)) + log(7 - 6*r + 2*r^2)) + (n11 + n35)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r + 2*r^2)) + (n21 + n25)*(log(pmax(1e-6,r)) + log(8 - 11*r + 6*r^2 - 3*r^3)) + (n03 + n43)*(log(pmax(1e-6,r)) + log(6 - 5*r - 2*r^2 + r^3)) + (n14 + n32)*(log(pmax(1e-6,r)) + log(15 - 9*r + 5*r^2 + r^3)) + (n13 + n33)*log(9 + 4*r - 8*r^2 + 8*r^3 - 4*r^4) + (n22 + n24)*log(21 + 4*r - 7*r^2 + 6*r^3 - 3*r^4) + (n12 + n34)*log(12 - 16*r + 12*r^2 - 9*r^3 + r^4) + n23*log(23 - 20*r + 26*r^2 - 12*r^3 + 6*r^4)
@@ -3890,7 +3976,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.3_2.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45,n50,n51,n52,n53,n54,n55) {
 L <- (-2*n00 - 2*n01 - n02 - n03 - 2*n04 - 2*n05 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - n25 - n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - n35 - 2*n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - 2*n45 - 2*n50 - 2*n51 - n52 - n53 - 2*n54 - 2*n55)*log(2) + (-2*n00 - n01 - n02 - n03 - n04 - 2*n05 - n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - n15 - n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - n25 - n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - n35 - n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - n45 - 2*n50 - n51 - n52 - n53 - n54 - 2*n55)*log(5) + 5*(n00 + n55)*log(pmax(1e-6,1 - r)) + 5*(n05 + n50)*log(pmax(1e-6,r)) + (n01 + n10 + n45 + n54)*(4*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n20 + n35 + n53)*(3*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n03 + n25 + n30 + n52)*(2*log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n04 + n15 + n40 + n51)*(log(pmax(1e-6,1 - r)) + 4*log(pmax(1e-6,r))) + (n14 + n41)*(3*log(pmax(1e-6,r)) + log(27 - 40*r + 25*r^2)) + (n11 + n44)*(3*log(pmax(1e-6,1 - r)) + log(12 - 10*r + 25*r^2)) + (n12 + n21 + n34 + n43)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(41 - 40*r + 50*r^2)) + (n13 + n24 + n31 + n42)*(2*log(pmax(1e-6,r)) + log(51 - 111*r + 110*r^2 - 50*r^3)) + (n23 + n32)*(log(pmax(1e-6,r)) + log(78 - 204*r + 303*r^2 - 240*r^3 + 100*r^4)) + (n22 + n33)*log(37 - 119*r + 265*r^2 - 343*r^3 + 260*r^4 - 100*r^5)
@@ -3999,7 +4086,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.3_2.4 <- function(x){
 logL_cc <- function(r,n01,n03,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35,n41,n42,n43,n44,n45,n51,n53,n55,n02,n04,n52,n54) {
 L <- (-2*n01 - n03 - 2*n05 - 2*n11 - 2*n12 - n13 - 2*n14 - 2*n15 - n21 - 2*n22 - n23 - 2*n24 - n25 - n31 - 2*n32 - n33 - 2*n34 - n35 - 2*n41 - 2*n42 - n43 - 2*n44 - 2*n45 - 2*n51 - n53 - 2*n55)*log(2) + (n03 + n11 + n12 + n13 + n14 + n15 + n41 + n42 + n43 + n44 + n45 + n53)*log(3) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45 - n51 - n52 - n53 - n54 - n55)*log(5) + 4*(n01 + n55)*log(pmax(1e-6,1 - r)) + 4*(n05 + n51)*log(pmax(1e-6,r)) + (n02 + n54)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n53)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n04 + n52)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n15 + n41)*(log(2 - r) + 3*log(pmax(1e-6,r))) + (n11 + n45)*(3*log(pmax(1e-6,1 - r)) + log(1 + r)) + (n21 + n35)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(5 + r)) + (n25 + n31)*(2*log(pmax(1e-6,r)) + log(6 - 7*r + r^2)) + (n12 + n44)*(2*log(pmax(1e-6,1 - r)) + log(3 + 4*r^2)) + (n14 + n42)*(2*log(pmax(1e-6,r)) + log(7 - 8*r + 4*r^2)) + (n24 + n32)*(log(pmax(1e-6,r)) + log(32 - 45*r + 36*r^2 - 8*r^3)) + (n13 + n43)*(log(pmax(1e-6,r)) + log(4 - 7*r + 6*r^2 - 3*r^3)) + (n22 + n34)*log(15 - 18*r + 15*r^2 - 4*r^3 - 8*r^4) + (n23 + n33)*log(11 - 12*r + 18*r^2 - 12*r^3 + 6*r^4)
@@ -4084,7 +4172,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.3_3.2 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35,n40,n41,n42,n43,n44,n45,n50,n51,n52,n53,n54,n55) {
 L <- (-4*n00 - 4*n01 - 3*n02 - 3*n03 - 4*n04 - 4*n05 - 4*n10 - 4*n11 - 3*n12 - 3*n13 - 4*n14 - 4*n15 - 3*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 3*n25 - 3*n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 3*n35 - 4*n40 - 4*n41 - 3*n42 - 3*n43 - 4*n44 - 4*n45 - 4*n50 - 4*n51 - 3*n52 - 3*n53 - 4*n54 - 4*n55)*log(2) + (n01 + n04 + n10 + n15 + n40 + n45 + n51 + n54)*log(3) + 2*(-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35 - n40 - n41 - n42 - n43 - n44 - n45 - n50 - n51 - n52 - n53 - n54 - n55)*log(5) + 4*(n00 + n55)*log(pmax(1e-6,1 - r)) + 4*(n05 + n50)*log(pmax(1e-6,r)) + (n04 + n15 + n40 + n51)*(log(2 - r) + 3*log(pmax(1e-6,r))) + (n01 + n10 + n45 + n54)*(3*log(pmax(1e-6,1 - r)) + log(1 + r)) + (n02 + n20 + n35 + n53)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(5 + r)) + (n03 + n25 + n30 + n52)*(2*log(pmax(1e-6,r)) + log(6 - 7*r + r^2)) + (n14 + n41)*(2*log(pmax(1e-6,r)) + log(32 - 20*r + 9*r^2)) + (n11 + n44)*(2*log(pmax(1e-6,1 - r)) + log(21 + 2*r + 9*r^2)) + (n13 + n24 + n31 + n42)*(log(pmax(1e-6,r)) + log(25 - 19*r + 9*r^2 - 3*r^3)) + (n12 + n21 + n34 + n43)*log(12 - 2*r - 10*r^2 + 3*r^3 - 3*r^4) + (n22 + n33)*log(39 - 38*r + 40*r^2 - 20*r^3 + 2*r^4) + (n23 + n32)*log(23 + 10*r - 8*r^2 + 12*r^3 + 2*r^4)
@@ -4169,7 +4258,8 @@ possible_phases = c("coupling coupling","coupling mixed","coupling repulsion","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.3_3.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26,n30,n31,n32,n33,n34,n35,n36,n40,n41,n42,n43,n44,n45,n46,n50,n51,n52,n53,n54,n55,n56) {
 L <- (-4*n00 - 4*n01 - 4*n02 - 3*n03 - 4*n04 - 4*n05 - 4*n06 - 4*n10 - 4*n11 - 4*n12 - 3*n13 - 4*n14 - 4*n15 - 4*n16 - 3*n20 - 3*n21 - 3*n22 - 3*n23 - 3*n24 - 3*n25 - 3*n26 - 3*n30 - 3*n31 - 3*n32 - 3*n33 - 3*n34 - 3*n35 - 3*n36 - 4*n40 - 4*n41 - 4*n42 - 3*n43 - 4*n44 - 4*n45 - 4*n46 - 4*n50 - 4*n51 - 4*n52 - 3*n53 - 4*n54 - 4*n55 - 4*n56)*log(2) + (-2*n00 - 2*n01 - 2*n02 - 2*n03 - 2*n04 - 2*n05 - 2*n06 - n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - n16 - n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - 2*n25 - n26 - n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - n36 - n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - 2*n45 - n46 - 2*n50 - 2*n51 - 2*n52 - 2*n53 - 2*n54 - 2*n55 - 2*n56)*log(5) + (n03 + n53)*log(11) + 5*(n00 + n56)*log(pmax(1e-6,1 - r)) + 5*(n06 + n50)*log(pmax(1e-6,r)) + (n10 + n46)*(4*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n53)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n20 + n36)*(3*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n26 + n30)*(2*log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n05 + n51)*(log(7 - 4*r) + 4*log(pmax(1e-6,r))) + (n16 + n40)*(log(pmax(1e-6,1 - r)) + 4*log(pmax(1e-6,r))) + (n01 + n55)*(4*log(pmax(1e-6,1 - r)) + log(3 + 4*r)) + (n02 + n54)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(13 + 5*r)) + (n04 + n52)*(3*log(pmax(1e-6,r)) + log(18 - 23*r + 5*r^2)) + (n15 + n41)*(3*log(pmax(1e-6,r)) + log(36 - 41*r + 20*r^2)) + (n21 + n35)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(26 - 13*r + 20*r^2)) + (n11 + n45)*(3*log(pmax(1e-6,1 - r)) + log(15 + r + 20*r^2)) + (n13 + n43)*(log(pmax(1e-6,r)) + log(46 - 79*r + 66*r^2 - 33*r^3)) + (n14 + n42)*(2*log(pmax(1e-6,r)) + log(90 - 126*r + 94*r^2 - 25*r^3)) + (n25 + n31)*(2*log(pmax(1e-6,r)) + log(33 - 60*r + 47*r^2 - 20*r^3)) + (n12 + n44)*(2*log(pmax(1e-6,1 - r)) + log(33 + 13*r + 19*r^2 + 25*r^3)) + (n23 + n33)*log(41 - 46*r + 68*r^2 - 44*r^3 + 22*r^4) + (n24 + n32)*(log(pmax(1e-6,r)) + log(69 - 111*r + 123*r^2 - 73*r^3 + 25*r^4)) + (n22 + n34)*log(33 - 49*r + 70*r^2 - 81*r^3 + 52*r^4 - 25*r^5)
@@ -4278,7 +4368,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_2.4_2.4 <- function(x){
 logL_cc <- function(r,n12,n13,n14,n21,n22,n23,n24,n25,n31,n32,n34,n35,n41,n42,n43,n44,n45,n52,n53,n54,n11,n15,n33,n51,n55) {
 L <- (2*n12 + n13 + 2*n14 + 2*n21 + n22 + 3*n23 + n24 + 2*n25 + n31 + 3*n32 + 3*n34 + n35 + 2*n41 + n42 + 3*n43 + n44 + 2*n45 + 2*n52 + n53 + 2*n54)*log(2) + (n13 + n31 + n35 + n53)*log(3) + 2*(-n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45 - n51 - n52 - n53 - n54 - n55)*log(5) + 4*(n11 + n55)*log(pmax(1e-6,1 - r)) + 4*(n15 + n51)*log(pmax(1e-6,r)) + (n12 + n21 + n45 + n54)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n13 + n31 + n35 + n53)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n14 + n25 + n41 + n52)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n24 + n42)*(2*log(pmax(1e-6,r)) + log(7 - 12*r + 8*r^2)) + (n22 + n44)*(2*log(pmax(1e-6,1 - r)) + log(3 - 4*r + 8*r^2)) + (n23 + n32 + n34 + n43)*(log(pmax(1e-6,r)) + log(2 - 5*r + 6*r^2 - 3*r^3)) + n33*log(11 - 32*r + 68*r^2 - 72*r^3 + 36*r^4)
@@ -4363,7 +4454,8 @@ possible_phases = c("coupling coupling","coupling mixed3c","coupling mixed2c","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_1.3 <- function(x){
 logL_c <- function(r,n02,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n32,n00,n01,n03,n04,n30,n31,n33,n34) {
 L <- (2*n02 + n10 + n11 + 4*n12 + n13 + n14 + n20 + n21 + 4*n22 + n23 + n24 + 2*n32)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*(4*log(2) + 2*log(5)) + (n01 + n33)*log(9 - 8*r) + (n11 + n23)*log(19 - 8*r) + (n00 + n34)*log(pmax(1e-6,1 - r)) + (n10 + n24)*log(2 - r) + (n04 + n30)*log(pmax(1e-6,r)) + (n14 + n20)*log(1 + r) + (n03 + n31)*log(1 + 8*r) + (n13 + n21)*log(11 + 8*r)
@@ -4392,7 +4484,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_1.4 <- function(x){
 logL_c <- function(r,n11,n12,n13,n14,n21,n22,n23,n24,n01,n02,n03,n04,n31,n32,n33,n34) {
 L <- (n11 + n12 + n13 + n14 + n21 + n22 + n23 + n24)*log(3) + (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34)*(2*log(2) + 2*log(5)) + (n02 + n33)*log(3 - 2*r) + (n12 + n23)*log(7 - 2*r) + (n01 + n34)*log(pmax(1e-6,1 - r)) + (n11 + n24)*log(2 - r) + (n04 + n31)*log(pmax(1e-6,r)) + (n14 + n21)*log(1 + r) + (n03 + n32)*log(1 + 2*r) + (n13 + n22)*log(5 + 2*r)
@@ -4421,7 +4514,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_1.5 <- function(x){
 logL_c <- function(r,n12,n13,n14,n22,n23,n24,n02,n03,n04,n32,n33,n34) {
 L <- (n12 + 2*n13 + n14 + n22 + 2*n23 + n24)*log(3) + (-n02 - n03 - n04 - n12 - n13 - n14 - n22 - n23 - n24 - n32 - n33 - n34)*(3*log(2) + log(5)) + (n02 + n34)*log(pmax(1e-6,1 - r)) + (n12 + n24)*log(2 - r) + (n04 + n32)*log(pmax(1e-6,r)) + (n14 + n22)*log(1 + r)
@@ -4450,7 +4544,8 @@ possible_phases = c("coupling","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_2.2 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n30,n31,n32,n33,n34) {
 L <- (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*(2*log(2) + 2*log(5)) + 2*(n00 + n34)*log(pmax(1e-6,1 - r)) + 2*(n04 + n30)*log(pmax(1e-6,r)) + (n14 + n20)*(log(4 - r) + log(pmax(1e-6,r))) + (n03 + n31)*(log(pmax(1e-6,r)) + log(2 + r)) + (n02 + n32)*log(1 + 4*r - 4*r^2) + (n11 + n23)*log(15 - 8*r - r^2) + (n10 + n24)*log(3 - 2*r - r^2) + (n13 + n21)*log(6 + 10*r - r^2) + (n01 + n33)*log(3 - 4*r + r^2) + (n12 + n22)*log(21 - 4*r + 4*r^2)
@@ -4487,7 +4582,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_2.3 <- function(x){
 logL_c <- function(r,n00,n01,n02,n03,n04,n05,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n30,n31,n32,n33,n34,n35) {
 L <- (-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35)*(4*log(2) + 2*log(5)) + 2*(n00 + n35)*log(pmax(1e-6,1 - r)) + 2*(n05 + n30)*log(pmax(1e-6,r)) + (n15 + n20)*(log(4 - r) + log(pmax(1e-6,r))) + (n04 + n31)*(log(pmax(1e-6,r)) + log(2 + 7*r)) + (n02 + n33)*log(9 - 8*r^2) + (n03 + n32)*log(1 + 16*r - 8*r^2) + (n11 + n24)*log(33 - 20*r - 7*r^2) + (n14 + n21)*log(6 + 34*r - 7*r^2) + (n10 + n25)*log(3 - 2*r - r^2) + (n01 + n34)*log(9 - 16*r + 7*r^2) + (n12 + n23)*log(81 - 32*r + 8*r^2) + (n13 + n22)*log(57 + 16*r + 8*r^2)
@@ -4524,7 +4620,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_2.4 <- function(x){
 logL_c <- function(r,n01,n02,n03,n04,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35) {
 L <- (-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35)*(2*log(2) + 2*log(5)) + 2*(n01 + n35)*log(pmax(1e-6,1 - r)) + 2*(n05 + n31)*log(pmax(1e-6,r)) + (n15 + n21)*(log(4 - r) + log(pmax(1e-6,r))) + (n04 + n32)*(log(pmax(1e-6,r)) + log(2 + r)) + (n03 + n33)*log(1 + 4*r - 4*r^2) + (n12 + n24)*log(15 - 8*r - r^2) + (n11 + n25)*log(3 - 2*r - r^2) + (n14 + n22)*log(6 + 10*r - r^2) + (n02 + n34)*log(3 - 4*r + r^2) + (n13 + n23)*log(21 - 4*r + 4*r^2)
@@ -4561,7 +4658,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_3.0 <- function(x){
 logL_c <- function(r,n01,n02,n10,n11,n12,n13,n20,n21,n22,n23,n31,n32,n00,n03,n30,n33) {
 L <- (n01 + n02 + n10 + n11 + n12 + n13 + n20 + n21 + n22 + n23 + n31 + n32)*log(3) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32 - n33)*(2*log(2) + log(5)) + 3*(n00 + n33)*log(pmax(1e-6,1 - r)) + 3*(n03 + n30)*log(pmax(1e-6,r)) + (n01 + n10 + n23 + n32)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n13 + n20 + n31)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n12 + n21)*(log(pmax(1e-6,r)) + log(4 - 4*r + 3*r^2)) + (n11 + n22)*log(3 - 5*r + 5*r^2 - 3*r^3)
@@ -4598,7 +4696,8 @@ possible_phases = c("coupling","mixed","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_3.1 <- function(x){
 logL_c <- function(r,n02,n10,n11,n12,n13,n14,n20,n21,n22,n23,n24,n32,n00,n01,n03,n04,n30,n31,n33,n34) {
 L <- (n02 + n10 + n11 + n12 + n13 + n14 + n20 + n21 + n22 + n23 + n24 + n32)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n10 - n11 - n12 - n13 - n14 - n20 - n21 - n22 - n23 - n24 - n30 - n31 - n32 - n33 - n34)*(3*log(2) + log(5)) + 3*(n00 + n34)*log(pmax(1e-6,1 - r)) + 3*(n04 + n30)*log(pmax(1e-6,r)) + (n02 + n32)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n10 + n24)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n31)*(log(3 - 2*r) + 2*log(pmax(1e-6,r))) + (n14 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n01 + n33)*(2*log(pmax(1e-6,1 - r)) + log(1 + 2*r)) + (n12 + n22)*log(3 - r + r^2) + (n13 + n21)*(log(pmax(1e-6,r)) + log(4 - 3*r + 2*r^2)) + (n11 + n23)*log(3 - 4*r + 3*r^2 - 2*r^3)
@@ -4643,7 +4742,8 @@ possible_phases = c("coupling","mixed1c","mixed2c","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_3.2 <- function(x){
 logL_c <- function(r,n01,n04,n10,n11,n12,n13,n14,n15,n20,n21,n22,n23,n24,n25,n31,n34,n00,n02,n03,n05,n30,n32,n33,n35) {
 L <- (n01 + n04 + n10 + n11 + n12 + n13 + n14 + n15 + n20 + n21 + n22 + n23 + n24 + n25 + n31 + n34)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n05 - n10 - n11 - n12 - n13 - n14 - n15 - n20 - n21 - n22 - n23 - n24 - n25 - n30 - n31 - n32 - n33 - n34 - n35)*(2*log(2) + 2*log(5)) + 2*(n01 + n34)*log(pmax(1e-6,1 - r)) + 3*(n00 + n35)*log(pmax(1e-6,1 - r)) + 3*(n05 + n30)*log(pmax(1e-6,r)) + 2*(n04 + n31)*log(pmax(1e-6,r)) + (n10 + n25)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n14 + n21)*(log(4 - r) + log(pmax(1e-6,r))) + (n15 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n03 + n32)*(log(pmax(1e-6,r)) + log(3 + 3*r - 5*r^2)) + (n11 + n24)*log(3 - 2*r - r^2) + (n12 + n23)*log(9 - 10*r + 9*r^2 - 5*r^3) + (n02 + n33)*log(1 + 6*r - 12*r^2 + 5*r^3) + (n13 + n22)*log(3 + 7*r - 6*r^2 + 5*r^3)
@@ -4688,7 +4788,8 @@ possible_phases = c("coupling","mixed1c","mixed2c","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_3.3 <- function(x){
 logL_c <- function(r,n01,n02,n04,n05,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26,n31,n32,n34,n35,n00,n03,n06,n30,n33,n36) {
 L <- (n01 + n02 + n04 + n05 + n10 + n11 + n12 + n13 + n14 + n15 + n16 + n20 + n21 + n22 + n23 + n24 + n25 + n26 + n31 + n32 + n34 + n35)*log(3) + (-n00 - n01 - n02 - n03 - n04 - n05 - n06 - n10 - n11 - n12 - n13 - n14 - n15 - n16 - n20 - n21 - n22 - n23 - n24 - n25 - n26 - n30 - n31 - n32 - n33 - n34 - n35 - n36)*(4*log(2) + 2*log(5)) + 3*(n00 + n36)*log(pmax(1e-6,1 - r)) + (n01 + n35)*(log(3 - 2*r) + 2*log(pmax(1e-6,1 - r))) + 3*(n06 + n30)*log(pmax(1e-6,r)) + (n10 + n26)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n16 + n20)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n05 + n31)*(2*log(pmax(1e-6,r)) + log(1 + 2*r)) + (n03 + n33)*log(1 + 24*r - 24*r^2) + (n15 + n21)*(log(pmax(1e-6,r)) + log(4 + 5*r - 6*r^2)) + (n04 + n32)*(log(pmax(1e-6,r)) + log(1 + 7*r - 5*r^2)) + (n13 + n23)*log(27 - 8*r + 8*r^2) + (n12 + n24)*log(27 - 32*r + 23*r^2 - 15*r^3) + (n02 + n34)*log(3 - 8*r^2 + 5*r^3) + (n11 + n25)*log(3 + 4*r - 13*r^2 + 6*r^3) + (n14 + n22)*log(3 + 31*r - 22*r^2 + 15*r^3)
@@ -4733,7 +4834,8 @@ possible_phases = c("coupling","mixed1c","mixed2c","repulsion","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.0_4.1 <- function(x){
 logL_c <- function(r,n01,n02,n03,n04,n11,n12,n13,n14,n21,n22,n23,n24,n31,n32,n33,n34) {
 L <- (-n01 - n02 - n03 - n04 - n11 - n12 - n13 - n14 - n21 - n22 - n23 - n24 - n31 - n32 - n33 - n34)*(3*log(2) + log(5)) + 2*(n01 + n34)*log(pmax(1e-6,1 - r)) + 2*(n04 + n31)*log(pmax(1e-6,r)) + (n03 + n32)*(log(2 - r) + log(pmax(1e-6,r))) + (n14 + n21)*(log(4 - r) + log(pmax(1e-6,r))) + (n02 + n33)*log(1 - r^2) + (n11 + n24)*log(3 - 2*r - r^2) + (n12 + n23)*log(9 - 4*r + r^2) + (n13 + n22)*log(6 + 2*r + r^2)
@@ -4770,7 +4872,8 @@ possible_phases = c("coupling","mixed1c","mixed2c","unknown")
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.3_2.4 <- function(x){
 logL_cc <- function(r,n01,n02,n03,n04,n05,n11,n12,n13,n14,n15,n21,n22,n23,n24,n25,n31,n32,n33,n34,n35,n41,n42,n43,n44,n45,n51,n52,n53,n54,n55,n61,n62,n63,n64,n65) {
 L <- (-4*n01 - 2*n02 - 3*n03 - 2*n04 - 4*n05 - 3*n11 - 2*n12 - 2*n13 - 2*n14 - 3*n15 - 4*n21 - 2*n22 - 3*n23 - 2*n24 - 4*n25 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 4*n41 - 2*n42 - 3*n43 - 2*n44 - 4*n45 - 3*n51 - 2*n52 - 2*n53 - 2*n54 - 3*n55 - 4*n61 - 2*n62 - 3*n63 - 2*n64 - 4*n65)*log(2) + (n03 + n63)*log(3) + 2*(-n01 - n02 - n03 - n04 - n05 - n11 - n12 - n13 - n14 - n15 - n21 - n22 - n23 - n24 - n25 - n31 - n32 - n33 - n34 - n35 - n41 - n42 - n43 - n44 - n45 - n51 - n52 - n53 - n54 - n55 - n61 - n62 - n63 - n64 - n65)*log(5) + 4*(n01 + n65)*log(pmax(1e-6,1 - r)) + 4*(n05 + n61)*log(pmax(1e-6,r)) + (n02 + n64)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n03 + n63)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n04 + n62)*(log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n15 + n51)*(log(4 - r) + 3*log(pmax(1e-6,r))) + (n25 + n41)*(2*log(pmax(1e-6,r)) + log(22 - 12*r - r^2)) + (n11 + n55)*(2*log(pmax(1e-6,1 - r)) + log(3 - 2*r - r^2)) + (n21 + n45)*(2*log(pmax(1e-6,1 - r)) + log(9 + 14*r - r^2)) + (n14 + n52)*(2*log(pmax(1e-6,r)) + log(7 - 6*r + 2*r^2)) + (n12 + n54)*(2*log(pmax(1e-6,1 - r)) + log(3 + 2*r + 2*r^2)) + (n13 + n53)*(log(pmax(1e-6,r)) + log(8 - 11*r + 6*r^2 - 3*r^3)) + (n31 + n35)*(log(pmax(1e-6,r)) + log(6 - 5*r - 2*r^2 + r^3)) + (n24 + n42)*(log(pmax(1e-6,r)) + log(15 - 9*r + 5*r^2 + r^3)) + (n32 + n34)*log(9 + 4*r - 8*r^2 + 8*r^3 - 4*r^4) + (n23 + n43)*log(21 + 4*r - 7*r^2 + 6*r^3 - 3*r^4) + (n22 + n44)*log(12 - 16*r + 12*r^2 - 9*r^3 + r^4) + n33*log(23 - 20*r + 26*r^2 - 12*r^3 + 6*r^4)
@@ -4855,7 +4958,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","m
 )
 }
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 r6_3.3_3.3 <- function(x){
 logL_cc <- function(r,n00,n01,n02,n03,n04,n05,n06,n10,n11,n12,n13,n14,n15,n16,n20,n21,n22,n23,n24,n25,n26,n30,n31,n32,n33,n34,n35,n36,n40,n41,n42,n43,n44,n45,n46,n50,n51,n52,n53,n54,n55,n56,n60,n61,n62,n63,n64,n65,n66) {
 L <- (-4*n00 - 3*n01 - 4*n02 - 2*n03 - 4*n04 - 3*n05 - 4*n06 - 3*n10 - 3*n11 - 3*n12 - 2*n13 - 3*n14 - 3*n15 - 3*n16 - 4*n20 - 3*n21 - 4*n22 - 2*n23 - 4*n24 - 3*n25 - 4*n26 - 2*n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - 2*n36 - 4*n40 - 3*n41 - 4*n42 - 2*n43 - 4*n44 - 3*n45 - 4*n46 - 3*n50 - 3*n51 - 3*n52 - 2*n53 - 3*n54 - 3*n55 - 3*n56 - 4*n60 - 3*n61 - 4*n62 - 2*n63 - 4*n64 - 3*n65 - 4*n66)*log(2) + (n01 + n02 + n04 + n05 + n10 + n11 + n12 + n13 + n14 + n15 + n16 + n20 + n21 + n22 + n23 + n24 + n25 + n26 + n31 + n32 + n34 + n35 + n40 + n41 + n42 + n43 + n44 + n45 + n46 + n50 + n51 + n52 + n53 + n54 + n55 + n56 + n61 + n62 + n64 + n65)*log(3) + (-2*n00 - 2*n01 - n02 - n03 - n04 - 2*n05 - 2*n06 - 2*n10 - 2*n11 - 2*n12 - 2*n13 - 2*n14 - 2*n15 - 2*n16 - n20 - 2*n21 - 2*n22 - 2*n23 - 2*n24 - 2*n25 - n26 - n30 - 2*n31 - 2*n32 - 2*n33 - 2*n34 - 2*n35 - n36 - n40 - 2*n41 - 2*n42 - 2*n43 - 2*n44 - 2*n45 - n46 - 2*n50 - 2*n51 - 2*n52 - 2*n53 - 2*n54 - 2*n55 - 2*n56 - 2*n60 - 2*n61 - n62 - n63 - n64 - 2*n65 - 2*n66)*log(5) + 6*(n00 + n66)*log(pmax(1e-6,1 - r)) + 6*(n06 + n60)*log(pmax(1e-6,r)) + (n01 + n10 + n56 + n65)*(5*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n20 + n46 + n64)*(4*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n03 + n30 + n36 + n63)*(3*log(pmax(1e-6,1 - r)) + 3*log(pmax(1e-6,r))) + (n04 + n26 + n40 + n62)*(2*log(pmax(1e-6,1 - r)) + 4*log(pmax(1e-6,r))) + (n05 + n16 + n50 + n61)*(log(pmax(1e-6,1 - r)) + 5*log(pmax(1e-6,r))) + (n15 + n51)*(4*log(pmax(1e-6,r)) + log(7 - 10*r + 6*r^2)) + (n11 + n55)*(4*log(pmax(1e-6,1 - r)) + log(3 - 2*r + 6*r^2)) + (n13 + n31 + n35 + n53)*(2*log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r)) + log(11 - 10*r + 10*r^2)) + (n12 + n21 + n45 + n54)*(3*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r)) + log(13 - 10*r + 15*r^2)) + (n14 + n25 + n41 + n52)*(3*log(pmax(1e-6,r)) + log(18 - 38*r + 35*r^2 - 15*r^3)) + (n24 + n42)*(2*log(pmax(1e-6,r)) + log(90 - 216*r + 284*r^2 - 200*r^3 + 75*r^4)) + (n22 + n44)*(2*log(pmax(1e-6,1 - r)) + log(33 - 52*r + 134*r^2 - 100*r^3 + 75*r^4)) + (n23 + n32 + n34 + n43)*(log(pmax(1e-6,r)) + log(23 - 67*r + 113*r^2 - 119*r^3 + 75*r^4 - 25*r^5)) + n33*log(41 - 138*r + 336*r^2 - 496*r^3 + 498*r^4 - 300*r^5 + 100*r^6)
@@ -4949,7 +5053,8 @@ possible_phases = c("coupling coupling","coupling mixed2c","coupling mixed1c","c
 }
 
 
-#' @rdname r6_functions
+#' @rdname r6_functions 
+#' @noRd
 p6_1.0_1.0 <- function(x){
   r_c <- (x[,"n_01"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_01"] + x[,"n_10"] + x[,"n_11"])
   logL_c <- (-x[,"n_00"] - x[,"n_01"] - x[,"n_10"] - x[,"n_11"])*log(2) + (x[,"n_00"] + x[,"n_11"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_01"] + x[,"n_10"])*log(pmax(1e-6,r_c))

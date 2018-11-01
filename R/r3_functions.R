@@ -18,6 +18,7 @@
 NULL
 
 #' @rdname r3_functions
+#' @noRd
 r3_0.1_0.1 <- function(x,ncores=1){
 r_c <- (x[,"n_01"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_01"] + x[,"n_10"] + x[,"n_11"])
 logL_c <- (-x[,"n_00"] - x[,"n_01"] - x[,"n_10"] - x[,"n_11"])*log(2) + (x[,"n_00"] + x[,"n_11"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_01"] + x[,"n_10"])*log(pmax(1e-6,r_c))
@@ -40,6 +41,7 @@ possible_phases = c("coupling","repulsion","unknown")
 }
 
 #' @rdname r3_functions
+#' @noRd
 r3_0.1_1.1 <- function(x,ncores=1){
 r_c <- (x[,"n_02"] + x[,"n_10"])/(x[,"n_00"] + x[,"n_02"] + x[,"n_10"] + x[,"n_12"])
 logL_c <- 2*(-x[,"n_00"] - x[,"n_01"] - x[,"n_02"] - x[,"n_10"] - x[,"n_11"] - x[,"n_12"])*log(2) + (x[,"n_00"] + x[,"n_12"])*log(pmax(1e-6,1 - r_c)) + (x[,"n_02"] + x[,"n_10"])*log(pmax(1e-6,r_c))
@@ -62,6 +64,7 @@ possible_phases = c("coupling","repulsion","unknown")
 }
 
 #' @rdname r3_functions
+#' @noRd
 r3_0.1_2.1 <- function(x,ncores=1){
   logL_c <- function(r,n00,n02,n03,n10,n11,n13,n01,n12) {
     L <- (-n00 - n02 - n03 - n10 - n11 - n13)*(2*log(2) + log(3)) + (n00 + n13)*log(pmax(1e-6,1 - r)) + (n01 + n12)*log(1/3 - r/4) + (n03 + n10)*log(pmax(1e-6,r)) + (n02 + n11)*log(1 + 3*r)
@@ -106,18 +109,23 @@ r3_0.1_2.1 <- function(x,ncores=1){
 }
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.0_1.0 <- function(x,ncores=1) r4_1.0_1.0(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.0_1.1 <- function(x,ncores=1) r4_1.0_1.1(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.0_2.0 <- function(x,ncores=1) r4_1.0_2.0(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.0_2.1 <- function(x,ncores=1) r4_1.0_2.1(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.1_1.1 <- function(x,ncores=1){
 logL_cc <- function(r,n00,n01,n02,n10,n12,n20,n21,n22,n11) {
 L <- (-2*n00 - n01 - 2*n02 - n10 - n12 - 2*n20 - n21 - 2*n22)*log(2) + 2*(n00 + n22)*log(pmax(1e-6,1 - r)) + 2*(n02 + n20)*log(pmax(1e-6,r)) + (n01 + n10 + n12 + n21)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + n11*log(1/2 - r + r^2)
@@ -194,6 +202,7 @@ possible_phases = c("coupling coupling","coupling repulsion","repulsion coupling
 }
 
 #' @rdname r3_functions
+#' @noRd
 r3_1.1_2.1 <- function(x,ncores=1){
   logL_cc <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23) {
     L <- (-2*n00 - 2*n01 - 2*n02 - 2*n03 - n10 - 2*n11 - 2*n12 - n13 - 2*n20 - 2*n21 - 2*n22 - 2*n23)*log(2) + (-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23)*log(3) + 2*(n00 + n23)*log(pmax(1e-6,1 - r)) + 2*(n03 + n20)*log(pmax(1e-6,r)) + (n10 + n13)*(log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n21)*(log(3 - r) + log(pmax(1e-6,r))) + (n01 + n22)*log(2 - r - r^2) + (n11 + n12)*log(3 - 2*r + 2*r^2)
@@ -270,15 +279,19 @@ r3_1.1_2.1 <- function(x,ncores=1){
 }
 
 #' @rdname r3_functions
+#' @noRd
 r3_2.0_2.0 <- function(x,ncores=1) r4_2.0_2.0(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_2.0_2.1 <- function(x,ncores=1) r4_2.0_2.1(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_2.0_1.1 <- function(x,ncores=1) r4_2.0_1.1(x,ncores) #Directly pass to r4 function
 
 #' @rdname r3_functions
+#' @noRd
 r3_2.1_2.1 <- function(x,ncores=1){
   logL_cc <- function(r,n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32) {
     L <- 2*(-n00 - n01 - n02 - n03 - n10 - n11 - n12 - n13 - n20 - n21 - n22 - n23 - n30 - n31 - n32)*log(2) + (-n00 - n03 - n11 - n12 - n21 - n22 - n30)*log(3) + 3*n00*log(pmax(1e-6,1 - r)) + 3*(n03 + n30)*log(pmax(1e-6,r)) + (n01 + n10 + n23 + n32)*(2*log(pmax(1e-6,1 - r)) + log(pmax(1e-6,r))) + (n02 + n13 + n20 + n31)*(log(pmax(1e-6,1 - r)) + 2*log(pmax(1e-6,r))) + (n12 + n21)*(log(pmax(1e-6,r)) + log(8 - 12*r + 9*r^2)) + (n11 + n22)*log(5 - 11*r + 15*r^2 - 9*r^3)

@@ -6,8 +6,9 @@
 \title{Use bridge markers to cluster homologues into linkage groups}
 \usage{
 bridgeHomologues(cluster_stack, cluster_stack2 = NULL, linkage_df,
-  linkage_df2 = NULL, LOD_threshold = 10, automatic_clustering = TRUE,
-  LG_number = 5, parentname = "", min_bridges = 2, log = NULL)
+  linkage_df2 = NULL, LOD_threshold = 5, automatic_clustering = TRUE,
+  LG_number = 5, parentname = "", min_links = 1, min_bridges = 1,
+  only_coupling = FALSE, log = NULL)
 }
 \arguments{
 \item{cluster_stack}{A \code{data.frame} with a column \code{"marker"} specifying markernames,
@@ -30,9 +31,12 @@ The use of multiple types of cross-parent markers is allowed.}
 
 \item{parentname}{Name of the parent. Used in the main title of the plot.}
 
-\item{min_bridges}{The minimum number of cross-parent bridges for a link to be considered.
-Make this number higher if there are a lot of spurious links.
-This argument is only used for biparental bridges (N.B. if \code{cluster_stack2} and \code{linkage_df2} are specified).}
+\item{min_links}{The minimum number of cross-parent linkages for a marker to be considered.
+Make this number higher if there are a lot of spurious links.}
+
+\item{min_bridges}{The minimum number of linking markers to link two homologues together.}
+
+\item{only_coupling}{Logical, should only coupling linkages be used in the process? By default \code{FALSE}}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
 }

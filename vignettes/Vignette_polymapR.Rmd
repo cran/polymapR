@@ -902,27 +902,34 @@ Up to now, we have been working under the assumption of random bivalent pairing 
 
 The `polymapR` package can currently accomodate preferential pairing in tetraploid species only, by correcting the recombination frequency estimates once the level of preferential pairing in a parental chromosome is known. In order to determine whether this is necessary, we can run some diagnostic tests using the marker data after an initial map has been produced which can inform our choice regarding whether to include a preferential pairing parameter or not (in a subsequent re-analysis).
 
-We first test for preferential pairing using the function `test_prefpairing`, which re-examines closely-linked repulsion-phase simplex x nulliplex marker pairs. The method used here is described in Bourke et al.[@Bourke2017], which is a development on ideas originally described by Qu and Hancock[@Qu2001]. We look for signatures of preferential pairing in repulsion-phase pairs which map to the same locus. Defining a minimum distance by which to consider markers essentially at the same locus is somewhat arbitrary - in our study of rose, we used pairs of duplicated individuals to determine an approximate error rate which, along with considerations of the size of the population and rate of missing values, led us to conclude that distances less than ~1 cM were close enough to be informative. By default, we use an even more stringent value of 0.5 cM, which limits the number of marker pairs used in the comparison. This can be increased or decreased as required using the `min_cM` argument, as we show here:
+First, a word of warning. There is a function to test for preferential pairing among pairs of closely-linked simplex x nulliplex markers in repulsion phase within `polymapR`. However, it is certainly also advised to use multi-point methods to test for preferential pairing (if possible). The only possible drawback is that multi-point methods (using all markers across a chromosome) generally assume uniform pairing behaviour across the length of a chromosome, which may not always occur [@Bourke2017]). A robust multi-point approach as described in [@Bourke2017] used identity-by-descent probabilities for the population, estimated using TetraOrigin [@Zheng2016], which estimates the most likely pairing behaviour per individual and can therefore reveal whether there are deviations from the assumption of random chromosomal pairing and recombination across the population.
+
+The function `test_prefpairing` examines closely-linked repulsion-phase simplex x nulliplex marker pairs only, and is therefore the results of this function may not be as *robust* as a multi-point whole-chromosome approach. Be that as it may, it is probably the simplest check we can preform post-mapping for the possibility of unusual pairing behaviour. The method used here is described also in Bourke et al.[@Bourke2017], which is a development on ideas originally described by Qu and Hancock[@Qu2001]. The idea is to look for signatures of preferential pairing in repulsion-phase pairs which map to the same locus. 
+
+We first need to define a minimum distance by which to consider markers essentially at the same locus. This is somewhat arbitrary - in our study of tetraploid rose, we used pairs of duplicated individuals to determine an approximate error rate which, along with considerations of the size of the population and rate of missing values, led us to conclude that distances less than ~1 cM were close enough to be informative (and for which we could assume 0 recombinations). The smaller the distance we choose here the better, although by choosing a very small distance we are limiting the number of repulsion-pairs available. By default in `test_prefpairing` we use a value of 0.5 cM. This can be increased or decreased as required using the `min_cM` argument.
 
 ```{r eval = FALSE}
 P1.prefPairing <- test_prefpairing(dosage_matrix = ALL_dosages, 
                                    maplist = integrated.maplist, 
                                    LG_hom_stack = LGHomDf_P1_1, 
-                                   min_cM = 1,
+                                   min_cM = 1, #changed from default of 0.5 cM
                                    ploidy = 4)
 
 head(P1.prefPairing)
 
 ```
-It is then a matter of checking the significance and deciding whether it is worthwhile to re-run the mapping. The column `P_value.adj` gives the adjusted P-value from a Binomial test to see whether the disomic repulsion estimate of recombination frequency differs significantly from $\frac{1}{3}$. In cases where this is significant (with `P_value.adj` < 0.01, say), we might have cause for concern. The output of `test_prefpairing` also lists the markers, their positions and on which homologues they reside. There is also an estimate of the pairwise preferential pairing parameter `pref.p`. If there is strong evidence of preferential pairing from multiple marker pairs, the approach we recommend is to take the average of the `pref.p` values for a particular chromosomal linkage group, which becomes one of the parameters `p1` or `p2` in the `linkage` function.
 
-Here, we have purely random pairing in our parents, so the estimates of `pref.p` are nonsensical - in general, we have defined the preferential parameter `p` such that $0 < p < \frac{2}{3}$. Supposing this were not the case, and we wanted to estimate the strength of preferential pairing on LG1 of parent 1, we would do something like the following:
+The output shows the repulsion-phase marker pairs tested. The most important column is probably the column `P_value.adj`, which gives the FDR-adjusted P-values from a Binomial test of the hypothesis that the disomic repulsion estimate of recombination frequency differs significantly from $\frac{1}{3}$ (actually it is a one-sided test, so we are testing that *r disom* falls below $\frac{1}{3}$). In cases where this is significant (with `P_value.adj` < 0.01, say), we might have some evidence for preferential pairing (but from that marker pair only!). The output of `test_prefpairing` also lists the markers, their positions and on which homologues they have been mapped. There is also an estimate of the pairwise preferential pairing parameter `pref.p`. Note that there are two possible (maximum-likelihood) estimators of a preferential pairing parameter in the case of a pair of simplex x nulliplex markers, depending on whether the marker alleles reside on homologous chromosomes, or homoeologous chromosomes (*i.e.* whether the pair are contained within a "subgenome", or are straddled across "subgenomes", to borrow the language of allopolyploids for convenience). If there is strong evidence of preferential pairing from multiple marker pairs, the approach we recommend is to take the average of the `pref.p` values for a particular chromosomal linkage group, which becomes one of the parameters `p1` or `p2` in the `linkage` function.
+
+Here, we have purely random pairing in our parents, so the estimates of `pref.p` should not be considered meaningful. The preferential parameter `p` is defined such that $0 < p < \frac{2}{3}$. Supposing this were not the case, and we wanted to estimate the strength of preferential pairing on LG1 of parent 1, we would do something like the following:
 
 ```{r eval = FALSE}
-mean(P1.prefPairing[P1.prefPairing$LG_a == 1,]$pref.p)
+mean(P1.prefPairing[P1.prefPairing$P_value.adj < 0.01 & P1.prefPairing$LG_a == 1,]$pref.p)
 ```
 
-Finally, to re-run the linkage analysis with this estimate for parent 1 of linkage group 1, we would first have to subset our marker dosage data corresponding to that linkage group only (since we do not need to re-analyse any other chromosome!), and then re-run the linkage analysis. Note that in cases with extreme levels of preferential pairing, the clustering into separate homologues can also be affected. If we had estimated a value of 0.25 for the preferential pairing parameter (instead of -0.56, which is nonsense) we could proceed as follows:
+Note that again we require first that there be significant evidence of disomic behaviour before including the estimate. If there is evidence of preferential pairing, it is probably a good idea to go back and reduce the `min_cM` argument even further, since we really want this value to be as close to 0 as possible for an accurate estimate of a preferential pairing parameter.
+
+Finally, to re-run the linkage analysis with this estimate for parent 1 of linkage group 1, we would first have to subset our marker dosage data corresponding to that linkage group only (since we do not need to re-analyse any other chromosome!), and then re-run the linkage analysis. Note that in cases with extreme levels of preferential pairing, the clustering into separate homologues can also be affected. Supposing we had estimated a value of 0.25 for the preferential pairing parameter we could proceed as follows:
 
 ```{r eval = FALSE}
 lg1_markers <- unique(c(rownames(marker_assignments_P1[marker_assignments_P1[,"Assigned_LG"] == 1,]),
@@ -937,7 +944,7 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
                                                     convert_palindrome_markers = FALSE,
                                                     ploidy = 4,
                                                     pairing = "preferential",
-                                                    prefPars = c(0.25,0),
+                                                    prefPars = c(0.25,0), #just for example!
                                                     LG_number = 1 #interested in just 1 chm.
 )
 
