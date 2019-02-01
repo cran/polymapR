@@ -5,10 +5,10 @@
 \title{Linkage analysis between all markertypes within LG.}
 \usage{
 finish_linkage_analysis(marker_assignment, dosage_matrix,
-  marker_combinations = NULL, target_parent = "P1", other_parent = "P2",
-  convert_palindrome_markers = TRUE, ploidy = 4, ploidy2 = NULL,
-  pairing = c("random", "preferential"), prefPars = c(0, 0), LG_number,
-  verbose = TRUE, log = NULL, ...)
+  marker_combinations = NULL, target_parent = "P1",
+  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy = 4,
+  ploidy2 = NULL, pairing = c("random", "preferential"),
+  prefPars = c(0, 0), LG_number, verbose = TRUE, log = NULL, ...)
 }
 \arguments{
 \item{marker_assignment}{A marker assignment matrix with markernames as rownames and at least containing the column \code{"Assigned_LG"}.}

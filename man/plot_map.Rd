@@ -6,10 +6,12 @@
 \usage{
 plot_map(maplist, highlight = NULL, bg_col = "grey",
   highlight_col = "yellow", colname_in_mark = NULL,
-  colname_beside_mark = NULL, palette_in_mark = colorRampPalette(c("white",
-  "purple")), palette_beside_mark = colorRampPalette(c("white", "green")),
-  color_by_type = FALSE, dosage_matrix = NULL, legend = FALSE,
-  legend.x = 1, legend.y = 120, ...)
+  colname_beside_mark = NULL,
+  palette_in_mark = colorRampPalette(c("white", "purple")),
+  palette_beside_mark = colorRampPalette(c("white", "green")),
+  color_by_type = FALSE, dosage_matrix = NULL, parent1 = "P1",
+  parent2 = "P2", legend = FALSE, legend.x = 1, legend.y = 120,
+  ...)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
@@ -30,6 +32,10 @@ limits in cM from and to which the plotted chromosomes should be highlighted.}
 \item{color_by_type}{Logical. Should the markers be coloured by type? If TRUE, dosage_matrix should be specified.}
 
 \item{dosage_matrix}{Optional (by default \code{NULL}). Dosage matrix of marker genotypes, input of \code{\link{linkage}}}
+
+\item{parent1}{Character string specifying the first (usually maternal) parentname.}
+
+\item{parent2}{Character string specifying the second (usually paternal) parentname.}
 
 \item{legend}{Logical. Should a legend be drawn?}
 

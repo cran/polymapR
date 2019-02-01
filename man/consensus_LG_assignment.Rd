@@ -4,8 +4,8 @@
 \alias{consensus_LG_assignment}
 \title{Consensus LG assignment}
 \usage{
-consensus_LG_assignment(P1_assigned, P2_assigned, LG_number = 5, ploidy = 4,
-  consensus_file = NULL, log = NULL)
+consensus_LG_assignment(P1_assigned, P2_assigned, LG_number = 5,
+  ploidy = 4, consensus_file = NULL, log = NULL)
 }
 \arguments{
 \item{P1_assigned}{A marker assignment file of the first parent. Should contain the number of linkages per LG per marker.}

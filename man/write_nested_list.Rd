@@ -5,8 +5,8 @@
 \title{Write out a nested list}
 \usage{
 write_nested_list(nested_list, directory, save_as_object = FALSE,
-  object_prefix = directory, extension = if (save_as_object) ".Rdata" else
-  ".txt", ...)
+  object_prefix = directory, extension = if (save_as_object) ".Rdata"
+  else ".txt", ...)
 }
 \arguments{
 \item{nested_list}{A nested list.}

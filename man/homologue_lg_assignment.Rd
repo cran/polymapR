@@ -6,9 +6,10 @@
 \usage{
 homologue_lg_assignment(dosage_matrix, assigned_list, assigned_markertypes,
   SN_functions = NULL, LG_hom_stack, target_parent = "P1",
-  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy = 4,
-  ploidy2 = NULL, pairing = "random", LG_number = 5, LOD_threshold = 3,
-  write_intermediate_files = TRUE, log = NULL, ...)
+  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy,
+  ploidy2 = NULL, pairing = "random", LG_number = 5,
+  LOD_threshold = 3, write_intermediate_files = TRUE, log = NULL,
+  ...)
 }
 \arguments{
 \item{dosage_matrix}{A dosage matrix.}
@@ -55,7 +56,7 @@ data("screened_data3", "P1_SxS_Assigned", "P1_DxN_Assigned", "LGHomDf_P1_1")
 Assigned_markers<-homologue_lg_assignment(screened_data3,
                          assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
                          assigned_markertypes = list(c(1,1), c(2,0)),
-                         LG_hom_stack = LGHomDf_P1_1,
+                         LG_hom_stack = LGHomDf_P1_1,ploidy=4,
                          write_intermediate_files=FALSE)
                          }
 }

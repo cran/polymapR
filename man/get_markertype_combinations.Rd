@@ -4,7 +4,8 @@
 \alias{get_markertype_combinations}
 \title{Visualize and get all markertype combinations for which there are functions in polymapR}
 \usage{
-get_markertype_combinations(ploidy, pairing, nonavailable_combinations = TRUE)
+get_markertype_combinations(ploidy, pairing,
+  nonavailable_combinations = TRUE)
 }
 \arguments{
 \item{ploidy}{Ploidy level}

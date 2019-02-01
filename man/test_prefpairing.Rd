@@ -4,9 +4,9 @@
 \alias{test_prefpairing}
 \title{Check for and estimate preferential pairing}
 \usage{
-test_prefpairing(dosage_matrix, maplist, LG_hom_stack, target_parent = "P1",
-  other_parent = "P2", ploidy, min_cM = 0.5, adj.method = "fdr",
-  verbose = TRUE)
+test_prefpairing(dosage_matrix, maplist, LG_hom_stack,
+  target_parent = "P1", other_parent = "P2", ploidy, min_cM = 0.5,
+  adj.method = "fdr", verbose = TRUE)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

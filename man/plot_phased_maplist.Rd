@@ -5,7 +5,8 @@
 \title{Visualise the phased homologue maplist}
 \usage{
 plot_phased_maplist(phased.maplist, ploidy = 4, ploidy2 = NULL,
-  cols = c("black", "darkred", "navyblue"), width = 0.2, mapTitles = NULL)
+  cols = c("black", "darkred", "navyblue"), width = 0.2,
+  mapTitles = NULL)
 }
 \arguments{
 \item{phased.maplist}{A list of phased linkage maps, the output of \code{\link{create_phased_maplist}}}

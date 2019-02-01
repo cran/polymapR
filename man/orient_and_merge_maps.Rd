@@ -6,7 +6,8 @@
 \usage{
 orient_and_merge_maps(maplist_P1, maplist_P2, parent_ID_1 = "P1",
   parent_ID_2 = "P2", connection_threshold = 2, LPmerge_interval = 4,
-  single_LPmerge = FALSE, plot_graph = FALSE, ploidy = 4, log = NULL)
+  single_LPmerge = FALSE, plot_graph = FALSE, ploidy = 4,
+  log = NULL)
 }
 \arguments{
 \item{maplist_P1, maplist_P2}{A list of length=ploidy, with data.frames containing markernames and position.}

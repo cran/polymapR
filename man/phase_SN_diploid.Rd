@@ -4,8 +4,8 @@
 \alias{phase_SN_diploid}
 \title{Phase 1.0 markers at the diploid level}
 \usage{
-phase_SN_diploid(linkage_df, cluster_list, LOD_chm = 3.5, LG_number = 3,
-  independence_LOD = FALSE, log = NULL)
+phase_SN_diploid(linkage_df, cluster_list, LOD_chm = 3.5,
+  LG_number = 3, independence_LOD = FALSE, log = NULL)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}} calculating linkage between 1.0 markers.}

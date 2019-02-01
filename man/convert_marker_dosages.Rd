@@ -4,9 +4,9 @@
 \alias{convert_marker_dosages}
 \title{Convert marker dosages to the basic types.}
 \usage{
-convert_marker_dosages(dosage_matrix, outname, ploidy = 4, ploidy2 = NULL,
-  parent1 = "P1", parent2 = "P2", marker_conversion_info = FALSE,
-  log = NULL)
+convert_marker_dosages(dosage_matrix, outname, ploidy = 4,
+  ploidy2 = NULL, parent1 = "P1", parent2 = "P2",
+  marker_conversion_info = FALSE, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

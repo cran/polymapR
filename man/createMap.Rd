@@ -4,9 +4,10 @@
 \alias{createMap}
 \title{Marker ordering function}
 \usage{
-createMap(pwdDATA, parent_ID = "P1", chm_num, h_num, mapFun = c("haldane",
-  "kosambi"), jumpThresh = 5, max_rf = 0.4, min_LOD = 1, rippleFREQ = 1,
-  rippleRounds = 3, round3 = TRUE, printMAPS = FALSE, log = NULL)
+createMap(pwdDATA, parent_ID = "P1", chm_num, h_num,
+  mapFun = c("haldane", "kosambi"), jumpThresh = 5, max_rf = 0.4,
+  min_LOD = 1, rippleFREQ = 1, rippleRounds = 3, round3 = TRUE,
+  printMAPS = FALSE, log = NULL)
 }
 \arguments{
 \item{pwdDATA}{pwd \code{data.frame} giving pairwise r and LOD estimates.}

@@ -112,11 +112,15 @@ assign_linkage_group <- function(linkage_df,
                                  assign_homologue = T,
                                  log = NULL) {
   #linkage_df <- test_linkage_df(linkage_df)
-  LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
+  LG_hom_stack <- test_LG_hom_stack(LG_hom_stack) #polymapR:::test_LG_hom_stack(LG_hom_stack)
   # filter for LOD threshold and phase:
   
   if(length(levels(factor(LG_hom_stack$homologue))) > ploidy){
     stop("The number of homologues per chromosome should not exceed ploidy.")
+  }
+  
+  if(length(unique(LG_hom_stack$LG)) != LG_number){
+    stop(paste("Only",length(unique(LG_hom_stack$LG)),"linkage groups were identified in LG_hom_stack. Please revise LG_number accordingly."))
   }
   
   linkage_df <-
@@ -162,8 +166,14 @@ assign_linkage_group <- function(linkage_df,
            })
   
   # get counts per chromosome (LG)
-  counts_chm <- t(matrix(sapply(count_tables, rowSums),nrow = LG_number,
-                         dimnames = list(paste0("LG", 1:LG_number),names(count_tables))))
+  if(LG_number > 1){
+   chm.counts <- sapply(count_tables, rowSums)
+  } else{
+   chm.counts <- matrix(sapply(count_tables, rowSums),nrow = 1, dimnames = list(1,names(count_tables)))
+  }
+  
+  counts_chm <- t(matrix(chm.counts,nrow = nrow(chm.counts),
+                         dimnames = list(paste0("LG", rownames(chm.counts)),names(count_tables))))
   
   unlinked_markers <- rownames(counts_chm)[rowSums(counts_chm) == 0]
   
@@ -194,12 +204,18 @@ assign_linkage_group <- function(linkage_df,
   }
   
   # linkage group with most counts (shouldn't we get rid of markers that link to >1 LG?)
-  Assigned_LG <- apply(counts_chm, 1, which.max)
+  Assigned_LG <- as.numeric(rownames(chm.counts))[apply(counts_chm, 1, which.max)]
   
   # get homolog count data for the selected linkage group
   counts_hom <- t(sapply(count_tables, function(x) {
     x[which.max(rowSums(x)),]
   }))
+  
+  if(ncol(counts_hom) != ploidy){
+    counts_hom <- cbind(counts_hom,matrix(0,ncol = ploidy - ncol(counts_hom),
+                                          nrow = nrow(counts_hom)))
+  }
+  
   colnames(counts_hom) <- paste0("Hom", 1:ploidy)
   
   if (assign_homologue) {
@@ -1594,6 +1610,8 @@ check_marker_assignment <- function(marker_assignment.P1,
                       marker_assignment.P2[match(biparentals,rownames(marker_assignment.P2)),"Assigned_LG"])
   
   if(length(mismatch) > 0){
+    if(verbose) message(paste("Inconsistent assignment detected for",length(mismatch),"markers. These will be removed.."))
+    
     mismatch.df <- data.frame("marker" = biparentals[mismatch],
                               "P1" = marker_assignment.P1[match(biparentals[mismatch],rownames(marker_assignment.P1)),"Assigned_LG"],
                               "P2" = marker_assignment.P2[match(biparentals[mismatch],rownames(marker_assignment.P2)),"Assigned_LG"])
@@ -2254,6 +2272,7 @@ consensus_LG_names <- function(modify_LG,
     intersect(rownames(template_SxS), rownames(modify_SxS))
   LG_P1 <- template_SxS[common_markers, "Assigned_LG"]
   LG_P2 <- modify_SxS[common_markers, "Assigned_LG"]
+  
   cons_table <- table(LG_P1, LG_P2)
   
   eq.chms <- TRUE
@@ -2290,6 +2309,43 @@ consensus_LG_names <- function(modify_LG,
   # get the clusters that have most assignments in P1
   changed_LGs <- apply(cons_table, 2, which.max)
   
+  # Make sure there are no conflicts here - if there are, resolve these also:
+  counter <- 1
+  
+  while(any(duplicated(changed_LGs)) & counter < 10){
+    if(counter == 1)
+      warning(paste0("Cannot simply rename LG ",
+                   paste0(changed_LGs[duplicated(changed_LGs)],collapse = ", "),
+                   ". Attempting a resolution...."))
+    
+    for(i in which(duplicated(changed_LGs))){
+      
+      #First determine which is the duplicate (if there are multiple, we are in trouble!)
+      max.counts <- apply(cons_table[,which(changed_LGs == changed_LGs[i])],2,max)
+      
+      ## Duplicated is the one with the least counts. If there is a tie we are in trouble...
+      if(length(max.counts) != length(unique(max.counts)))
+        warning(paste("Cannot decide a duplicate concerning LG",changed_LGs[i]))
+      
+      i <- names(which.min(max.counts)) #this allows to change to a different duplicate within the loop. Possibly buggy..
+      
+      x <- sort(cons_table[,i],decreasing = T) > 0
+      
+      for(nam in as.numeric(names(x[x])[2:length(x[x])])){
+        if(!nam %in% changed_LGs){
+          changed_LGs[i] <- nam
+          break()
+        }
+      }
+      
+      }
+    counter <- counter + 1
+  }
+  
+  if(counter == 10) stop("Unable to resolve re-numbering puzzle. SxN cluster analysis may need to be revisited!")
+  rm(counter)
+  
+  modify_LG$LG <- as.factor(modify_LG$LG)
   levels(modify_LG$LG) <- as.numeric(changed_LGs)
   
   # level ordering
@@ -3780,7 +3836,8 @@ createTetraOriginInput <- function(maplist,
 #' create_phased_maplist(integrated.maplist,
 #'                      dosage_matrix.conv = screened_data3,
 #'                      marker_assignment.1=marker_assignments_P1,
-#'                      marker_assignment.2=marker_assignments_P2)
+#'                      marker_assignment.2=marker_assignments_P2,
+#'                      ploidy = 4)
 #' @export
 create_phased_maplist <- function(maplist,
                                   dosage_matrix.conv,
@@ -3788,7 +3845,7 @@ create_phased_maplist <- function(maplist,
                                   remove_markers = NULL,
                                   N_linkages = 2,
                                   lower_bound = 0.05,
-                                  ploidy = 4,
+                                  ploidy,
                                   ploidy2 = NULL,
                                   marker_assignment.1,
                                   marker_assignment.2,
@@ -3826,11 +3883,23 @@ create_phased_maplist <- function(maplist,
   # Begin by separating the SxN and NxS linkages:
   SxN_assigned <- marker_assignment.1[marker_assignment.1[,parent1]==1 &
                                         marker_assignment.1[,parent2]==0,]
-  p1_assigned <- marker_assignment.1[-match(rownames(SxN_assigned),rownames(marker_assignment.1)),]
-  
+  if(nrow(SxN_assigned) > 0){
+    p1_assigned <- marker_assignment.1[-match(rownames(SxN_assigned),rownames(marker_assignment.1)),]
+    noSN <- FALSE
+  } else{
+    p1_assigned <- marker_assignment.1
+    noSN <- TRUE
+  }
+
   NxS_assigned <- marker_assignment.2[marker_assignment.2[,parent1]==0 &
                                         marker_assignment.2[,parent2]==1,]
-  p2_assigned <- marker_assignment.2[-match(rownames(NxS_assigned),rownames(marker_assignment.2)),]
+  if(nrow(NxS_assigned) > 0){
+    p2_assigned <- marker_assignment.2[-match(rownames(NxS_assigned),rownames(marker_assignment.2)),]
+    noNS <- FALSE
+  } else{
+    p2_assigned <- marker_assignment.2
+    noNS <- TRUE
+  }
   
   #Use only the markers with at least N_linkages significant linkages
   P1unlinked <- rownames(p1_assigned)[apply(p1_assigned[,3+grep("LG",colnames(p1_assigned)[4:ncol(p1_assigned)]),drop = FALSE],1,max)<N_linkages]
@@ -3909,8 +3978,8 @@ create_phased_maplist <- function(maplist,
   rownames(P2rates) <- rownames(p2_assigned)
   
   # return simplex x nulliplex markers
-  p1_assigned <- rbind(SxN_assigned,p1_assigned)
-  p2_assigned <- rbind(NxS_assigned,p2_assigned)
+  if(!noSN) p1_assigned <- rbind(SxN_assigned,p1_assigned)
+  if(!noNS) p2_assigned <- rbind(NxS_assigned,p2_assigned)
   
   P1rates <- rbind(SxN_assigned[,p1cols],P1rates)
   P2rates <- rbind(NxS_assigned[,p2cols],P2rates)
@@ -4071,8 +4140,6 @@ define_LG_structure <- function(cluster_list,
                                 LOD_hom,
                                 LG_number,
                                 log = NULL){
-  if(length(levels(cluster_list[[as.character(LOD_chm)]]$cluster)) != LG_number)
-    stop(paste("define_LG_structure: Incorrect number of linkage groups identified at LOD",LOD_chm))
   
   if (is.null(log)) {
     log.conn <- stdout()
@@ -4082,12 +4149,25 @@ define_LG_structure <- function(cluster_list,
     log.conn <- file(log, "a")
   }
   
-  LGhom.df <- merge(cluster_list[[as.character(LOD_chm)]],
-                    cluster_list[[as.character(LOD_hom)]],
-                    by = "marker")
-  colnames(LGhom.df) <- c("SxN_Marker","LG","homologue")
-  LGhom.df$homologue <-  as.numeric(LGhom.df$homologue)
+  
+  if(LG_number == 1){
+    warning(paste("Since only 1 LG expected, all markers at LOD",LOD_hom,"will by default be included in chromosomal cluster!"))
+    LGhom.df <- data.frame("SxN_Marker" = cluster_list[[as.character(LOD_hom)]]$marker,
+                           "LG" = 1,
+                           "homologue" = cluster_list[[as.character(LOD_hom)]]$cluster)
+  } else if(length(levels(cluster_list[[as.character(LOD_chm)]]$cluster)) != LG_number){
+    stop(paste("define_LG_structure: Incorrect number of linkage groups identified at LOD",LOD_chm))
+  } else{
+    
+    LGhom.df <- merge(cluster_list[[as.character(LOD_chm)]],
+                      cluster_list[[as.character(LOD_hom)]],
+                      by = "marker")
+    colnames(LGhom.df) <- c("SxN_Marker","LG","homologue")
+  }
+
   LGhom.df$LG <-  as.numeric(LGhom.df$LG)
+  LGhom.df$homologue <-  as.numeric(LGhom.df$homologue)
+  
   LGhom.df <- LGhom.df[order(LGhom.df$LG,LGhom.df$homologue),]
   
   unlinked_markers <- setdiff(cluster_list[[as.character(LOD_chm)]]$marker, LGhom.df$SxN_Marker)
@@ -4165,6 +4245,9 @@ finish_linkage_analysis <- function(marker_assignment,
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
   pairing <- match.arg(pairing)
   
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
   #initialise:
   ploidy.F1 <- ploidy
   sn.ignore <- "_0.1_"
@@ -4215,13 +4298,13 @@ finish_linkage_analysis <- function(marker_assignment,
   r_LOD_lists <- c()
   lgs <- unique(marker_assignment[, "Assigned_LG"])
   lgs <- lgs[order(lgs)]
+  
   if (!is.null(log))
     pb <- txtProgressBar(0, nrow(marker_combinations), style = 3)
   for (i in seq(nrow(marker_combinations))) {
     mtype1 <- marker_combinations[i, 1:2]
-    if (marker_combinations[i, 1] == marker_combinations[i,
-                                                         3] & marker_combinations[i, 2] == marker_combinations[i,
-                                                                                                               4]) {
+    if (marker_combinations[i, 1] == marker_combinations[i,3] & 
+        marker_combinations[i, 2] == marker_combinations[i,4]) {
       mtype2 <- NULL
       mtype2_name <- marker_combinations[i, 3:4]
     } else {
@@ -4243,21 +4326,19 @@ finish_linkage_analysis <- function(marker_assignment,
       if(is.null(log) & verbose){
         write(paste0("Running LG", lg, "..."), log.conn)
       }
-      markers <- rownames(marker_assignment)[marker_assignment[,
-                                                               "Assigned_LG"] == lg]
-      r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,
-                                                              ],
+      markers <- rownames(marker_assignment)[marker_assignment[,"Assigned_LG"] == lg]
+      r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,],
                                                 markertype1 = mtype1,
                                                 markertype2 = mtype2,
-                                                target_parent = target_parent,#.new,
-                                                other_parent = other_parent,#.new,
+                                                target_parent = target_parent,
+                                                other_parent = other_parent,
                                                 convert_palindrome_markers = convert_palindrome_markers,
-                                                LOD_threshold = 0,
                                                 ploidy = ploidy,
                                                 ploidy2 = ploidy2,
                                                 pairing = pairing,
                                                 prefPars = prefPars,
-                                                verbose = F)
+                                                verbose = F,
+                                                ...)
     }
     r_LOD_list_name <- paste0("r_LOD_list_", paste(mtype1,
                                                    collapse = "."), "_", paste(mtype2_name, collapse = "."))
@@ -4266,21 +4347,22 @@ finish_linkage_analysis <- function(marker_assignment,
     if (!is.null(log))
       setTxtProgressBar(pb, i)
   }
-  for (i in seq(LG_number)) {
+  
+  for (i in lgs) { #seq(LG_number)
     combined_mat <- data.frame(marker_a = character(), marker_b = character(),
                                r = numeric(), LOD = numeric(), phase = character())
     for (list in r_LOD_lists) {
       assign("l", get(list))
       iname <- paste0("LG", i)
       lgnames <- names(l)
-      if (iname %in% lgnames)
+      if (iname %in% lgnames) #no longer needed (deprecated)
         combined_mat <- rbind(combined_mat, l[[iname]])
     }
     assign(paste0("LG", i), get("combined_mat"))
   }
   if (!is.null(log))
     close(log.conn)
-  return(mget(paste0("LG", seq(LG_number))))
+  return(mget(paste0("LG", lgs))) #seq(LG_number)
 }
 
 #' Visualize and get all markertype combinations for which there are functions in polymapR
@@ -4357,7 +4439,7 @@ get_markertype_combinations <- function(ploidy,
 #' Assigned_markers<-homologue_lg_assignment(screened_data3,
 #'                          assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
 #'                          assigned_markertypes = list(c(1,1), c(2,0)),
-#'                          LG_hom_stack = LGHomDf_P1_1,
+#'                          LG_hom_stack = LGHomDf_P1_1,ploidy=4,
 #'                          write_intermediate_files=FALSE)
 #'                          }
 #' @export
@@ -4369,7 +4451,7 @@ homologue_lg_assignment <- function(dosage_matrix,
                                     target_parent = "P1",
                                     other_parent = "P2",
                                     convert_palindrome_markers = TRUE,
-                                    ploidy = 4,
+                                    ploidy,
                                     ploidy2 = NULL,
                                     pairing = "random",
                                     LG_number = 5,
@@ -4379,15 +4461,15 @@ homologue_lg_assignment <- function(dosage_matrix,
                                     ...) {
   LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
   assigned_markers <- lapply(assigned_list, rownames)
   assigned_markers <- do.call("c", assigned_markers)
   filt_dosdat <-
     dosage_matrix[!rownames(dosage_matrix) %in% assigned_markers,]
-  
-  
-  #linkage_functions <-
-  #  names(rf_list[[paste0("p", ploidy)]][[pairing]])
-  
+
   if(pairing == "random") {
     pairing_abbr <- "r"
   } else if(pairing == "preferential"){
@@ -4438,7 +4520,6 @@ homologue_lg_assignment <- function(dosage_matrix,
     write.logheader(matc, log)
     log.conn <- file(log, "a")
   }
-  
   
   #add a progress bar
   
@@ -4493,11 +4574,6 @@ homologue_lg_assignment <- function(dosage_matrix,
                   sep = "\t")
     }
     
-    # Assign markers to all homologues (= no homologue assignment) if target parent is 0.5*ploidy
-    # assign_homologue <- ifelse(mtype2[1] != 0.5 * target.ploidy, TRUE, FALSE) #We don't use this currently (Why?)
-    
-    #if(!is.null(linkage_df)){
-    
     assignedData <- assign_linkage_group(
       linkage_df = linkage_df,
       LG_hom_stack = LG_hom_stack,
@@ -4528,16 +4604,18 @@ homologue_lg_assignment <- function(dosage_matrix,
   }
   
   if(!is.null(log)) sink(log.conn, append = TRUE)
+
   marker_assignments <-
     merge_marker_assignments(
       dosage_matrix = dosage_matrix,
-      target_parent = target_parent,#.new,
-      other_parent = other_parent,#.new,
+      target_parent = target_parent,
+      other_parent = other_parent,
       LG_hom_stack = LG_hom_stack,
       SN_linked_markers = assigned_list,
       ploidy = target.ploidy,
       LG_number = LG_number
     )
+  
   if(!is.null(log)) sink()
   
   if (!is.null(log))
@@ -4618,6 +4696,9 @@ linkage <- function(dosage_matrix,
                     log = NULL) {
   time_start <- Sys.time()
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
   if(identical(markertype1, markertype2)) markertype2 <- NULL
   
   pairing <- match.arg(pairing)
@@ -4641,7 +4722,7 @@ linkage <- function(dosage_matrix,
   if(is.null(ploidy2)) ploidy2 <- ploidy
   prog_ploidy <- (ploidy + ploidy2)/2
   
-  if(!prog_ploidy %in% c(3,4,6)) stop(paste("F1 populations of ploidy",prog_ploidy,"are not currently catered for."))
+  if(!prog_ploidy %in% c(2,3,4,6)) stop(paste("F1 populations of ploidy",prog_ploidy,"are not currently catered for."))
   
   # Below does conversion from 3.1 to 1.3 in tetraploids
   # for hexaploids there are two of these cases: 5.1 and 4.2
@@ -5109,6 +5190,9 @@ marker_binning <-
            log = NULL) {
     linkage_df <- test_linkage_df(linkage_df)
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
+    if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+      stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+    
     if (is.null(log)) {
       log.conn <- stdout()
     } else {
@@ -5737,69 +5821,62 @@ merge_marker_assignments <- function(dosage_matrix,
                                      log = NULL) {
   LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
   markers_LG_hom_stack <- as.character(LG_hom_stack[, "SxN_Marker"])
   LG_hom_stack <- LG_hom_stack[, c("LG", "homologue")]
   rownames(LG_hom_stack) <- markers_LG_hom_stack
   colnames(LG_hom_stack) <- c("Assigned_LG", "Assigned_Homolog")
   comb <- as.matrix(do.call(rbind, SN_linked_markers))
-  
+
   #Add SxN markers
   SN_LG_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_LG"], function(x) {
     a <- rep(0, LG_number)
     a[x] <- 1
     return(a)
-  }),nrow = LG_number, dimnames = list(paste0("LG", 1:LG_number),markers_LG_hom_stack)
+  }),nrow = LG_number, dimnames = list(paste0("LG", levels(LG_hom_stack$Assigned_LG)),markers_LG_hom_stack)
   ))
-  # SN_LG_mat <- t(SN_LG_mat)
-  # rownames(SN_LG_mat) <- markers_LG_hom_stack
-  # colnames(SN_LG_mat) <- paste0("LG", 1:LG_number)
-  LG_mat <- rbind(SN_LG_mat, comb[, paste0("LG", 1:LG_number), drop = FALSE])
+  
+  LG_mat <- rbind(SN_LG_mat, comb[, paste0("LG", levels(LG_hom_stack$Assigned_LG)), drop = FALSE])
   LG_mat <-
-    cbind(c(LG_hom_stack[, "Assigned_LG"], comb[, "Assigned_LG"]), LG_mat)
+    cbind(c(as.numeric(as.character(LG_hom_stack[, "Assigned_LG"])), comb[, "Assigned_LG"]), LG_mat)
   rownames(LG_mat) <- c(markers_LG_hom_stack, rownames(comb))
   colnames(LG_mat)[1] <- "Assigned_LG"
-  
+
+
   SN_hom_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_Homolog"], function(x) {
     a <- rep(0, ploidy)
     a[x] <- 1
     return(a)
   }),nrow = ploidy, dimnames = list(paste0("Hom", 1:ploidy),markers_LG_hom_stack)
   ))
-  # SN_hom_mat <- t(SN_hom_mat)
-  # rownames(SN_hom_mat) <- markers_LG_hom_stack
-  # colnames(SN_hom_mat) <- paste0("Hom", 1:ploidy)
+
   counts_hom_mat <- rbind(SN_hom_mat, comb[, paste0("Hom", 1:ploidy)])
   
   assigned_hom_mat <- matrix(c(LG_hom_stack[, "Assigned_Homolog"],
                                rep(NA, (ploidy - 1) * nrow(LG_hom_stack))),
                              ncol = ploidy)
-  
-  # assigned_hom_mat <-
-  #   cbind(c(LG_hom_stack[, "Assigned_homolog"], comb[, "Assigned_hom"]), hom_mat)
-  # rownames(hom_mat) <- c(markers_hom_hom_stack, rownames(comb))
-  # colnames(hom_mat)[1] <- "Assigned_hom"
-  # rownames(hom_mat) <- markers_LG_hom_stack
-  
-  
-  # backbone_hom_matrix <-
-  #   matrix(c(LG_hom_stack[, "Assigned_Homolog"], rep(NA, (ploidy - 1) * nrow(LG_hom_stack))),
-  #          ncol = ploidy)
-  
-  
+
   ##incorporate number of linkages per homologue
   assigned_hom_mat <-
     rbind(assigned_hom_mat, comb[, paste0("Assigned_hom", 1:ploidy)])
+  
   Assigned_LG_hom <- cbind(LG_mat, counts_hom_mat, assigned_hom_mat)
-  #rownames(Assigned_LG_hom)<-rownames(Assigned_hom)
-  # parental_dosages <-
-  # dosage_matrix[rownames(Assigned_LG_hom), c(target_parent, other_parent)]
+  
+  matched_rows <- match(rownames(Assigned_LG_hom),rownames(dosage_matrix))
+  
+  if(any(is.na(matched_rows))){
+    stop("Could not find all assigned markers in dosage_matrix. Please check supplied dosage_matrix is correct.")
+  }
+  
   parental_dosages <-
-    dosage_matrix[match(rownames(Assigned_LG_hom),rownames(dosage_matrix)), c(target_parent, other_parent)]
+    dosage_matrix[matched_rows, c(target_parent, other_parent)]
   
   Assigned_LG_hom <-
     as.matrix(cbind(parental_dosages, Assigned_LG_hom))
   class(Assigned_LG_hom) <- "integer"
-  
+
   if (is.null(log)) {
     log.conn <- stdout()
   } else {
@@ -6465,6 +6542,8 @@ plot_linkage_df <- function(linkage_df,
 #' @param palette_in_mark,palette_beside_mark Color palette used to plot values. Only used if colnames of the values are specified.
 #' @param color_by_type Logical. Should the markers be coloured by type? If TRUE, dosage_matrix should be specified.
 #' @param dosage_matrix Optional (by default \code{NULL}). Dosage matrix of marker genotypes, input of \code{\link{linkage}}
+#' @param parent1 Character string specifying the first (usually maternal) parentname.
+#' @param parent2 Character string specifying the second (usually paternal) parentname.
 #' @param legend Logical. Should a legend be drawn?
 #' @param legend.x Optional. The x value of the coordinates of the legend.
 #' @param legend.y Optional. The y value of the coordinates of the legend.
@@ -6489,6 +6568,8 @@ plot_map <- function(maplist,
                      palette_beside_mark = colorRampPalette(c("white", "green")),
                      color_by_type = FALSE,
                      dosage_matrix = NULL,
+                     parent1 = "P1",
+                     parent2 = "P2",
                      legend = FALSE,
                      legend.x = 1,
                      legend.y = 120,
@@ -6502,8 +6583,8 @@ plot_map <- function(maplist,
   if(color_by_type){
     all_markers <- unlist(sapply(maplist, function(x) as.character(x[,1])))
     markpres <- all_markers %in% rownames(dosage_matrix)
-    types <- dosage_matrix[all_markers[markpres], c("P1", "P2")]
-    types <- paste(types[, "P1"], types[, "P2"], sep = "x")
+    types <- dosage_matrix[all_markers[markpres], c(parent1, parent2)]
+    types <- paste(types[, parent1], types[, parent2], sep = "x")
     if(sum(!markpres) > 0){
       types <- c(types, rep("nxn", sum(!markpres)))
       warning(paste0(all_markers[!markpres], " not in dosage_matrix so type could not be determined"))
@@ -7366,6 +7447,9 @@ test_prefpairing <- function(dosage_matrix,
   
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
   LG_hom_stack <- LG_hom_stack[order(LG_hom_stack[,2],LG_hom_stack[,3]),]
+  
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
   
   maplist.df <- do.call("rbind", lapply(seq(length(maplist)), function(LG) cbind(maplist[[LG]][,c("marker","position")],LG)))
   

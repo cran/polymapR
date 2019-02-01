@@ -4,8 +4,8 @@
 \alias{write_pwd_list}
 \title{Write pwd files from a nested list}
 \usage{
-write_pwd_list(linkages_list, target_parent, binned = FALSE, dir = getwd(),
-  log = NULL)
+write_pwd_list(linkages_list, target_parent, binned = FALSE,
+  dir = getwd(), log = NULL)
 }
 \arguments{
 \item{linkages_list}{A nested \code{list} with linkage group on the first level and homologue on the second.}

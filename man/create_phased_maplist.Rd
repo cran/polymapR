@@ -4,10 +4,11 @@
 \alias{create_phased_maplist}
 \title{Create a phased homologue map list using the original dosages}
 \usage{
-create_phased_maplist(maplist, dosage_matrix.conv, dosage_matrix.orig = NULL,
-  remove_markers = NULL, N_linkages = 2, lower_bound = 0.05, ploidy = 4,
-  ploidy2 = NULL, marker_assignment.1, marker_assignment.2, parent1 = "P1",
-  parent2 = "P2", original_coding = FALSE, log = NULL, verbose = TRUE)
+create_phased_maplist(maplist, dosage_matrix.conv,
+  dosage_matrix.orig = NULL, remove_markers = NULL, N_linkages = 2,
+  lower_bound = 0.05, ploidy, ploidy2 = NULL, marker_assignment.1,
+  marker_assignment.2, parent1 = "P1", parent2 = "P2",
+  original_coding = FALSE, log = NULL, verbose = TRUE)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}
@@ -51,5 +52,6 @@ data("integrated.maplist", "screened_data3", "marker_assignments_P1","marker_ass
 create_phased_maplist(integrated.maplist,
                      dosage_matrix.conv = screened_data3,
                      marker_assignment.1=marker_assignments_P1,
-                     marker_assignment.2=marker_assignments_P2)
+                     marker_assignment.2=marker_assignments_P2,
+                     ploidy = 4)
 }

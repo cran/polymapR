@@ -4,8 +4,8 @@
 \alias{screen_for_duplicate_individuals}
 \title{Screen for duplicate individuals}
 \usage{
-screen_for_duplicate_individuals(dosage_matrix, cutoff = NULL, plot_cor = T,
-  log = NULL)
+screen_for_duplicate_individuals(dosage_matrix, cutoff = NULL,
+  plot_cor = T, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

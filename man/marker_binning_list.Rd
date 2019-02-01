@@ -5,7 +5,8 @@
 \title{Bin markers that are in a nested list}
 \usage{
 marker_binning_list(dosage_matrix, linkage_list, r_thresh = NA,
-  lod_thresh = NA, return_removed_marker_info = FALSE, log = NULL, ...)
+  lod_thresh = NA, return_removed_marker_info = FALSE, log = NULL,
+  ...)
 }
 \arguments{
 \item{dosage_matrix}{A dosage \code{matrix}}

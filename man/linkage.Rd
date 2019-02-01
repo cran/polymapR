@@ -6,10 +6,10 @@
 \usage{
 linkage(dosage_matrix, markertype1 = c(1, 0), markertype2 = NULL,
   target_parent = "P1", other_parent = "P2", G2_test = FALSE,
-  convert_palindrome_markers = TRUE, LOD_threshold = 0, ploidy = c(4, 6),
-  ploidy2 = NULL, pairing = c("random", "preferential"), prefPars = c(0,
-  0), combinations_per_iter = NULL, verbose = TRUE, full_output = FALSE,
-  iter_RAM = 500, ncores = 1, log = NULL)
+  convert_palindrome_markers = TRUE, LOD_threshold = 0, ploidy = c(4,
+  6), ploidy2 = NULL, pairing = c("random", "preferential"),
+  prefPars = c(0, 0), combinations_per_iter = NULL, verbose = TRUE,
+  full_output = FALSE, iter_RAM = 500, ncores = 1, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
