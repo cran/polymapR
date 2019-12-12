@@ -30,12 +30,7 @@ A matrix similar to dosage_matrix, with rows or columns removed that had a highe
 \code{screen_for_NA_values} identifies and can remove rows or columns of a marker dataset based on the relative frequency of missing values.
 }
 \examples{
-data("segregating_data")
-data("screened_data")
+data("segregating_data","screened_data")
 screened_markers<-screen_for_NA_values(dosage_matrix=segregating_data, margin=1, cutoff=0.1)
 screened_indiv<-screen_for_NA_values(dosage_matrix=screened_data, margin=2, cutoff=0.1)
-\dontrun{
-#user input:
-#screen_for_NA_values(dosage_matrix=segregating_data, margin=1, cutoff=NULL)
-}
 }

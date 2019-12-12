@@ -12,7 +12,7 @@ MDSMap_from_list(linkage_list, write_to_file = FALSE,
 
 \item{write_to_file}{Should output be written to a file? By default \code{FALSE}, if \code{TRUE} then output,
 including plots from \code{MDSMap} are saved in the same directory as the one used for input files. These
-plots are currently saved as pnf images. If a different plot format is required (e.g. for publications),
+plots are currently saved as pdf images. If a different plot format is required (e.g. for publications),
 then run the \code{MDSMap} function \code{\link[MDSMap]{estimate.map}} (or similar) directly and save the output
 with a different plotting function as wrapper around the map function call.}
 

@@ -4,7 +4,9 @@
 \alias{check_map}
 \title{Check the quality of a linkage map using heatplots}
 \usage{
-check_map(linkage_list, maplist, mapfn = "haldane", lod.thresh = 5)
+check_map(linkage_list, maplist, mapfn = "haldane", lod.thresh = 5,
+  tidyplot = TRUE, detail = 1, sortmarkers = TRUE, plottype = c("",
+  "pdf", "png")[1], prefix = "")
 }
 \arguments{
 \item{linkage_list}{A named \code{list} with r and LOD of markers within linkage groups.}
@@ -14,6 +16,18 @@ check_map(linkage_list, maplist, mapfn = "haldane", lod.thresh = 5)
 \item{mapfn}{The map function used in generating the maps, either one of "haldane" or "kosambi". By default "haldane" is assumed.}
 
 \item{lod.thresh}{Numeric. Threshold for the LOD values to be displayed in heatmap, by default 5 (set at 0 to display all values)}
+
+\item{tidyplot}{If \code{TRUE}, an attempt is made to reduce the plot density, using the \code{hexbin} package. 
+This can have a considerable performance impact for high-density maps}
+
+\item{detail}{Level of detail for heatmaps, by default 1 cM. Values less than 0.5 cM can have serious performance implications.}
+
+\item{sortmarkers}{If \code{TRUE} (by default) the markers in the linkage_list are sorted: first the lower position, then the higher. 
+Results in an averaging (in plot B) over all markers at a gives pair of positions}
+
+\item{plottype}{Option to specify graphical device for plotting, (either png or pdf), or by default "", in which case plots are directly plotted within R}
+
+\item{prefix}{Optional prefix appended to plot names if outputting plots.}
 }
 \description{
 Perform a series of checks on a linkage map and visualise the results using heatplots. Also shows the discrepency between

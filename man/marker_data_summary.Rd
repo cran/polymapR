@@ -4,7 +4,7 @@
 \alias{marker_data_summary}
 \title{Summarize marker data}
 \usage{
-marker_data_summary(dosage_matrix, ploidy = 4, pairing = c("random",
+marker_data_summary(dosage_matrix, ploidy, pairing = c("random",
   "preferential"), parent1 = "P1", parent2 = "P2",
   progeny_incompat_cutoff = 0.1, verbose = TRUE, log = NULL)
 }
@@ -33,7 +33,7 @@ Returns a list containing the following components:
   frequency table of different markertypes. Names start with parentnames, and behind that the dosage score.
 }
 \item{offspring_incompatible}{
-  relative frequency of incompatible offspring with same layout as parental_info.
+  Rate of incompatible ("impossible") marker scores (given as percentages of the total number of observed marker scores per marker class)
 }
 \item{progeny_incompatible}{
   progeny names having incompatible dosage scores higher than threshold at progeny_incompat_cutoff.
@@ -44,5 +44,5 @@ Gives a frequency table of different markertypes, relative frequency per markert
 }
 \examples{
 data("ALL_dosages")
-summary_list<-marker_data_summary(dosage_matrix = ALL_dosages)
+summary_list<-marker_data_summary(dosage_matrix = ALL_dosages, ploidy = 4)
 }

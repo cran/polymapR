@@ -4,8 +4,8 @@
 \alias{phase_SN_diploid}
 \title{Phase 1.0 markers at the diploid level}
 \usage{
-phase_SN_diploid(linkage_df, cluster_list, LOD_chm = 3.5,
-  LG_number = 3, independence_LOD = FALSE, log = NULL)
+phase_SN_diploid(linkage_df, cluster_list, LOD_chm = 3.5, LG_number,
+  independence_LOD = FALSE, log = NULL)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}} calculating linkage between 1.0 markers.}
@@ -28,5 +28,5 @@ A data.frame with markers classified by homologue and linkage group.
 }
 \examples{
 data("SN_SN_P2_triploid","P2_homologues_triploid")
-cluster_list2<-phase_SN_diploid(SN_SN_P2_triploid,P2_homologues_triploid,LOD_chm=5)
+cluster_list2<-phase_SN_diploid(SN_SN_P2_triploid,P2_homologues_triploid,LOD_chm=5,LG_number = 3)
 }

@@ -4,7 +4,7 @@
 \alias{merge_homologues}
 \title{Merge homologues}
 \usage{
-merge_homologues(LG_hom_stack, ploidy, linkage_group, mergeList = NULL,
+merge_homologues(LG_hom_stack, ploidy, LG, mergeList = NULL,
   log = NULL)
 }
 \arguments{
@@ -12,7 +12,7 @@ merge_homologues(LG_hom_stack, ploidy, linkage_group, mergeList = NULL,
 
 \item{ploidy}{The ploidy level of the plant species.}
 
-\item{linkage_group}{The linkage group where the to be merged homologue fragments are in.}
+\item{LG}{The linkage group where the to be merged homologue fragments are in.}
 
 \item{mergeList}{A list of vectors of length 2, specifying the numbers of the homologue fragments to be merged. User input is asked if \code{NULL}.}
 
@@ -27,5 +27,5 @@ Based on additional information, homologue fragments, separated during clustered
 }
 \examples{
 data("LGHomDf_P2_1")
-merged<-merge_homologues(LGHomDf_P2_1, 4, 2, list(c(1,5)))
+merged<-merge_homologues(LGHomDf_P2_1,ploidy=4,LG=2,mergeList=list(c(1,5)))
 }

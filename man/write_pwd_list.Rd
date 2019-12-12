@@ -22,6 +22,7 @@ write_pwd_list(linkages_list, target_parent, binned = FALSE,
 A wrapper for \code{\link{write.pwd}}, which allows to write multiple pwd files with a directory structure according to the nested linkage list.
 }
 \examples{
+\dontrun{
 data("all_linkages_list_P1_split")
-write_pwd_list(all_linkages_list_P1_split, target_parent="P1", binned=FALSE)
+write_pwd_list(all_linkages_list_P1_split, target_parent="P1", binned=FALSE)}
 }

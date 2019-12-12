@@ -22,6 +22,9 @@ all_linkages_list_P1
 all_linkages_list_P1_split
 all_linkages_list_P1_subset
 integrated.maplist
+map1
+map2
+map3
 maplist_P1
 maplist_P1_subset
 maplist_P2_subset

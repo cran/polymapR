@@ -26,8 +26,7 @@ the output of \code{\link{define_LG_structure}} or \code{\link{bridgeHomologues}
 
 \item{adj.method}{Method to correct p values of Binomial test for multiple testing, by default the FDR correction is used, other options are available, inherited from \code{\link{p.adjust}}}
 
-\item{verbose}{Should messages be send to stdout?
-If \code{NULL} log is send to stdout.}
+\item{verbose}{Should messages be send to stdout? If \code{NULL} log is send to stdout.}
 }
 \description{
 Identify closely-mapped repulsion-phase simplex x nulliplex markers and test these

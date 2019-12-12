@@ -123,17 +123,17 @@ createChmHomList <- function(LG_hom_stack, LG_number=12){
 #' @description Make a plot with recombination frequency versus LOD score.
 #' @param linkage_df A linkage data.frame.
 #' @param LG_hom_stack A \code{data.frame} as a result of \code{\link{bridgeHomologues}}
-#' @param LG_number Chromosome (LG) number.
+#' @param LG Linkage group (LG) number.
 #' @param h1 Homologue to be compared.
 #' @param h2 Homologue to be compared against h1
 #' @param ymax Maximum limit of y-axis
 #' @noRd
 plot_SNlinks <- function(linkage_df,LG_hom_stack,
-                         LG_number, h1, h2, ymax=NULL){
+                         LG, h1, h2, ymax=NULL){
   
-  h1Markers <- LG_hom_stack[LG_hom_stack[,"LG"] == LG_number & LG_hom_stack[,"homologue"] == h1,"SxN_Marker"]
+  h1Markers <- LG_hom_stack[LG_hom_stack[,"LG"] == LG & LG_hom_stack[,"homologue"] == h1,"SxN_Marker"]
   # find markers in cluster to combine
-  h2Markers <- LG_hom_stack[LG_hom_stack[,"LG"] == LG_number & LG_hom_stack[,"homologue"] == h2,"SxN_Marker"]
+  h2Markers <- LG_hom_stack[LG_hom_stack[,"LG"] == LG & LG_hom_stack[,"homologue"] == h2,"SxN_Marker"]
   
   # find markers that are in both clusters 
   subdata1 <- linkage_df[linkage_df[,"marker_a"] %in% h1Markers & linkage_df[,"marker_b"] %in% h2Markers,]
@@ -145,7 +145,7 @@ plot_SNlinks <- function(linkage_df,LG_hom_stack,
   
   if(nrow(plotdata) > 0){
     plot(NULL,xlab="r",ylab="LOD",
-         xlim=c(0,0.5),ylim=c(0,ymax),main=paste0("LG",LG_number," h",h1," & h",h2))
+         xlim=c(0,0.5),ylim=c(0,ymax),main=paste0("LG",LG," h",h1," & h",h2))
     with(plotdata[plotdata$phase=="coupling",],
          points(r,LOD,pch=19,col="limegreen"))
     with(plotdata[plotdata$phase=="repulsion",],
@@ -202,18 +202,18 @@ calc_binning_thresholds <- function(dosage_matrix){
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
 #' @noRd
 test_dosage_matrix <- function(dosage_matrix){
-  if(class(dosage_matrix) == "data.frame"){
+  if(inherits(dosage_matrix,"data.frame")){
     warning("dosage_matrix should be a matrix, now it's a data.frame.")
     message("Trying to convert it to matrix, assuming markernames are in the first column..")
     rownames(dosage_matrix) <- dosage_matrix[,1]
     dosage_matrix <- as.matrix(dosage_matrix[,-1])
     class(dosage_matrix) <- "integer"
-  } else if(class(dosage_matrix) == "matrix"){
+  } else if(inherits(dosage_matrix,"matrix")){
     rn <- rownames(dosage_matrix)
     cn <- colnames(dosage_matrix)
     if(is.null(rn)) stop("The rownames of dosage_matrix should contain markernames. Now NULL")
     if(is.null(cn)) stop("The columnnames of dosage_matrix should contain genotype names. Now NULL")
-    if(!(typeof(dosage_matrix)=="integer" | typeof(dosage_matrix)=="double")){
+    if(!(typeof(dosage_matrix) =="integer" | typeof(dosage_matrix) =="double")){
       warning("dosage_matrix should be integer or numeric. Trying to convert it.. ")
       class(dosage_matrix) <- "integer"
     }

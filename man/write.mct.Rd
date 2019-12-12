@@ -28,6 +28,7 @@ MapChart output as well.}
 Write a .mct file of a maplist for external plotting with MapChart software (Voorrips ).
 }
 \examples{
+\dontrun{
 data("integrated.maplist")
-write.mct(integrated.maplist)
+write.mct(integrated.maplist)}
 }

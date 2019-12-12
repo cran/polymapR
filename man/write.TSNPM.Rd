@@ -25,6 +25,7 @@ write.TSNPM(phased.maplist, outputdir = "TetraploidSNPMap_QTLfiles",
 Output the phased linkage map files into format readable by TetraploidSNPMap (Hackett et al. 2017) to perform QTL analysis.
 }
 \examples{
+\dontrun{
 data("phased.maplist")
-write.TSNPM(phased.maplist,ploidy=4)
+write.TSNPM(phased.maplist,ploidy=4)}
 }

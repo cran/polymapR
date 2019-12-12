@@ -4,7 +4,7 @@
 \alias{plot_phased_maplist}
 \title{Visualise the phased homologue maplist}
 \usage{
-plot_phased_maplist(phased.maplist, ploidy = 4, ploidy2 = NULL,
+plot_phased_maplist(phased.maplist, ploidy, ploidy2 = NULL,
   cols = c("black", "darkred", "navyblue"), width = 0.2,
   mapTitles = NULL)
 }
@@ -27,5 +27,5 @@ plot_phased_maplist(phased.maplist, ploidy = 4, ploidy2 = NULL,
 }
 \examples{
 data("phased.maplist")
-plot_phased_maplist(phased.maplist)
+plot_phased_maplist(phased.maplist, ploidy = 4)
 }

@@ -6,7 +6,7 @@
 \usage{
 finish_linkage_analysis(marker_assignment, dosage_matrix,
   marker_combinations = NULL, target_parent = "P1",
-  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy = 4,
+  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy,
   ploidy2 = NULL, pairing = c("random", "preferential"),
   prefPars = c(0, 0), LG_number, verbose = TRUE, log = NULL, ...)
 }
@@ -26,9 +26,9 @@ E.g. if using 1.0_2.0 and 1.0_3.0 types use: \code{matrix(c(1,0,2,0,1,0,3,0), by
 
 \item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?}
 
-\item{ploidy}{Ploidy level of parent 1.}
+\item{ploidy}{Ploidy level of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
 
-\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, the ploidy of parent 2.}
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
 
 \item{pairing}{Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}.}
 

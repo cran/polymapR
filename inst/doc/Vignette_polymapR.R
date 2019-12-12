@@ -73,7 +73,7 @@ pq_before_convert <- parental_quantities(dosage_matrix = ALL_dosages,
                                          las = 2)
 
 ## ---- fig.width = 7, fig.height = 5--------------------------------------
-segregating_data <- convert_marker_dosages(dosage_matrix = ALL_dosages)
+segregating_data <- convert_marker_dosages(dosage_matrix = ALL_dosages, ploidy = 4)
 pq_after_convert <- parental_quantities(dosage_matrix = segregating_data)
 
 
@@ -235,14 +235,14 @@ table(LGHomDf_P2$LG,LGHomDf_P2$homologue)
 ## ---- fig.width = 7, fig.height = 6--------------------------------------
 overviewSNlinks(linkage_df = SN_SN_P2,
                 LG_hom_stack = LGHomDf_P2,
-                LG_number = 2,
+                LG = 2,
                 LOD_threshold = 2)
 
 
 ## ------------------------------------------------------------------------
 LGHomDf_P2_1 <- merge_homologues(LG_hom_stack = LGHomDf_P2,
                                  ploidy = 4,
-                                 linkage_group = 2,
+                                 LG = 2,
                                  mergeList = list(c(4,5)))
 
 
@@ -545,10 +545,13 @@ plot_phased_maplist(phased.maplist = phased.maplist[1], #Can plot full list also
                     cols = c("black","grey50","grey50"))
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  check_map(linkage_list = list(linkages$LG1), maplist = list(integrated.maplist$LG1))
+#  check_map(linkage_list = list(LG1 = linkages$LG1), maplist = list(LG1 = integrated.maplist$LG1))
 
 ## ---- out.width = "600px", echo = FALSE----------------------------------
-knitr::include_graphics("figures/map_diagnostics.png")
+knitr::include_graphics("figures/LG1_check_map_plotA.png")
+
+## ---- out.width = "650px", echo = FALSE----------------------------------
+knitr::include_graphics("figures/LG1_check_map_plotB.png")
 
 ## ----eval = FALSE--------------------------------------------------------
 #  P1.prefPairing <- test_prefpairing(dosage_matrix = ALL_dosages,
@@ -567,10 +570,8 @@ knitr::include_graphics("figures/map_diagnostics.png")
 #  lg1_markers <- unique(c(rownames(marker_assignments_P1[marker_assignments_P1[,"Assigned_LG"] == 1,]),
 #                          rownames(marker_assignments_P2[marker_assignments_P2[,"Assigned_LG"] == 1,])))
 #  
-#  filtered_data_lg1 <- filtered_data[rownames(filtered_data) %in% lg1_markers,]
-#  
-#  all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[rownames(marker_assignments$P1) %in% lg1_markers,],
-#                                                      dosage_matrix = filtered_data_lg1,
+#  all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[lg1_markers,],
+#                                                      dosage_matrix = filtered_data[lg1_markers,],
 #                                                      target_parent = "P1",
 #                                                      other_parent = "P2",
 #                                                      convert_palindrome_markers = FALSE,

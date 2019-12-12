@@ -37,6 +37,7 @@ is limited to a specific region, which is useful for later fine-mapping work.}
 map positions with marker dosages.
 }
 \examples{
+\dontrun{
 data("integrated.maplist","ALL_dosages")
-createTetraOriginInput(maplist=integrated.maplist,dosage_matrix=ALL_dosages,bin_size=10)
+createTetraOriginInput(maplist=integrated.maplist,dosage_matrix=ALL_dosages,bin_size=10)}
 }

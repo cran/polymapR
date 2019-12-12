@@ -24,5 +24,5 @@ This functions classifies them into homologue within the linkage group.
 }
 \examples{
 data("marker_assignments_P1", "all_linkages_list_P1")
-splitted_list<-split_linkage_info(all_linkages_list_P1, marker_assignments_P1, 4)
+splitted_list<-split_linkage_info(all_linkages_list_P1, marker_assignments_P1, ploidy = 4)
 }

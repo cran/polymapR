@@ -23,13 +23,9 @@ A matrix similar to dosage_matrix, with merged duplicate individuals.
 \code{screen_for_duplicate_individuals} identifies and merges duplicate individuals.
 }
 \examples{
-data("segregating_data")
-dupscreened<-screen_for_duplicate_individuals(dosage_matrix=segregating_data,
-                                               cutoff=0.9,
-                                               plot_cor=TRUE)
 \dontrun{
 #user input:
 data("segregating_data")
-screen_for_duplicate_individuals(dosage_matrix=segregating_data, plot_cor=TRUE)
+screen_for_duplicate_individuals(dosage_matrix=segregating_data,cutoff=0.9,plot_cor=TRUE)
 }
 }

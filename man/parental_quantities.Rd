@@ -25,8 +25,7 @@ A named vector containing the frequency of each markertype in the dataset.
 Plots and returns frequency information for each markertype.
 }
 \examples{
-data("ALL_dosages")
-data("screened_data")
+data("ALL_dosages","screened_data")
 parental_quantities(dosage_matrix=ALL_dosages)
 parental_quantities(dosage_matrix=screened_data)
 }

@@ -5,10 +5,10 @@
 \title{Cluster 1.0 markers}
 \usage{
 cluster_SN_markers(linkage_df, LOD_sequence = 7,
-  independence_LOD = FALSE, LG_number = 5, ploidy = 4,
-  parentname = "", plot_network = F, min_clust_size = 1,
-  plot_clust_size = TRUE, max_vertex_size = 5, min_vertex_size = 2,
-  phase_considered = "All", log = NULL)
+  independence_LOD = FALSE, LG_number, ploidy, parentname = "",
+  plot_network = F, min_clust_size = 1, plot_clust_size = TRUE,
+  max_vertex_size = 5, min_vertex_size = 2, phase_considered = "All",
+  log = NULL)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}} calculating linkage between 1.0 markers.}
@@ -45,5 +45,5 @@ A list with cluster data.frames.
 }
 \examples{
 data("SN_SN_P1")
-cluster_list<-cluster_SN_markers(SN_SN_P1, LOD_sequence=c(4:10), parentname="P1")
+cluster_list<-cluster_SN_markers(SN_SN_P1,LOD_sequence=c(4:10),parentname="P1",ploidy=4,LG_number=5)
 }

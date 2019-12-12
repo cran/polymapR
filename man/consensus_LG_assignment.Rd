@@ -4,8 +4,8 @@
 \alias{consensus_LG_assignment}
 \title{Consensus LG assignment}
 \usage{
-consensus_LG_assignment(P1_assigned, P2_assigned, LG_number = 5,
-  ploidy = 4, consensus_file = NULL, log = NULL)
+consensus_LG_assignment(P1_assigned, P2_assigned, LG_number, ploidy,
+  consensus_file = NULL, log = NULL)
 }
 \arguments{
 \item{P1_assigned}{A marker assignment file of the first parent. Should contain the number of linkages per LG per marker.}
@@ -34,5 +34,5 @@ Assign markers to an LG based on consensus between two parents.
 }
 \examples{
 data("P1_SxS_Assigned", "P2_SxS_Assigned_2")
-SxS_Assigned_list <- consensus_LG_assignment(P1_SxS_Assigned, P2_SxS_Assigned_2, LG_number=5)
+SxS_Assigned_list <- consensus_LG_assignment(P1_SxS_Assigned,P2_SxS_Assigned_2,5,4)
 }

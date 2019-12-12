@@ -11,7 +11,7 @@ bibliography: bibliography.bib
 csl: biomed-central.csl
 ---
   
-In this tutorial, we will go step by step through the basic steps of performing linkage analysis in polyploids using `polymapR`. Most of the theory behind the functions described here can be found in a recent *Bioinformatics* publication of Bourke et al. (2018) at https://doi.org/10.1093/bioinformatics/bty371. The example dataset is a simulated dataset of an hypothetical tetraploid outcrossing plant species with five chromosomes. Chromosomes have random pairing behaviour. The population consists of 207 individuals originating from an F1 cross between two non-inbred parents. Frequently occurring data imperfections like missing values, genotyping errors and duplicated individuals are taken into account. 
+In this tutorial, we will go step by step through the basic steps of performing linkage analysis in polyploids using `polymapR`. Most of the theory behind the functions described here can be found in the *Bioinformatics* publication of Bourke et al. (2018) at https://doi.org/10.1093/bioinformatics/bty371. The example dataset is a simulated dataset of an hypothetical tetraploid outcrossing plant species with five chromosomes. Chromosomes have random pairing behaviour. The population consists of 207 individuals originating from an F1 cross between two non-inbred parents. Frequently occurring data imperfections like missing values, genotyping errors and duplicated individuals are taken into account. 
 
 ##Table of Contents
 1. [A (very) short introduction to R and the `polymapR` package.](#sect1)
@@ -68,7 +68,7 @@ install.packages("polymapR")
 <a name="sect3"></a>
 
 ##3. Logging function calls and output
-Most exported function in `polymapR` have a `log` argument. The default setting is `NULL`. In that case, all messages are returned to the standard output, which means your R console if you are calling the functions interactively. However, if it is set to a file name (e.g. `log.Rmd` or `log.txt`) all function calls and output are written to that file. It automatically creates one if it does not exist yet. The log file is written in R markdown (http://rmarkdown.rstudio.com/). The advantage of markdown is that it is readable as plain text, but it can also easily be rendered into a nicely formatted html or pdf. In order to do so, give your logfile a .Rmd extension and use the `knitr` package to turn it into a pdf, docx or html. 
+Most exported functions in `polymapR` have a `log` argument. The default setting is `NULL`. In that case, all messages are returned to the standard output, which means your R console if you are calling the functions interactively. However, if it is set to a file name (e.g. `log.Rmd` or `log.txt`) all function calls and output are written to that file. It automatically creates one if it does not exist yet. The log file is written in R markdown (http://rmarkdown.rstudio.com/). The advantage of markdown is that it is readable as plain text, but it can also easily be rendered into a nicely formatted html or pdf. In order to do so, give your logfile a .Rmd extension and use the `knitr` package to turn it into a pdf, docx or html. 
 
 <a name="sect4"></a>
 
@@ -195,7 +195,7 @@ Note that some classes such as 2x2 cannot be converted into any other category, 
 To convert the marker data:
 
 ```{r, fig.width = 7, fig.height = 5}
-segregating_data <- convert_marker_dosages(dosage_matrix = ALL_dosages)
+segregating_data <- convert_marker_dosages(dosage_matrix = ALL_dosages, ploidy = 4)
 pq_after_convert <- parental_quantities(dosage_matrix = segregating_data)
 
 ```
@@ -392,7 +392,7 @@ This results in an ideal situation of 5 linkage groups each with exactly 4 homol
 table(LGHomDf_P1_1$LG, LGHomDf_P1_1$homologue)
 ```
 
-However, clustering of P2 is a bit less ideal. The following redoes everything for P2:
+However, clustering of P2 is a bit more difficult. The following redoes everything for P2:
 ```{r, eval=FALSE}
 SN_SN_P2 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
@@ -433,7 +433,7 @@ LGHomDf_P2 <- bridgeHomologues(cluster_stack = P2_homologues[["6"]],
 table(LGHomDf_P2$LG,LGHomDf_P2$homologue)
 ```
 
-Linkage group 2 possesses five "homologues" instead of four - it is therefore likely we have a number of fragmented homologues. However, we don't know which clusters are actual homologues, and which are fragments. We can try to determine this using two methods. 
+Linkage group 1 only possesses three "homologues" instead of four. This can result in a loss of phase information in later steps, but will not prevent us from proceeding with the mapping. However, it is also possible that more than 4 homologues are grouped together, likely the result of having a number of fragmented homologues. However, as we don't know which clusters are actual homologues, and which are fragments, we must examine the affected linkage group in more detail. `polymapR` currently offers two methods for this. 
 
 ###8.1 Using the function `overviewSNlinks`
 
@@ -441,16 +441,16 @@ Run `overviewSNlinks` as follows:
 ```{r, fig.width = 7, fig.height = 6}
 overviewSNlinks(linkage_df = SN_SN_P2,
                 LG_hom_stack = LGHomDf_P2,
-                LG_number = 2,
+                LG = 2,
                 LOD_threshold = 2)
 
 ```
 
-Apparently, homologue 4 and 5 have markers in coupling, whereas all other homologue combinations have only markers in repulsion. We therefore merge homologue 4 and 5 (this is specified in the argument `mergeList` - use `?merge_homologues` for more information):
+In cases of fragmented homologues, it may be possible to identify which fragments belong together by examining the phase of intra-cluster marker pairs, so we are looking for coupling (green) linkage between fragments. This can be then be used to merge these homologues (specified in the argument `mergeList` - use `?merge_homologues` for more information). For example, if we wanted to merge homologues 4 and 5 of linkage group 2 we would use the following:
 ```{r}
 LGHomDf_P2_1 <- merge_homologues(LG_hom_stack = LGHomDf_P2,
                                  ploidy = 4,
-                                 linkage_group = 2,
+                                 LG = 2,
                                  mergeList = list(c(4,5)))
 
 ```
@@ -469,7 +469,7 @@ cluster_per_LG(LG = 2,
 
 ```
 
-The network layout is based on the first LOD score you provide in `LOD_sequence` (which is LOD = 3 in this example). The darker the background, the more consistent the clustering is over the range of LOD scores. Change the `LOD_sequence` if the network is not as required (4 clusters in the case of a tetraploid) and re-run. If the network looks as you would like to, use the `cluster_per_LG` function but with a `LOD_sequence` of length 1 (the first LOD score, so again LOD = 3 in this example), and specify `modify_LG_hom_stack = TRUE` to make a modification to the cluster numbering:
+The network layout is based on the first LOD score you provide in `LOD_sequence` (which is LOD = 3 in this example). The darker the background, the more consistent the clustering is over the range of LOD scores. Change the `LOD_sequence` if the network is not as required (4 clusters in the case of a tetraploid) and re-run. If the network looks as you would like to, use the `cluster_per_LG` function but with a `LOD_sequence` of length 1 (the first LOD score, so again LOD = 3 in this example), and specify `modify_LG_hom_stack = TRUE` to make a modification to the cluster numbering (the output is then returned and can be saved as a new LG_hom_stack object):
 ```{r}
 LGHomDf_P2_1 <- cluster_per_LG(LG = 2, 
                                linkage_df = SN_SN_P2[SN_SN_P2$phase == "coupling",], 
@@ -753,7 +753,7 @@ write_pwd_list(linkages_list = all_linkages_list_P2$linkage_list,
 <a name="sect14"></a>
 
 ##14. Marker ordering
-The basis of producing linkage maps has now been achieved, that is the pairwise recombination frequencies have been estimated and LOD scores for these estimates have been calculated for all markers. There are two options in the `polymapR` package for marker ordering: weighted linear regression (based on the JoinMap algorithm) or multi-dimensional scaling. The first is a reliable and widely used algorithm, but is extremely slow for higher marker numbers. The latter option has recently been developed by Katherine Preedy and Christine Hackett [@Hackett2016] and offers similar levels of accuracy as the weighted linear regression but at much higher speed. 
+The basis of producing linkage maps has now been achieved, that is the pairwise recombination frequencies have been estimated and LOD scores for these estimates have been calculated for all markers. We rely on a package developed by Katherine Preedy and Christine Hackett [@Hackett2016] that offers similar levels of accuracy as the weighted linear regression method, but at much higher speed. 
 Our approach is to create genetic maps of the homologues as well as an integrated map across all hoologues and parents. As an example we use the multidimensional scaling approach, using the function `MDSMap_from_list`. This function applies the `estimate.map` function from the `MDSMap` package to a list of linkage dataframes. Below, we are using the default settings of `estimate.map`, however, they can be changed by supplying extra arguments. 
 ```{r, eval=FALSE}
 maplist_P1_LG1 <- MDSMap_from_list(all_linkages_list_P1_split$LG1, 
@@ -883,17 +883,22 @@ This function can also visualise phased hexaploid maps, or triploid maps (tetrap
 `MDSMap` produces output that can be examined each time a map is produced, namely the principal coordinate plots with the principal curve (on which the map is based) - highlighting possible outlying markers that do not associate well with the rest of the markers, and a plot of the nearest-neighbour fit (nnfit) for the markers along each linkge group, giving an indication of markers with high stress. Both of these can help the user to evaluate the quality of the map (for more details, we recommend reading the `MDSMap` publication [@Hackett2016]) and often results in a number of rounds of mapping, where problematic markers are identified and removed followed by subsequent remapping and re-evaluation. Once the maps have been produced it is also an idea to get a general overview of the map quality using the `check_map` function. Note that by default this function expects lists as input arguments, enabling diagnostics to be run over all maps. Here we run it for a single linkage group, LG1:
 
 ```{r, eval = FALSE}
-check_map(linkage_list = list(linkages$LG1), maplist = list(integrated.maplist$LG1))
+check_map(linkage_list = list(LG1 = linkages$LG1), maplist = list(LG1 = integrated.maplist$LG1))
 ```
 
 
 ```{r, out.width = "600px", echo = FALSE}
-knitr::include_graphics("figures/map_diagnostics.png")
+knitr::include_graphics("figures/LG1_check_map_plotA.png")
 ```
 
-For each map produced, there are 3 diagnostic plots. The first of these shows the differences between the pairwise estimates of recombination frequency and the effective estimate of recombination frequency based on the map itself (the multi-point estimate of the recombination frequency) . These differences are compared to the LOD score for each pairwise estimate. An overall estimate of the weighted root mean square error of these differences (weighted by the LOD scores) is printed on the plot. In general, we expect that if the difference between the expected and realised recombination frequency is high, the LOD should be low. If this is not the case, something went wrong in the final mapping step.
-The second plot shows the comparison between a marker's map position and the recombination frequency estimates to all other markers. In gerenal we expect that small recombination frequency estimates come from nearby markers and should therefore be concentrated around the diagonal, which are shown as light green regions. Areas of light green off the diagonal suggest a poor map order.
-The final plot is similar to the previous except that LOD values are shown in place of recombination frequencies. Again, we expect a concentration of higher LOD scores around the diagonal. By default, LOD scores less than 5 are not shown to make things clearer, but this value can be varied using the `lod.thresh` argument.
+```{r, out.width = "650px", echo = FALSE}
+knitr::include_graphics("figures/LG1_check_map_plotB.png")
+```
+
+
+For each map produced, there are 3 diagnostic plots. The first of these shows the differences between the pairwise estimates of recombination frequency and the effective estimate of recombination frequency based on the map itself (the multi-point estimate of the recombination frequency) . These differences are compared to the LOD score for each pairwise estimate. An overall estimate of the weighted root mean square error of these differences (weighted by the LOD scores) is printed on the console. In general, we expect that if the difference between the expected and realised recombination frequency is high, the LOD should be low. If this is not the case, something went wrong in the final mapping step.
+The second plot shows the comparison between a marker's map position and the recombination frequency estimates to all other markers. In gerenal we expect that small recombination frequency estimates come from nearby markers and should therefore be concentrated around the diagonal, which are shown as light green regions. Areas of light green off the diagonal suggest a sub-optimal map order.
+The third plot is similar to the previous except that LOD values are shown in place of recombination frequencies. Again, we expect a concentration of higher LOD scores around the diagonal. By default, LOD scores less than 5 are not shown to make things clearer, but this value can be varied using the `lod.thresh` argument.
 
 <a name="sect17"></a>
 
@@ -904,7 +909,7 @@ The `polymapR` package can currently accomodate preferential pairing in tetraplo
 
 First, a word of warning. There is a function to test for preferential pairing among pairs of closely-linked simplex x nulliplex markers in repulsion phase within `polymapR`. However, it is certainly also advised to use multi-point methods to test for preferential pairing (if possible). The only possible drawback is that multi-point methods (using all markers across a chromosome) generally assume uniform pairing behaviour across the length of a chromosome, which may not always occur [@Bourke2017]). A robust multi-point approach as described in [@Bourke2017] used identity-by-descent probabilities for the population, estimated using TetraOrigin [@Zheng2016], which estimates the most likely pairing behaviour per individual and can therefore reveal whether there are deviations from the assumption of random chromosomal pairing and recombination across the population.
 
-The function `test_prefpairing` examines closely-linked repulsion-phase simplex x nulliplex marker pairs only, and is therefore the results of this function may not be as *robust* as a multi-point whole-chromosome approach. Be that as it may, it is probably the simplest check we can preform post-mapping for the possibility of unusual pairing behaviour. The method used here is described also in Bourke et al.[@Bourke2017], which is a development on ideas originally described by Qu and Hancock[@Qu2001]. The idea is to look for signatures of preferential pairing in repulsion-phase pairs which map to the same locus. 
+The function `test_prefpairing` examines closely-linked repulsion-phase simplex x nulliplex marker pairs only, and is therefore the results of this function may not be as *robust* as a multi-point whole-chromosome approach. Be that as it may, it is probably the simplest check we can perform post-mapping for the possibility of unusual pairing behaviour. The method used here is described also in Bourke et al.[@Bourke2017], which is a development on ideas originally described by Qu and Hancock[@Qu2001]. The idea is to look for signatures of preferential pairing in repulsion-phase pairs which map to the same locus. 
 
 We first need to define a minimum distance by which to consider markers essentially at the same locus. This is somewhat arbitrary - in our study of tetraploid rose, we used pairs of duplicated individuals to determine an approximate error rate which, along with considerations of the size of the population and rate of missing values, led us to conclude that distances less than ~1 cM were close enough to be informative (and for which we could assume 0 recombinations). The smaller the distance we choose here the better, although by choosing a very small distance we are limiting the number of repulsion-pairs available. By default in `test_prefpairing` we use a value of 0.5 cM. This can be increased or decreased as required using the `min_cM` argument.
 
@@ -935,10 +940,8 @@ Finally, to re-run the linkage analysis with this estimate for parent 1 of linka
 lg1_markers <- unique(c(rownames(marker_assignments_P1[marker_assignments_P1[,"Assigned_LG"] == 1,]),
                         rownames(marker_assignments_P2[marker_assignments_P2[,"Assigned_LG"] == 1,])))
 
-filtered_data_lg1 <- filtered_data[rownames(filtered_data) %in% lg1_markers,]
-
-all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[rownames(marker_assignments$P1) %in% lg1_markers,],
-                                                    dosage_matrix = filtered_data_lg1,
+all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[lg1_markers,],
+                                                    dosage_matrix = filtered_data[lg1_markers,],
                                                     target_parent = "P1",
                                                     other_parent = "P2",
                                                     convert_palindrome_markers = FALSE,
@@ -953,7 +956,7 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
 <a name="sect18"></a>
 
 ##18. QTL analysis
-Currently it is not possible to conduct QTL analysis within `polymapR`, although extensions in this direction are planned (either within the package or as a separate package). However, for tetraploid populations the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 14.2](#sect14)).
+Currently it is not possible to conduct QTL analysis within `polymapR`, although extensions in this direction are planned (the package `polyqtlR` will soon be available through CRAN). However, for tetraploid populations the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 14.2](#sect14)).
 
 To generate these files, use the `write.TSNPM` function as follows:
 

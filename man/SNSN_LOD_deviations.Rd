@@ -30,5 +30,5 @@ marker clustering.
 }
 \examples{
 data("SN_SN_P1")
-SNSN_LOD_deviations(SN_SN_P1,4,198)
+SNSN_LOD_deviations(SN_SN_P1,ploidy = 4, N = 198)
 }

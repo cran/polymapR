@@ -6,7 +6,7 @@
 \usage{
 merge_marker_assignments(dosage_matrix, target_parent = "P1",
   other_parent = "P2", LG_hom_stack, SN_linked_markers, ploidy,
-  LG_number = 5, log = NULL)
+  LG_number, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{A dosage \code{matrix}.}

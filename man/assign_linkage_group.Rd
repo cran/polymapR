@@ -6,8 +6,8 @@
 \usage{
 assign_linkage_group(linkage_df, LG_hom_stack, SN_colname = "marker_a",
   unassigned_marker_name = "marker_b", phase_considered = "coupling",
-  LG_number = 12, LOD_threshold = 3, ploidy = 4,
-  assign_homologue = T, log = NULL)
+  LG_number, LOD_threshold = 3, ploidy, assign_homologue = T,
+  log = NULL)
 }
 \arguments{
 \item{linkage_df}{A linkage \code{data.frame} as output of \code{\link{linkage}}.}
@@ -43,5 +43,5 @@ The columns LG1 - LGn and Hom1 - Homn give the number of hits per marker for tha
 data("SN_DN_P1", "LGHomDf_P1_1")
 assigned_df<-assign_linkage_group(linkage_df = SN_DN_P1,
                      LG_hom_stack = LGHomDf_P1_1,
-                     LG_number = 5)
+                     LG_number = 5, ploidy = 4)
 }

@@ -21,5 +21,5 @@ A matrix with two columns. Each row represents a function with the first and sec
 Visualize and get all markertype combinations for which there are functions in polymapR
 }
 \examples{
-get_markertype_combinations(4, "random")
+get_markertype_combinations(ploidy = 4, pairing = "random")
 }

@@ -7,7 +7,7 @@
 \usage{
 bridgeHomologues(cluster_stack, cluster_stack2 = NULL, linkage_df,
   linkage_df2 = NULL, LOD_threshold = 5, automatic_clustering = TRUE,
-  LG_number = 5, parentname = "", min_links = 1, min_bridges = 1,
+  LG_number, parentname = "", min_links = 1, min_bridges = 1,
   only_coupling = FALSE, log = NULL)
 }
 \arguments{

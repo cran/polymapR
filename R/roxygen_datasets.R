@@ -126,4 +126,11 @@
 #' @rdname maplist_P1
 "maplist_P2_subset"
 
+#' A sample map
+"map1"
 
+#' A sample map
+"map2"
+
+#' A sample map
+"map3"

@@ -6,8 +6,8 @@
 \usage{
 linkage(dosage_matrix, markertype1 = c(1, 0), markertype2 = NULL,
   target_parent = "P1", other_parent = "P2", G2_test = FALSE,
-  convert_palindrome_markers = TRUE, LOD_threshold = 0, ploidy = c(4,
-  6), ploidy2 = NULL, pairing = c("random", "preferential"),
+  convert_palindrome_markers = TRUE, LOD_threshold = 0, ploidy,
+  ploidy2 = NULL, pairing = c("random", "preferential"),
   prefPars = c(0, 0), combinations_per_iter = NULL, verbose = TRUE,
   full_output = FALSE, iter_RAM = 500, ncores = 1, log = NULL)
 }
@@ -30,9 +30,9 @@ The first element specifies the dosage in \code{target_parent}, the second in \c
 
 \item{LOD_threshold}{Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.}
 
-\item{ploidy}{Integer. The ploidy of parent 1.}
+\item{ploidy}{Integer. The ploidy of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
 
-\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, the ploidy of parent 2.}
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
 
 \item{pairing}{Type of pairing. \code{"random"} or \code{"preferential"}.}
 

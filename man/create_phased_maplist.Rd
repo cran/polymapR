@@ -48,10 +48,11 @@ the \code{\link{convert_marker_dosages}} function). Required if \code{original_c
 integrated map positions and original marker dosages.
 }
 \examples{
+\dontrun{
 data("integrated.maplist", "screened_data3", "marker_assignments_P1","marker_assignments_P2")
 create_phased_maplist(integrated.maplist,
                      dosage_matrix.conv = screened_data3,
                      marker_assignment.1=marker_assignments_P1,
                      marker_assignment.2=marker_assignments_P2,
-                     ploidy = 4)
+                     ploidy = 4)}
 }

@@ -19,8 +19,9 @@ write.pwd(linkage_df, pwd_file, file_info, log = NULL)
 Output of this function allows to use JoinMap to perform the marker ordering step.
 }
 \examples{
+\dontrun{
 data("all_linkages_list_P1_split")
 write.pwd(all_linkages_list_P1_split[["LG3"]][["homologue1"]],
            "LG3_homologue1_P1.pwd",
-           "Please feed me to JoinMap")
+           "Please feed me to JoinMap")}
 }

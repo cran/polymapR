@@ -25,8 +25,9 @@ write_nested_list(nested_list, directory, save_as_object = FALSE,
 Write a nested list into a directory structure
 }
 \examples{
+\dontrun{
 data("all_linkages_list_P1_subset")
 write_nested_list(nested_list = all_linkages_list_P1_subset,
                   directory = "all_linkages_P1",
-                  sep="\\t")
+                  sep="\\t")}
 }
