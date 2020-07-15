@@ -4,14 +4,18 @@
 \alias{convert_marker_dosages}
 \title{Convert marker dosages to the basic types.}
 \usage{
-convert_marker_dosages(dosage_matrix, outname, ploidy, ploidy2 = NULL,
-  parent1 = "P1", parent2 = "P2", marker_conversion_info = FALSE,
-  log = NULL)
+convert_marker_dosages(
+  dosage_matrix,
+  ploidy,
+  ploidy2 = NULL,
+  parent1 = "P1",
+  parent2 = "P2",
+  marker_conversion_info = FALSE,
+  log = NULL
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
-
-\item{outname}{output filename (deprecated for now)}
 
 \item{ploidy}{ploidy level of the plant species. If parents have different ploidy level, ploidy of parent1.}
 
@@ -21,12 +25,14 @@ convert_marker_dosages(dosage_matrix, outname, ploidy, ploidy2 = NULL,
 
 \item{parent2}{Character string specifying the second (usually paternal) parentname.}
 
-\item{marker_conversion_info}{Logical. Should marker conversion information be returned?}
+\item{marker_conversion_info}{Logical, by default \code{FALSE}. Should marker conversion information be returned? This output can be useful for later map phasing step,
+if original marker coding is desired (which is most likely the case).}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
 }
 \value{
-A modified dosage matrix. If \code{marker_swap_info = TRUE}, this function returns a list.
+A modified dosage matrix. If \code{marker_conversion_info = TRUE}, this function returns a list, with both the converted dosage_matrix, and 
+information on the marker conversions performed per marker.
 }
 \description{
 Convert marker dosages to the basic types which hold the same information and for which linkage calculations can be performed.

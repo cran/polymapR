@@ -4,8 +4,14 @@
 \alias{assign_SN_SN}
 \title{Assign (leftover) 1.0 markers}
 \usage{
-assign_SN_SN(linkage_df, LG_hom_stack, LOD_threshold, ploidy, LG_number,
-  log = NULL)
+assign_SN_SN(
+  linkage_df,
+  LG_hom_stack,
+  LOD_threshold,
+  ploidy,
+  LG_number,
+  log = NULL
+)
 }
 \arguments{
 \item{linkage_df}{A \code{data.frame} as output of \code{\link{linkage}} with arguments markertype1=c(1,0) and markertype2=NULL.}

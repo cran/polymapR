@@ -5,10 +5,20 @@
 \alias{assembleDuplexLinks}
 \title{Use bridge markers to cluster homologues into linkage groups}
 \usage{
-bridgeHomologues(cluster_stack, cluster_stack2 = NULL, linkage_df,
-  linkage_df2 = NULL, LOD_threshold = 5, automatic_clustering = TRUE,
-  LG_number, parentname = "", min_links = 1, min_bridges = 1,
-  only_coupling = FALSE, log = NULL)
+bridgeHomologues(
+  cluster_stack,
+  cluster_stack2 = NULL,
+  linkage_df,
+  linkage_df2 = NULL,
+  LOD_threshold = 5,
+  automatic_clustering = TRUE,
+  LG_number,
+  parentname = "",
+  min_links = 1,
+  min_bridges = 1,
+  only_coupling = FALSE,
+  log = NULL
+)
 }
 \arguments{
 \item{cluster_stack}{A \code{data.frame} with a column \code{"marker"} specifying markernames,

@@ -10,13 +10,27 @@
 \alias{SN_DN_P2}
 \alias{SN_SN_P2_triploid}
 \title{A linkage \code{data.frame}.}
-\format{\itemize{
+\format{
+\itemize{
   \item marker_a. First marker in comparison
   \item marker_b. Second marker in comparison
   \item r. recombination frequency
   \item LOD. LOD score
   \item phase. The phase between markers
-}}
+}
+
+An object of class \code{linkage_df} (inherits from \code{data.frame}) with 19306 rows and 5 columns.
+
+An object of class \code{linkage_df} (inherits from \code{data.frame}) with 53152 rows and 5 columns.
+
+An object of class \code{linkage_df} (inherits from \code{data.frame}) with 59494 rows and 5 columns.
+
+An object of class \code{linkage_df} (inherits from \code{data.frame}) with 19536 rows and 5 columns.
+
+An object of class \code{linkage_df} (inherits from \code{data.frame}) with 19897 rows and 5 columns.
+
+An object of class \code{data.frame} with 6655 rows and 5 columns.
+}
 \usage{
 SN_SN_P1
 

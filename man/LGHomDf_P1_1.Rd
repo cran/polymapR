@@ -6,11 +6,17 @@
 \alias{LGHomDf_P2_1}
 \alias{LGHomDf_P2_2}
 \title{A \code{data.frame} specifying the assigned homologue and linkage group number per SxN marker}
-\format{\itemize{
+\format{
+\itemize{
  \item SxN_Marker. Markername of simplex nulliplex marker
  \item homologue. Assigned homologue number
  \item LG Assigned. linkage group number
-}}
+}
+
+An object of class \code{data.frame} with 195 rows and 3 columns.
+
+An object of class \code{data.frame} with 195 rows and 3 columns.
+}
 \usage{
 LGHomDf_P1_1
 

@@ -4,8 +4,16 @@
 \alias{screen_for_duplicate_markers}
 \title{Screen for and remove duplicated markers}
 \usage{
-screen_for_duplicate_markers(dosage_matrix, merge_NA = TRUE,
-  plot_cluster_size = TRUE, log = NULL)
+screen_for_duplicate_markers(
+  dosage_matrix,
+  merge_NA = TRUE,
+  plot_cluster_size = TRUE,
+  ploidy,
+  ploidy2 = NULL,
+  LG_number,
+  estimate_bin_size = FALSE,
+  log = NULL
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
@@ -15,15 +23,25 @@ If \code{FALSE} the dosage scores of representing marker are represented in the 
 
 \item{plot_cluster_size}{Logical. Should an informative plot about duplicate cluster size be given? By default, \code{TRUE}.}
 
+\item{ploidy}{Ploidy level of parent 1. Only needed if \code{estimate_bin_size} is \code{TRUE}}
+
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. 
+Only needed if \code{estimate_bin_size} is \code{TRUE}}
+
+\item{LG_number}{Expected number of chromosomes (linkage groups). Only needed if \code{estimate_bin_size} is \code{TRUE}}
+
+\item{estimate_bin_size}{Logical, by default \code{FALSE}. If \code{TRUE}, a very rudimentary calculation is made to estimate
+the average size of a marker bin, assuming a uniform distribution of cross-over events and on average one cross-over per bivalent.}
+
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
 }
 \value{
 A list containing:
 \itemize{
-\item{bin_list} list of binned markers. The list names are the representing markers.
-This information can later be used to enrich the map with binned markers.
-\item{filtered_dosage_matrix} dosage_matrix with merged duplicated markers.
-The markers will be given the name of the marker with least missing values.
+\item{bin_list} {list of binned markers. The list names are the representing markers.
+This information can later be used to enrich the map with binned markers.}
+\item{filtered_dosage_matrix} {dosage_matrix with merged duplicated markers.
+The markers will be given the name of the marker with least missing values.}
 }
 }
 \description{

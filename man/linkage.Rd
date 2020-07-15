@@ -4,19 +4,33 @@
 \alias{linkage}
 \title{Calculate recombination frequency, LOD and phase}
 \usage{
-linkage(dosage_matrix, markertype1 = c(1, 0), markertype2 = NULL,
-  target_parent = "P1", other_parent = "P2", G2_test = FALSE,
-  convert_palindrome_markers = TRUE, LOD_threshold = 0, ploidy,
-  ploidy2 = NULL, pairing = c("random", "preferential"),
-  prefPars = c(0, 0), combinations_per_iter = NULL, verbose = TRUE,
-  full_output = FALSE, iter_RAM = 500, ncores = 1, log = NULL)
+linkage(
+  dosage_matrix,
+  markertype1 = c(1, 0),
+  markertype2 = NULL,
+  target_parent = "P1",
+  other_parent = "P2",
+  G2_test = FALSE,
+  convert_palindrome_markers = TRUE,
+  LOD_threshold = 0,
+  ploidy,
+  ploidy2 = NULL,
+  pairing = c("random", "preferential"),
+  prefPars = c(0, 0),
+  combinations_per_iter = NULL,
+  iter_RAM = 500,
+  ncores = 1,
+  verbose = TRUE,
+  full_output = FALSE,
+  log = NULL
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
 
 \item{markertype1}{A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
 
-\item{markertype2}{A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the funciton will calculate
+\item{markertype2}{A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the function will calculate
 linkage within the markertype as specified by \code{markertype1}.
 The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
 
@@ -24,7 +38,7 @@ The first element specifies the dosage in \code{target_parent}, the second in \c
 
 \item{other_parent}{Character string specifying the other parent as provided in the columnnames of dosage_matrix}
 
-\item{G2_test}{Apply a G2 test (LOD of indepedence) in addition to the LOD of linkage.}
+\item{G2_test}{Apply a G2 test (LOD of independence) in addition to the LOD of linkage.}
 
 \item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3? If unsure, set to TRUE.}
 
@@ -41,18 +55,19 @@ See the function \code{\link{test_prefpairing}} and the vignette for more detail
 
 \item{combinations_per_iter}{Optional integer. Number of marker combinations per iteration.}
 
-\item{verbose}{Should messages be send to stdout?}
-
-\item{full_output}{Logical, by default \code{FALSE}. If \code{TRUE}, the complete output over all phases and showing marker combination counts is returned.}
-
-\item{iter_RAM}{A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, espacially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.}
+\item{iter_RAM}{A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, especially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.}
 
 \item{ncores}{Number of cores to use. Works both for Windows and UNIX (using \code{doParallel}). Use \code{parallel::detectCores()} to find out how many cores you have available.}
+
+\item{verbose}{Should messages be sent to stdout?}
+
+\item{full_output}{Logical, by default \code{FALSE}. If \code{TRUE}, the complete output over all phases and showing marker combination counts is returned.}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
 }
 \value{
 Returns a data.frame with columns:
+\itemize{
 \item{marker_a}{
   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 }
@@ -67,6 +82,7 @@ Returns a data.frame with columns:
 }
 \item{phase}{
   phase between markers
+}
 }
 }
 \description{

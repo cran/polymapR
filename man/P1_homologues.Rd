@@ -6,11 +6,17 @@
 \alias{P2_homologues}
 \alias{P2_homologues_triploid}
 \title{A list of cluster stacks at different LOD scores}
-\format{A list with with LOD thresholds as names. The list contains dataframes with the following format:
+\format{
+A list with with LOD thresholds as names. The list contains dataframes with the following format:
 \itemize{
  \item marker. markername
  \item pseudohomologue. name of (pseudo)homologue
- }}
+ }
+
+An object of class \code{list} of length 10.
+
+An object of class \code{list} of length 15.
+}
 \usage{
 P1_homologues
 

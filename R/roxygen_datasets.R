@@ -17,6 +17,10 @@
 #' @rdname ALL_dosages
 "TRI_dosages"
 
+#' An example of a genotype probability data frame
+#' @format Data frame
+"gp_df"
+
 #' A linkage \code{data.frame}.
 #' @format 
 #' \itemize{
@@ -134,3 +138,12 @@
 
 #' A sample map
 "map3"
+
+#' Example output of the checkF1 function 
+"chk1"
+
+#' Example output dataset of updog::multidog function
+"mout"
+
+#' Example output dataset of polyRAD::PipelineMapping2Parents function
+"exampleRAD_mapping"

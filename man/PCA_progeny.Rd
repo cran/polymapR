@@ -4,8 +4,7 @@
 \alias{PCA_progeny}
 \title{Perform a PCA on progeny}
 \usage{
-PCA_progeny(dosage_matrix, highlight = NULL, colors = NULL,
-  log = NULL)
+PCA_progeny(dosage_matrix, highlight = NULL, colors = NULL, log = NULL)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

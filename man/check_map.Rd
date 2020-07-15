@@ -4,9 +4,17 @@
 \alias{check_map}
 \title{Check the quality of a linkage map using heatplots}
 \usage{
-check_map(linkage_list, maplist, mapfn = "haldane", lod.thresh = 5,
-  tidyplot = TRUE, detail = 1, sortmarkers = TRUE, plottype = c("",
-  "pdf", "png")[1], prefix = "")
+check_map(
+  linkage_list,
+  maplist,
+  mapfn = "haldane",
+  lod.thresh = 5,
+  tidyplot = TRUE,
+  detail = 1,
+  sortmarkers = TRUE,
+  plottype = c("", "pdf", "png")[1],
+  prefix = ""
+)
 }
 \arguments{
 \item{linkage_list}{A named \code{list} with r and LOD of markers within linkage groups.}

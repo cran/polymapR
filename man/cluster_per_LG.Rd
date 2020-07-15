@@ -4,10 +4,20 @@
 \alias{cluster_per_LG}
 \title{Cluster 1.0 markers into correct homologues per linkage group}
 \usage{
-cluster_per_LG(LG, linkage_df, LG_hom_stack, LOD_sequence,
-  modify_LG_hom_stack = FALSE, nclust_out = NULL,
-  network.layout = c("circular", "stacked", "n"), device = NULL,
-  label.offset = 1, cex.lab = 0.7, log = NULL, ...)
+cluster_per_LG(
+  LG,
+  linkage_df,
+  LG_hom_stack,
+  LOD_sequence,
+  modify_LG_hom_stack = FALSE,
+  nclust_out = NULL,
+  network.layout = c("circular", "stacked", "n"),
+  device = NULL,
+  label.offset = 1,
+  cex.lab = 0.7,
+  log = NULL,
+  ...
+)
 }
 \arguments{
 \item{LG}{Integer. Linkage group to investigate.}

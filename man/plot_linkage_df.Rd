@@ -4,12 +4,22 @@
 \alias{plot_linkage_df}
 \title{Plot r versus LOD grouped by phase}
 \usage{
-plot_linkage_df(linkage_df, r_max = 0.5, ...)
+plot_linkage_df(
+  linkage_df,
+  r_max = 0.5,
+  stepsize = 0.001,
+  add_legend = TRUE,
+  ...
+)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}}.}
 
 \item{r_max}{Maximum r value to plot}
+
+\item{stepsize}{Size of window in recombination frequency to generate mean LOD score. Larger values will reduce plot density.}
+
+\item{add_legend}{Logical, should a legend be added to the plot?}
 
 \item{\dots}{Arguments passed to base plot function}
 }

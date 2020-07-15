@@ -6,7 +6,13 @@
 \alias{maplist_P1_subset}
 \alias{maplist_P2_subset}
 \title{A list of maps of one parent}
-\format{An object of class \code{list} of length 5.}
+\format{
+An object of class \code{list} of length 5.
+
+An object of class \code{list} of length 5.
+
+An object of class \code{list} of length 5.
+}
 \usage{
 maplist_P1
 

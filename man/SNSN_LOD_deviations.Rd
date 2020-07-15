@@ -4,8 +4,14 @@
 \alias{SNSN_LOD_deviations}
 \title{Identify deviations in LOD scores between pairs of simplex x nulliplex markers}
 \usage{
-SNSN_LOD_deviations(linkage_df, ploidy, N, plot_expected = TRUE,
-  alpha = c(0.05, 0.2), phase = c("coupling", "repulsion"))
+SNSN_LOD_deviations(
+  linkage_df,
+  ploidy,
+  N,
+  plot_expected = TRUE,
+  alpha = c(0.05, 0.2),
+  phase = c("coupling", "repulsion")
+)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}}.}

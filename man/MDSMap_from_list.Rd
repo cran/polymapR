@@ -4,8 +4,14 @@
 \alias{MDSMap_from_list}
 \title{Wrapper function for MDSMap to generate linkage maps from list of pairwise linkage estimates}
 \usage{
-MDSMap_from_list(linkage_list, write_to_file = FALSE,
-  mapdir = "mapping_files_MDSMap", plot_prefix = "", log = NULL, ...)
+MDSMap_from_list(
+  linkage_list,
+  write_to_file = FALSE,
+  mapdir = "mapping_files_MDSMap",
+  plot_prefix = "",
+  log = NULL,
+  ...
+)
 }
 \arguments{
 \item{linkage_list}{A named \code{list} with r and LOD of markers within linkage groups.}

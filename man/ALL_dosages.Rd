@@ -9,7 +9,19 @@
 \alias{screened_data3}
 \alias{TRI_dosages}
 \title{A dosage matrix for a random pairing tetraploid with five linkage groups.}
-\format{A matrix}
+\format{
+A matrix
+
+An object of class \code{matrix} (inherits from \code{array}) with 2873 rows and 209 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 1417 rows and 209 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 1417 rows and 207 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 1417 rows and 200 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 250 rows and 202 columns.
+}
 \usage{
 ALL_dosages
 

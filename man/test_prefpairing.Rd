@@ -4,9 +4,17 @@
 \alias{test_prefpairing}
 \title{Check for and estimate preferential pairing}
 \usage{
-test_prefpairing(dosage_matrix, maplist, LG_hom_stack,
-  target_parent = "P1", other_parent = "P2", ploidy, min_cM = 0.5,
-  adj.method = "fdr", verbose = TRUE)
+test_prefpairing(
+  dosage_matrix,
+  maplist,
+  LG_hom_stack,
+  target_parent = "P1",
+  other_parent = "P2",
+  ploidy,
+  min_cM = 0.5,
+  adj.method = "fdr",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
@@ -26,7 +34,7 @@ the output of \code{\link{define_LG_structure}} or \code{\link{bridgeHomologues}
 
 \item{adj.method}{Method to correct p values of Binomial test for multiple testing, by default the FDR correction is used, other options are available, inherited from \code{\link{p.adjust}}}
 
-\item{verbose}{Should messages be send to stdout? If \code{NULL} log is send to stdout.}
+\item{verbose}{Should messages be sent to stdout? If \code{NULL} log is send to stdout.}
 }
 \description{
 Identify closely-mapped repulsion-phase simplex x nulliplex markers and test these

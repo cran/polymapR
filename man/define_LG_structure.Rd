@@ -4,8 +4,7 @@
 \alias{define_LG_structure}
 \title{Generate linkage group and homologue structure of SxN markers}
 \usage{
-define_LG_structure(cluster_list, LOD_chm, LOD_hom, LG_number,
-  log = NULL)
+define_LG_structure(cluster_list, LOD_chm, LOD_hom, LG_number, log = NULL)
 }
 \arguments{
 \item{cluster_list}{A list of cluster_stacks, the output of \code{cluster_SN_markers}.}

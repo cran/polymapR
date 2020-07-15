@@ -4,7 +4,9 @@
 \name{map3}
 \alias{map3}
 \title{A sample map}
-\format{An object of class \code{data.frame} with 60 rows and 2 columns.}
+\format{
+An object of class \code{data.frame} with 60 rows and 2 columns.
+}
 \usage{
 map3
 }

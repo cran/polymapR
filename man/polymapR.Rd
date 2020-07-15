@@ -3,8 +3,7 @@
 \docType{package}
 \name{polymapR}
 \alias{polymapR}
-\alias{polymapR-package}
 \title{Linkage analysis in polyploids}
 \description{
-This package uses dosage-scored SNP markers from an F1 cross to perform linkage analysis in polyploids
+This package uses dosage-scored (or probabilistic) bi-allelic markers from an F1 cross to perform linkage analysis in polyploids
 }

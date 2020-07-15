@@ -4,8 +4,13 @@
 \alias{parental_quantities}
 \title{Calculate frequency of each markertype.}
 \usage{
-parental_quantities(dosage_matrix, parent1 = "P1", parent2 = "P2",
-  log = NULL, ...)
+parental_quantities(
+  dosage_matrix,
+  parent1 = "P1",
+  parent2 = "P2",
+  log = NULL,
+  ...
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

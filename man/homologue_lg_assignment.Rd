@@ -4,14 +4,60 @@
 \alias{homologue_lg_assignment}
 \title{Assign markers to linkage groups and homologues.}
 \usage{
-homologue_lg_assignment(dosage_matrix, assigned_list, assigned_markertypes,
-  SN_functions = NULL, LG_hom_stack, target_parent = "P1",
-  other_parent = "P2", convert_palindrome_markers = TRUE, ploidy,
-  ploidy2 = NULL, pairing = "random", LG_number, LOD_threshold = 3,
-  write_intermediate_files = TRUE, log = NULL, ...)
+homologue_lg_assignment(
+  input_type = "discrete",
+  dosage_matrix,
+  probgeno_df,
+  chk,
+  assigned_list,
+  assigned_markertypes,
+  SN_functions = NULL,
+  LG_hom_stack,
+  target_parent = "P1",
+  other_parent = "P2",
+  convert_palindrome_markers = TRUE,
+  ploidy,
+  ploidy2 = NULL,
+  pairing = "random",
+  LG_number,
+  LOD_threshold = 3,
+  write_intermediate_files = TRUE,
+  log = NULL,
+  ...
+)
 }
 \arguments{
-\item{dosage_matrix}{A dosage matrix.}
+\item{input_type}{Can be either one of 'discrete' or 'probabilistic'. For the former (default), \code{dosage_matrix} must be supplied,
+while for the latter \code{probgeno_df} and \code{chk} must be supplied.}
+
+\item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
+
+\item{probgeno_df}{A data frame as read from the scores file produced by function
+\code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+\itemize{
+\item{SampleName}{
+Name of the sample (individual)
+}
+\item{MarkerName}{
+Name of the marker
+}
+\item{P0}{
+Probabilities of dosage score '0'
+}
+\item{P1...}{
+Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+}
+\item{maxP}{
+Maximum genotype probability identified for a particular individual and marker combination
+}
+\item{maxgeno}{
+Most probable dosage for a particular individual and marker combination
+}
+\item{geno}{
+Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}}
+}}
+
+\item{chk}{Output list as returned by function \code{\link{checkF1}}. This argument is only needed if probabilistic genotypes are used.}
 
 \item{assigned_list}{List of \code{data.frames} with marker assignments for which the assignment analysis is already performed.}
 
@@ -47,15 +93,16 @@ homologue_lg_assignment(dosage_matrix, assigned_list, assigned_markertypes,
 A \code{data.frame} specifying marker assignments to linkage group and homologue.
 }
 \description{
-This is a wrapper combining \code{\link{linkage}} and \code{\link{assign_linkage_group}}. It is used to assign all marker types to linkage groups by using linkage information with 1.0 markers. It allows for input of marker assignments for which this analysis has already been performed.
+This is a wrapper combining \code{\link{linkage}} (or \code{\link{linkage.gp}}) and \code{\link{assign_linkage_group}}. 
+It is used to assign all marker types to linkage groups by using linkage information with 1.0 markers. It allows for input of marker assignments for which this analysis has already been performed.
 }
 \examples{
 \dontrun{
 data("screened_data3", "P1_SxS_Assigned", "P1_DxN_Assigned", "LGHomDf_P1_1")
-Assigned_markers<-homologue_lg_assignment(screened_data3,
-                         assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
-                         assigned_markertypes = list(c(1,1), c(2,0)),
-                         LG_hom_stack = LGHomDf_P1_1,ploidy=4,LG_number = 5,
-                         write_intermediate_files=FALSE)
+Assigned_markers<-homologue_lg_assignment(dosage_matrix = screened_data3,
+                                          assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
+                                          assigned_markertypes = list(c(1,1), c(2,0)),
+                                          LG_hom_stack = LGHomDf_P1_1,ploidy=4,LG_number = 5,
+                                          write_intermediate_files=FALSE)
                          }
 }

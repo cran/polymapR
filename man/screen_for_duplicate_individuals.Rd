@@ -4,8 +4,13 @@
 \alias{screen_for_duplicate_individuals}
 \title{Screen for duplicate individuals}
 \usage{
-screen_for_duplicate_individuals(dosage_matrix, cutoff = NULL,
-  plot_cor = T, log = NULL)
+screen_for_duplicate_individuals(
+  dosage_matrix,
+  cutoff = NULL,
+  plot_cor = T,
+  log = NULL,
+  saveCOV = "PearsonCC"
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
@@ -15,6 +20,8 @@ screen_for_duplicate_individuals(dosage_matrix, cutoff = NULL,
 \item{plot_cor}{Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
+
+\item{saveCOV}{= "PearsonCC"}
 }
 \value{
 A matrix similar to dosage_matrix, with merged duplicate individuals.

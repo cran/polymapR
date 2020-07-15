@@ -4,9 +4,17 @@
 \alias{marker_binning}
 \title{Perform binning of markers.}
 \usage{
-marker_binning(dosage_matrix, linkage_df, r_thresh = NA,
-  lod_thresh = NA, target_parent = "P1", other_parent = "P2",
-  max_marker_nr = NULL, max_iter = 10, log = NULL)
+marker_binning(
+  dosage_matrix,
+  linkage_df,
+  r_thresh = NA,
+  lod_thresh = NA,
+  target_parent = "P1",
+  other_parent = "P2",
+  max_marker_nr = NULL,
+  max_iter = 10,
+  log = NULL
+)
 }
 \arguments{
 \item{dosage_matrix}{A dosage \code{matrix}.}

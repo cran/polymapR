@@ -4,12 +4,19 @@
 \alias{merge_marker_assignments}
 \title{Merge marker assignments}
 \usage{
-merge_marker_assignments(dosage_matrix, target_parent = "P1",
-  other_parent = "P2", LG_hom_stack, SN_linked_markers, ploidy,
-  LG_number, log = NULL)
+merge_marker_assignments(
+  dosage_matrix,
+  target_parent = "P1",
+  other_parent = "P2",
+  LG_hom_stack,
+  SN_linked_markers,
+  ploidy,
+  LG_number,
+  log = NULL
+)
 }
 \arguments{
-\item{dosage_matrix}{A dosage \code{matrix}.}
+\item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
 
 \item{target_parent}{Character string specifying target parent.}
 

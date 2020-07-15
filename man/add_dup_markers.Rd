@@ -16,8 +16,8 @@ add_dup_markers(maplist, bin_list, marker_assignments = NULL)
 \value{
 A list with the following items:
 \itemize{
-\item{maplist: List of maps, now with duplicate markers added}
-\item{marker_assignments: If required, marker assignment list with duplicate markers added}
+\item{maplist}{List of maps, now with duplicate markers added}
+\item{marker_assignments}{If required, marker assignment list with duplicate markers added}
 }
 }
 \description{

@@ -4,8 +4,13 @@
 \alias{write.TSNPM}
 \title{Write TetraploidSNPMap input file}
 \usage{
-write.TSNPM(phased.maplist, outputdir = "TetraploidSNPMap_QTLfiles",
-  filename = "TSNPM", ploidy, verbose = FALSE)
+write.TSNPM(
+  phased.maplist,
+  outputdir = "TetraploidSNPMap_QTLfiles",
+  filename = "TSNPM",
+  ploidy,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{phased.maplist}{Phased maps in list format, the output of \code{\link{create_phased_maplist}}}
@@ -16,7 +21,7 @@ write.TSNPM(phased.maplist, outputdir = "TetraploidSNPMap_QTLfiles",
 
 \item{ploidy}{The ploidy of the species, currently only 4 is supported by TetraploidSNPMap}
 
-\item{verbose}{Should messages be send to stdout?}
+\item{verbose}{Should messages be sent to stdout?}
 }
 \value{
 \code{NULL}

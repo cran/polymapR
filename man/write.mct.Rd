@@ -4,9 +4,14 @@
 \alias{write.mct}
 \title{Write MapChart file}
 \usage{
-write.mct(maplist, mapdir = "mapping_files_MDSMap",
+write.mct(
+  maplist,
+  mapdir = "mapping_files_MDSMap",
   file_info = paste("; MapChart file created on", Sys.Date()),
-  filename = "MapFile", precision = 2, showMarkerNames = FALSE)
+  filename = "MapFile",
+  precision = 2,
+  showMarkerNames = FALSE
+)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position. All map data are

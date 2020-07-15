@@ -4,8 +4,13 @@
 \alias{consensus_LG_names}
 \title{Find consensus linkage group names}
 \usage{
-consensus_LG_names(modify_LG, template_SxS, modify_SxS, merge_LGs = TRUE,
-  log = NULL)
+consensus_LG_names(
+  modify_LG,
+  template_SxS,
+  modify_SxS,
+  merge_LGs = TRUE,
+  log = NULL
+)
 }
 \arguments{
 \item{modify_LG}{A \code{data.frame} with markernames, linkage group (\code{"LG"}) and homologue (\code{"homologue"}), in which the linkage group numbers will be modified}

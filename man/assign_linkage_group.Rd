@@ -4,10 +4,18 @@
 \alias{assign_linkage_group}
 \title{Assign non-SN markers to a linkage group and homologue(s).}
 \usage{
-assign_linkage_group(linkage_df, LG_hom_stack, SN_colname = "marker_a",
-  unassigned_marker_name = "marker_b", phase_considered = "coupling",
-  LG_number, LOD_threshold = 3, ploidy, assign_homologue = T,
-  log = NULL)
+assign_linkage_group(
+  linkage_df,
+  LG_hom_stack,
+  SN_colname = "marker_a",
+  unassigned_marker_name = "marker_b",
+  phase_considered = "coupling",
+  LG_number,
+  LOD_threshold = 3,
+  ploidy,
+  assign_homologue = T,
+  log = NULL
+)
 }
 \arguments{
 \item{linkage_df}{A linkage \code{data.frame} as output of \code{\link{linkage}}.}
@@ -33,7 +41,7 @@ assign_linkage_group(linkage_df, LG_hom_stack, SN_colname = "marker_a",
 \value{
 Output is a data.frame with at least the following columns:
 \item{Assigned_LG}{The assigned linkage group}
-\item{Assigend_hom1}{The homologue with most linkages}
+\item{Assigned_hom1}{The homologue with most linkages}
 The columns LG1 - LGn and Hom1 - Homn give the number of hits per marker for that linkage group/homologue. Assigned_hom2 .. gives the nth homologue with most linkages.
 }
 \description{

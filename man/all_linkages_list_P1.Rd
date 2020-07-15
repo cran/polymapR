@@ -6,7 +6,13 @@
 \alias{all_linkages_list_P1_split}
 \alias{all_linkages_list_P1_subset}
 \title{A (nested) list of linkage data frames classified per linkage group and homologue}
-\format{An object of class \code{list} of length 5.}
+\format{
+An object of class \code{list} of length 5.
+
+An object of class \code{list} of length 5.
+
+An object of class \code{list} of length 5.
+}
 \usage{
 all_linkages_list_P1
 

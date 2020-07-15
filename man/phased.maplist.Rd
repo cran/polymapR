@@ -4,7 +4,9 @@
 \name{phased.maplist}
 \alias{phased.maplist}
 \title{A list of phased maps}
-\format{An object of class \code{list} of length 5.}
+\format{
+An object of class \code{list} of length 5.
+}
 \usage{
 phased.maplist
 }

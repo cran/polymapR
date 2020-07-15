@@ -4,8 +4,7 @@
 \alias{merge_homologues}
 \title{Merge homologues}
 \usage{
-merge_homologues(LG_hom_stack, ploidy, LG, mergeList = NULL,
-  log = NULL)
+merge_homologues(LG_hom_stack, ploidy, LG, mergeList = NULL, log = NULL)
 }
 \arguments{
 \item{LG_hom_stack}{A \code{data.frame} with markernames, linkage group (\code{"LG"}) and homologue (\code{"homologue"})}

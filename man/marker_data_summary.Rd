@@ -4,9 +4,17 @@
 \alias{marker_data_summary}
 \title{Summarize marker data}
 \usage{
-marker_data_summary(dosage_matrix, ploidy, pairing = c("random",
-  "preferential"), parent1 = "P1", parent2 = "P2",
-  progeny_incompat_cutoff = 0.1, verbose = TRUE, log = NULL)
+marker_data_summary(
+  dosage_matrix,
+  ploidy,
+  pairing = c("random", "preferential"),
+  parent1 = "P1",
+  parent2 = "P2",
+  progeny_incompat_cutoff = 0.1,
+  verbose = TRUE,
+  shortform = FALSE,
+  log = NULL
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
@@ -24,6 +32,8 @@ this genotype as incompatible. Incompatible dosages are greater than maximum num
 smaller than the minimum number of alleles that can be inherited.}
 
 \item{verbose}{Logical, by default \code{TRUE} - should intermediate messages be written to stout?}
+
+\item{shortform}{Logical, by default \code{FALSE}. Returns only a shortened output with parental dosage summary, used internally by some functions.}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.}
 }

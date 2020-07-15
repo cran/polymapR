@@ -4,9 +4,15 @@
 \alias{screen_for_NA_values}
 \title{Screen marker data for NA values}
 \usage{
-screen_for_NA_values(dosage_matrix, margin = 1, cutoff = NULL,
-  parentnames = c("P1", "P2"), plot_breakdown = FALSE, log = NULL,
-  print.removed = TRUE)
+screen_for_NA_values(
+  dosage_matrix,
+  margin = 1,
+  cutoff = NULL,
+  parentnames = c("P1", "P2"),
+  plot_breakdown = FALSE,
+  log = NULL,
+  print.removed = TRUE
+)
 }
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}

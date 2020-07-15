@@ -4,7 +4,9 @@
 \name{integrated.maplist}
 \alias{integrated.maplist}
 \title{A nested list with integrated maps}
-\format{An object of class \code{list} of length 5.}
+\format{
+An object of class \code{list} of length 5.
+}
 \usage{
 integrated.maplist
 }

@@ -4,8 +4,14 @@
 \alias{overviewSNlinks}
 \title{Plotting 1.0 links between homologues}
 \usage{
-overviewSNlinks(linkage_df, LG_hom_stack, LG, LOD_threshold, ymax = NULL,
-  log = NULL)
+overviewSNlinks(
+  linkage_df,
+  LG_hom_stack,
+  LG,
+  LOD_threshold,
+  ymax = NULL,
+  log = NULL
+)
 }
 \arguments{
 \item{linkage_df}{A data.frame as output of \code{\link{linkage}} with arguments markertype1=c(1,0) and markertype2=NULL.}

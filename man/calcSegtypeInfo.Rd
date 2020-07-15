@@ -17,19 +17,19 @@ A list with for each different segregation type (segtype) one item.
 The names of the items are the names of the segtypes.
 Each item is itself a list with components:
 \itemize{
-\item{freq: a vector of the ploidy+1 fractions of the dosages in the F1}
-\item{intratios: an integer vector with the ratios as the simplest integers}
-\item{expgeno: a vector with the dosages present in this segtype}
-\item{allfrq: the allele frequency of the dosage allele in the F1}
-\item{polysomic: boolean: does this segtype occur with polysomic inheritance?}
-\item{disomic: boolean: does this segtype occur with disomic inheritance?}
-\item{mixed: boolean: does this segtype occur with mixed inheritance (i.e. with
+\item{freq}{a vector of the ploidy+1 fractions of the dosages in the F1}
+\item{intratios}{an integer vector with the ratios as the simplest integers}
+\item{expgeno}{a vector with the dosages present in this segtype}
+\item{allfrq}{the allele frequency of the dosage allele in the F1}
+\item{polysomic}{boolean: does this segtype occur with polysomic inheritance?}
+\item{disomic}{boolean: does this segtype occur with disomic inheritance?}
+\item{mixed}{boolean: does this segtype occur with mixed inheritance (i.e. with
 polysomic inheritance in one parent and disomic inheritance in the other)?}
-\item{pardosage: integer matrix with 2 columns and as many rows as there
+\item{pardosage}{integer matrix with 2 columns and as many rows as there
 are parental dosage combinations for this segtype;
 each row has one possible combination of dosages for
 parent 1 (1st column) and parent 2 (2nd column)}
-\item{parmode: logical matrix with 3 columns and the same number of rows as
+\item{parmode}{logical matrix with 3 columns and the same number of rows as
 pardosage. The 3 columns are named polysomic, disomic and mixed and
 tell if this parental dosage combination will generate this
 segtype under polysomic, disomic and mixed inheritance}

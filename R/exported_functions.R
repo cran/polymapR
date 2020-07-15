@@ -1,6 +1,6 @@
 #' Linkage analysis in polyploids
 #'
-#' This package uses dosage-scored SNP markers from an F1 cross to perform linkage analysis in polyploids
+#' This package uses dosage-scored (or probabilistic) bi-allelic markers from an F1 cross to perform linkage analysis in polyploids
 #' @docType package
 #' @name polymapR
 #' @import utils stats foreach grDevices graphics
@@ -14,8 +14,8 @@ NULL
 #' @return
 #' A list with the following items:
 #' \itemize{
-#' \item{maplist: List of maps, now with duplicate markers added}
-#' \item{marker_assignments: If required, marker assignment list with duplicate markers added}
+#' \item{maplist}{List of maps, now with duplicate markers added}
+#' \item{marker_assignments}{If required, marker assignment list with duplicate markers added}
 #' }
 #' @export
 add_dup_markers <- function(maplist, 
@@ -76,7 +76,7 @@ add_dup_markers <- function(maplist,
   }
   
   return(outlist)
-}
+} #add_dup_markers
 
 #' Assign non-SN markers to a linkage group and homologue(s).
 #' @description \code{assign_linkage_group} quantifies per marker number of linkages to a linkage group and evaluates to which linkage group (and homologue(s)) the marker belongs.
@@ -93,7 +93,7 @@ add_dup_markers <- function(maplist,
 #' @return
 #' Output is a data.frame with at least the following columns:
 #' \item{Assigned_LG}{The assigned linkage group}
-#' \item{Assigend_hom1}{The homologue with most linkages}
+#' \item{Assigned_hom1}{The homologue with most linkages}
 #' The columns LG1 - LGn and Hom1 - Homn give the number of hits per marker for that linkage group/homologue. Assigned_hom2 .. gives the nth homologue with most linkages.
 #' @examples
 #' data("SN_DN_P1", "LGHomDf_P1_1")
@@ -167,9 +167,9 @@ assign_linkage_group <- function(linkage_df,
   
   # get counts per chromosome (LG)
   if(LG_number > 1){
-   chm.counts <- sapply(count_tables, rowSums)
+    chm.counts <- sapply(count_tables, rowSums)
   } else{
-   chm.counts <- matrix(sapply(count_tables, rowSums),nrow = 1, dimnames = list(1,names(count_tables)))
+    chm.counts <- matrix(sapply(count_tables, rowSums),nrow = 1, dimnames = list(1,names(count_tables)))
   }
   
   counts_chm <- t(matrix(chm.counts,nrow = nrow(chm.counts),
@@ -262,7 +262,8 @@ assign_linkage_group <- function(linkage_df,
     close(log.conn)
   
   return(output)
-}
+} #assign_linkage_group
+
 
 #' Assign (leftover) 1.0 markers
 #' @description Some 1.0 markers might have had ambiguous linkages, or linkages with low LOD scores leaving them unlinked to a linkage group.
@@ -358,7 +359,7 @@ assign_SN_SN <- function(linkage_df,
     homologue = unamb_ass[, "Assigned_hom1"],
     LG = unamb_ass[, "Assigned_LG"]
   ))
-}
+} #assign_SN_SN
 
 #' Use bridge markers to cluster homologues into linkage groups
 #' @aliases bridgeHomologues assembleDuplexLinks
@@ -445,10 +446,12 @@ bridgeHomologues <- function(
     
     dupcombs <- t(sapply(combs, function(x) table(homvec[x])))
     
-    for(i in seq(nrow(dupcombs))){
-      tmp <- dupcombs[i,]
-      dupcombs[i, -order(tmp, decreasing = T)[1:2]] <- 0
-    }
+    # Possible issue with this part from GvG May 2020, seems can be removed without issue (not fully checked)
+    # for(i in seq(nrow(dupcombs))){
+    #   tmp <- dupcombs[i,]
+    #   dupcombs[i, -order(tmp, decreasing = T)[1:2]] <- 0
+    # }
+    
     pc <- t(combn(levels(homvec), 2))
     class(pc) <- "integer"
     
@@ -538,6 +541,7 @@ bridgeHomologues <- function(
   } else {
     stop("Both cluster_stack2 and linkage_df2 should be specified or none of the two.")
   }
+  
   edges <- edges[edges$weights >= min_bridges,]
   # make network between SN x SN clusters
   nw <- igraph::graph.data.frame(edges[,c("h1", "h2")], directed = F)
@@ -612,7 +616,7 @@ bridgeHomologues <- function(
     close(log.conn)
   
   return(SN_SN_chm_cl)
-}
+} #bridgeHomologues
 
 # calcSegtypeInfo ***********************************************************
 #'@title Build a list of segregation types
@@ -657,19 +661,19 @@ bridgeHomologues <- function(
 # (alternatives for itemize: enumerate and describe,
 # see https://cran.r-project.org/web/packages/roxygen2/vignettes/formatting.html)
 #'\itemize{
-#'\item{freq: a vector of the ploidy+1 fractions of the dosages in the F1}
-#'\item{intratios: an integer vector with the ratios as the simplest integers}
-#'\item{expgeno: a vector with the dosages present in this segtype}
-#'\item{allfrq: the allele frequency of the dosage allele in the F1}
-#'\item{polysomic: boolean: does this segtype occur with polysomic inheritance?}
-#'\item{disomic: boolean: does this segtype occur with disomic inheritance?}
-#'\item{mixed: boolean: does this segtype occur with mixed inheritance (i.e. with
+#'\item{freq}{a vector of the ploidy+1 fractions of the dosages in the F1}
+#'\item{intratios}{an integer vector with the ratios as the simplest integers}
+#'\item{expgeno}{a vector with the dosages present in this segtype}
+#'\item{allfrq}{the allele frequency of the dosage allele in the F1}
+#'\item{polysomic}{boolean: does this segtype occur with polysomic inheritance?}
+#'\item{disomic}{boolean: does this segtype occur with disomic inheritance?}
+#'\item{mixed}{boolean: does this segtype occur with mixed inheritance (i.e. with
 #'polysomic inheritance in one parent and disomic inheritance in the other)?}
-#'\item{pardosage: integer matrix with 2 columns and as many rows as there
+#'\item{pardosage}{integer matrix with 2 columns and as many rows as there
 #'are parental dosage combinations for this segtype;
 #'each row has one possible combination of dosages for
 #'parent 1 (1st column) and parent 2 (2nd column)}
-#'\item{parmode: logical matrix with 3 columns and the same number of rows as
+#'\item{parmode}{logical matrix with 3 columns and the same number of rows as
 #'pardosage. The 3 columns are named polysomic, disomic and mixed and
 #'tell if this parental dosage combination will generate this
 #'segtype under polysomic, disomic and mixed inheritance}
@@ -686,7 +690,7 @@ calcSegtypeInfo <- function(ploidy, ploidy2=NULL) {
   if (is.null(ploidy2)) ploidy2 <- ploidy else
     if (ploidy2 %% 2 != 0) stop("calcSegtypeInfo: odd ploidy2 not allowed")
   ploidyF1 <- (ploidy + ploidy2) / 2
-
+  
   result <- list()
   #we check all parental combinations and enumerate the segtypes:
   for (p1 in 0:ploidy) {
@@ -840,181 +844,219 @@ calcSegtypeInfo <- function(ploidy, ploidy2=NULL) {
   result
 } #calcSegtypeInfo
 
-# checkF1 *******************************************************************
-#'@title Identify the best-fitting F1 segregation types
-#'@description For a given set of F1 and parental samples, this function
-#'finds the best-fitting segregation type. It can perform a dosage shift prior
-#'to selecting the segregation type.
+#  checkF1 *******************************************************************
+#' @title Identify the best-fitting F1 segregation types 
+#' @description For a given set of F1 and parental samples, this function
+#' finds the best-fitting segregation type using either discrete or probabilistic input data. 
+#' It can also perform a dosage shift prior to selecting the segregation type.
+#' @param input_type Can be either one of 'discrete' or 'probabilistic'. For the former (default), a \code{dosage_matrix} must be supplied,
+#' while for the latter a \code{probgeno_df} must be supplied. 
+#' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}
+#' }
+#' }
+#' @param parent1 character vector with the sample names of parent 1
+#' @param parent2 character vector with the sample names of parent 2
+#' @param F1 character vector with the sample names of the F1 individuals
+#' @param ancestors character vector with the sample names of any other
+#' ancestors or other samples of interest. The dosages of these samples will
+#' be shown in the output (shifted if shiftParents \code{TRUE}) but they are not used
+#' in the selection of the segregation type.
+#' @param polysomic if \code{TRUE} at least all polysomic segtypes are considered;
+#' if \code{FALSE} these are not specifically selected (but if e.g. disomic is \code{TRUE},
+#' any polysomic segtypes that are also disomic will still be considered)
+#' @param disomic if \code{TRUE} at least all disomic segtypes are considered (see
+#' \code{polysomic})
+#' @param mixed if \code{TRUE} at least all mixed segtypes are considered (see
+#' \code{polysomic}). A mixed segtype occurs when inheritance in one parent is
+#' polysomic (random chromosome pairing) and in the other parent disomic (fully
+#' preferential chromosome pairing)
+#' @param ploidy The ploidy of parent 1 (must be even, 2 (diploid) or larger).
+#' @param ploidy2 The ploidy of parent 2. If omitted it is
+#' assumed to be equal to ploidy.
+#' @param outfile the tab-separated text file to write the output to; if NA a temporary file
+#' checkF1.tmp is created in the current working directory and deleted at end
+#' @param critweight NA or a numeric vector containing the weights of three quality
+#' criteria; do not need to sum to 1. If NA, the output will not contain a
+#' column qall_weights. Else the weights specify how qall_weights will be
+#' calculated from quality parameters q1, q2 and q3.
+#' @param Pvalue_threshold a minimum threshold value for the Pvalue of the
+#' bestParentfit segtype (with a smaller Pvalue the q1 quality parameter will
+#' be set to 0)
+#' @param fracInvalid_threshold a maximum threshold for the fracInvalid of the
+#' bestParentfit segtype (with a larger fraction of invalid dosages in the F1
+#' the q1 quality parameter will be set to 0)
+#' @param fracNA_threshold a maximum threshold for the fraction of unscored F1
+#' samples (with a larger fraction of unscored samples in the F1
+#' the q3 quality parameter will be set to 0)
+#' @param shiftmarkers if specified, shiftmarkers must be a data frame with
+#' columns MarkerName and shift; for the markernames that match exactly
+#' (upper/lowercase etc) those in the input (either \code{dosage_matrix} or \code{probgeno_df}), the dosages are increased by the
+#' amount specified in column shift,
+#' e.g. if shift is -1, dosages 2..ploidy are converted to 1..(ploidy-1)
+#' and dosage 0 is a combination of old dosages 0 and 1, for all samples.
+#' The segregation check is then performed with the shifted dosages.
+#' A shift=NA is allowed, these markers will not be shifted.
+#' The sets of markers in the input (either \code{dosage_matrix} or \code{probgeno_df}) and shiftmarkers
+#' may be different, but markers may occur only once in shiftmarkers.
+#' A column shift is added at the end of the returned data frame.\cr
+#' If parameter shiftParents is \code{TRUE}, the parental and ancestor scores are
+#' shifted as the F1 scores, if \code{FALSE} they are not shifted.
+#' @param parentsScoredWithF1 \code{TRUE} if parents are scored in the same experiment
+#' and the same \code{fitPoly} run as the F1, else \code{FALSE}.
+#' If \code{TRUE}, their fraction missing scores
+#' and conflicts tell something about the quality of the scoring. If \code{FALSE}
+#' (e.g. when the F1 is triploid and the parents are diploid and tetraploid) the
+#' quality of the F1 scores can be independent of that of the parents.\cr
+#' If not specified, \code{TRUE} is assumed if ploidy2 == ploidy and \code{FALSE} if
+#' ploidy2 != ploidy
+#' @param shiftParents only used if parameter shiftmarkers is specified. If \code{TRUE},
+#' apply the shifts also to the parental and ancestor scores.
+#' By default \code{TRUE} if \code{parentsScoredWithF1} is \code{TRUE}
+#' @param showAll (default \code{FALSE}) if \code{TRUE}, for each segtype 3 columns
+#' are added to the returned data frame with the frqInvalid, Pvalue and
+#' matchParents values for these segtype (see the description of the return value)
+#' @param append_shf if \code{TRUE} and parameter shiftmarkers is specified, _shf is
+#' appended to all marker names where shift is not 0. This is not required for
+#' any of the functions in this package but may prevent duplicated marker names
+#' when using other software. 
+#' @details For each marker is tested how well the different segregation types
+#' fit with the observed parental and F1 dosages. The results are summarized
+#' by columns bestParentfit (which is the best fitting segregation type,
+#' taking into account the F1 and parental dosages) and columns qall_mult
+#' and/or qall_weights (how good is the fit of the bestParentfit segtype: 0=bad,
+#' 1=good).\cr
+#' Column bestfit in the results gives the segtype best fitting the F1
+#' segregation without taking account of the parents. This bestfit segtype is
+#' used by function correctDosages, which tests for possible "shifts" in
+#' the marker models.\cr
+#' In case the parents are not scored together with the F1 (e.g. if the F1 is
+#' triploid and the parents are diploid and tetraploid) \code{dosage_matrix}
+#' should be edited to contain the parental as well as the F1 scores.
+#' In case the diploid and tetraploid parent are scored in the same run of
+#' function \code{saveMarkerModels} (from package \code{fitPoly})
+#' the diploid is initially scored as nulliplex-duplex-quadruplex (dosage 0, 2
+#' or 4); that must be converted to the true diploid dosage scores (0, 1 or 2).
+#' Similar corrections are needed with other combinations, such as a diploid
+#' parent scored together with a hexaploid population etc.
 #'
-#'@usage checkF1(dosage_matrix, parent1, parent2, F1, ancestors=character(0),
-#'polysomic, disomic, mixed, ploidy, ploidy2, outfile,
-#'critweight=c(1.0, 0.4, 0.4),
-#'Pvalue_threshold=0.0001, fracInvalid_threshold=0.05,
-#'fracNA_threshold=0.25, shiftmarkers, parentsScoredWithF1=TRUE,
-#'shiftParents=parentsScoredWithF1, showAll=FALSE, append_shf=FALSE)
-#'
-#'@param dosage_matrix An integer matrix with markers in rows and individuals in columns.
-#'@param parent1 character vector with the sample names of parent 1
-#'@param parent2 character vector with the sample names of parent 2
-#'@param F1 character vector with the sample names of the F1 individuals
-#'@param ancestors character vector with the sample names of any other
-#'ancestors or other samples of interest. The dosages of these samples will
-#'be shown in the output (shifted if shiftParents \code{TRUE}) but they are not used
-#'in the selection of the segregation type.
-#'@param polysomic if \code{TRUE} at least all polysomic segtypes are considered;
-#'if \code{FALSE} these are not specifically selected (but if e.g. disomic is \code{TRUE},
-#'any polysomic segtypes that are also disomic will still be considered)
-#'@param disomic if \code{TRUE} at least all disomic segtypes are considered (see
-#'\code{polysomic})
-#'@param mixed if \code{TRUE} at least all mixed segtypes are considered (see
-#'\code{polysomic}). A mixed segtype occurs when inheritance in one parent is
-#'polysomic (random chromosome pairing) and in the other parent disomic (fully
-#'preferential chromosome pairing)
-#'@param ploidy The ploidy of parent 1 (must be even, 2 (diploid) or larger).
-#'@param ploidy2 The ploidy of parent 2. If omitted it is
-#'assumed to be equal to ploidy.
-#'@param outfile the file to write the output to; if NA a temporary file
-#'checkF1.tmp is created in the current working directory and deleted at end
-#'@param critweight NA or a numeric vector containing the weights of three quality
-#'criteria; do not need to sum to 1. If NA, the output will not contain a
-#'column qall_weights. Else the weights specify how qall_weights will be
-#'calculated from quality parameters q1, q2 and q3.
-#'@param Pvalue_threshold a minimum threshold value for the Pvalue of the
-#'bestParentfit segtype (with a smaller Pvalue the q1 quality parameter will
-#'be set to 0)
-#'@param fracInvalid_threshold a maximum threshold for the fracInvalid of the
-#'bestParentfit segtype (with a larger fraction of invalid dosages in the F1
-#'the q1 quality parameter will be set to 0)
-#'@param fracNA_threshold a maximum threshold for the fraction of unscored F1
-#'samples (with a larger fraction of unscored samples in the F1
-#'the q3 quality parameter will be set to 0)
-#'@param shiftmarkers if specified, shiftmarkers must be a data frame with
-#'columns MarkerName and shift; for the markernames that match exactly
-#'(upper/lowercase etc) those in \code{dosage_matrix}, the dosages are increased by the
-#'amount specified in column shift,
-#'e.g. if shift is -1, dosages 2..ploidy are converted to 1..(ploidy-1)
-#'and dosage 0 is a combination of old dosages 0 and 1, for all samples.
-#'The segregation check
-#'is then performed with the shifted dosages.
-#'A shift=NA is allowed, these markers will not be shifted.
-#'The sets of markers in \code{dosage_matrix} and shiftmarkers
-#'may be different, but markers may occur only once in shiftmarkers.
-#'A column shift is added at the end of the returned data frame.\cr
-#'If parameter shiftParents is \code{TRUE}, the parental and ancestor scores are
-#'shifted as the F1 scores, if \code{FALSE} they are not shifted.
-#'@param parentsScoredWithF1 \code{TRUE} if parents are scored in the same experiment
-#'and the same \code{fitPoly} run as the F1, else \code{FALSE}.
-#'If \code{TRUE}, their fraction missing scores
-#'and conflicts tell something about the quality of the scoring. If \code{FALSE}
-#'(e.g. when the F1 is triploid and the parents are diploid and tetraploid) the
-#'quality of the F1 scores can be independent of that of the parents
-#'@param shiftParents only used if parameter shiftmarkers is specified. If \code{TRUE},
-#'apply the shifts also to the parental and ancestor scores.
-#'By default \code{TRUE} if \code{parentsScoredWithF1} is \code{TRUE}
-#'@param showAll (default \code{FALSE}) if \code{TRUE}, for each segtype 3 columns
-#'are added to the returned data frame with the frqInvalid, Pvalue and
-#'matchParents values for these segtype (see the description of the return value)
-#'@param append_shf if \code{TRUE} and parameter shiftmarkers is specified, _shf is
-#'appended to all marker names where shift is not 0. This is not required for
-#'any of the functions in this package but may prevent duplicated marker names
-#'when using other software.
-
-#'@details For each marker is tested how well the different segregation types
-#'fit with the observed parental and F1 dosages. The results are summarized
-#'by columns bestParentfit (which is the best fitting segregation type,
-#'taking into account the F1 and parental dosages) and columns qall_mult
-#'and/or qall_weights (how good is the fit of the bestParentfit segtype: 0=bad,
-#'1=good).\cr
-#'Column bestfit in the results gives the segtype best fitting the F1
-#'segregation without taking account of the parents. This bestfit segtype is
-#'used by function correctDosages, which tests for possible "shifts" in
-#'the marker models.\cr
-#'In case the parents are not scored together with the F1 (e.g. if the F1 is
-#'triploid and the parents are diploid and tetraploid) \code{dosage_matrix}
-#'should be edited to contain the parental as well as the F1 scores.
-#'In case the diploid and tetraploid parent are scored in the same run of
-#'function \code{saveMarkerModels} (from package \code{fitPoly})
-#'the diploid is initially scored as nulliplex-duplex-quadruplex (dosage 0, 2
-#'or 4); that must be converted to the true diploid dosage scores (0, 1 or 2).
-#'Similar corrections are needed with other combinations, such as a diploid
-#'parent scored together with a hexaploid population etc.
-#'
-#'@return A data frame with one row per markers, with the following columns:
-#'\itemize{
-#'\item{m: the sequential number of the marker (as assigned by \code{fitPoly})}
-#'\item{MarkerName: the name of the marker, with _shf appended if the marker
-#'is shifted and append_shf is \code{TRUE}}
-#'\item{parent1: consensus dosage score of the samples of parent 1}
-#'\item{parent2: consensus dosage score of the samples of parent 2}
-#'\item{F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
-#'0 ... <ploidy>}
-#'\item{F1_NA: the number of F1 samples with a missing dosage score}
-#'\item{sample names of parents and ancestors: the dosage scores for those
-#'samples}
-#'\item{bestfit: the best fitting segtype, considering only the F1 samples}
-#'\item{frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
-#'with a dosage score that is invalid (that should not occur). The frequency is
-#'calculated as the number of invalid samples divided by the number of non-NA
-#'samples}
-#'\item{Pvalue_bestfit: the chisquare test P-value for the observed
-#'distribution of dosage scores vs the expected fractions. For segtypes
-#'where only one dosage is expected (1_0, 1_1 etc) the binomial probability of
-#'the number of invalid scores is given, assuming an error
-#'rate of seg_invalidrate (hard-coded as 0.03)}
-#'\item{matchParent_bestfit: indication how the bestfit segtype matches the
-#'consensus dosages of parent 1 and 2: "Unknown"=both parental
-#'dosages unknown; "No"=one or both parental dosages known
-#'and conflicting with the segtype; "OneOK"= only one parental
-#'dosage known, not conflicting with the segtype; "Yes"=both
-#'parental dosages known and combination matching with
-#'the segtype. This score is initially assigned based on
-#'only high-confidence parental consensus scores; if
-#'low-confidence dosages are confirmed by the F1, the
-#'matchParent for (only) the selected segtype is
-#'updated, as are the parental consensus scores.}
-#'\item{bestParentfit: the best fitting segtype that does not conflict with
-#'the parental consensus scores}
-#'\item{frqInvalid_bestParentfit, Pvalue_bestParentfit,
-#'matchParent_bestParentfit: same as the corresponding columns for bestfit.
-#'Note that matchParent_bestParentfit cannot be "No".}
-#'\item{q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
-#'the bestParentfit segtype based on Pvalue, invalidP and whether bestfit is
-#'equal to bestParentfit}
-#'\item{q2_parents: a value from 0 (bad) to 1 (good), based either on the
-#'quality of the parental scores (the number of missing scores and of
-#'conflicting scores, if parentsScoredWithF1 is TRUE) or on matchParents
-#'(No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)}
-#'\item{q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
-#'of F1 samples that have a non-missing dosage score}
-#'\item{qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
-#'equal to the product q1*q2*q3. Equal to 0 if any of these is 0, hence
-#'sensitive to thresholds; a natural selection criterion would be to accept
-#'all markers with qall_mult > 0}
-#'\item{qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
-#'q1, q2 and q3, with weights as specified in parameter critweight. This column is
-#'present only if critweight is specified. In this case there is no "natural"
-#'threshold; a threshold for selection of markers must be obtained by inspecting
-#'XY-plots of markers over a range of qall_weights values}
-#'\item{shift: if shiftmarkers is specified a column shift is added with
-#'for all markers the applied shift (for the unshifted markers the shift value
-#'is 0)}
-#'}
-#'qall_mult and/or qall_weights can be used to compare the quality
-#'of the SNPs within one analysis and one F1 population but not between analyses
-#'or between different F1 populations.\cr
-#'If parameter showAll is \code{TRUE} there are 3 additional columns for each
-#'segtype with names frqInvalid_<segtype>, Pvalue_<segtype> and
-#'matchParent_<segtype>; see the corresponding columns for bestfit for an
-#'explanation. These extra columns are inserted directly before the bestfit
-#'column.
-#'@export
-checkF1 <- function(dosage_matrix,
+#' @return A list containing two elements, \code{checked_F1} and \code{meta}. \code{meta} is itself
+#' a list that stores the parameter settings used in running \code{checkF1} which can 
+#' be useful for later reference. The first element (\code{checked_F1}) contains the actual results: a data
+#' frame with one row per marker, with the following columns:
+#' \itemize{
+#' \item{m: the sequential number of the marker (as assigned by \code{fitPoly})}
+#' \item{MarkerName: the name of the marker, with _shf appended if the marker
+#' is shifted and append_shf is \code{TRUE}}
+#' \item{parent1: consensus dosage score of the samples of parent 1}
+#' \item{parent2: consensus dosage score of the samples of parent 2}
+#' \item{F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
+#' 0 ... <ploidy>}
+#' \item{F1_NA: the number of F1 samples with a missing dosage score}
+#' \item{sample names of parents and ancestors: the dosage scores for those
+#' samples}
+#' \item{bestfit: the best fitting segtype, considering only the F1 samples}
+#' \item{frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
+#' with a dosage score that is invalid (that should not occur). The frequency is
+#' calculated as the number of invalid samples divided by the number of non-NA
+#' samples}
+#' \item{Pvalue_bestfit: the chisquare test P-value for the observed
+#' distribution of dosage scores vs the expected fractions. For segtypes
+#' where only one dosage is expected (1_0, 1_1 etc) the binomial probability of
+#' the number of invalid scores is given, assuming an error
+#' rate of seg_invalidrate (hard-coded as 0.03)}
+#' \item{matchParent_bestfit: indication how the bestfit segtype matches the
+#' consensus dosages of parent 1 and 2: "Unknown"=both parental
+#' dosages unknown; "No"=one or both parental dosages known
+#' and conflicting with the segtype; "OneOK"= only one parental
+#' dosage known, not conflicting with the segtype; "Yes"=both
+#' parental dosages known and combination matching with
+#' the segtype. This score is initially assigned based on
+#' only high-confidence parental consensus scores; if
+#' low-confidence dosages are confirmed by the F1, the
+#' matchParent for (only) the selected segtype is
+#' updated, as are the parental consensus scores.}
+#' \item{bestParentfit: the best fitting segtype that does not conflict with
+#' the parental consensus scores}
+#' \item{frqInvalid_bestParentfit, Pvalue_bestParentfit,
+#' matchParent_bestParentfit: same as the corresponding columns for bestfit.
+#' Note that matchParent_bestParentfit cannot be "No".}
+#' \item{q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
+#' the bestParentfit segtype based on Pvalue, invalidP and whether bestfit is
+#' equal to bestParentfit}
+#' \item{q2_parents: a value from 0 (bad) to 1 (good), based either on the
+#' quality of the parental scores (the number of missing scores and of
+#' conflicting scores, if parentsScoredWithF1 is TRUE) or on matchParents
+#' (No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)}
+#' \item{q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
+#' of F1 samples that have a non-missing dosage score}
+#' \item{qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
+#' equal to the product q1*q2*q3. Equal to 0 if any of these is 0, hence
+#' sensitive to thresholds; a natural selection criterion would be to accept
+#' all markers with qall_mult > 0}
+#' \item{qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
+#' q1, q2 and q3, with weights as specified in parameter critweight. This column is
+#' present only if critweight is specified. In this case there is no "natural"
+#' threshold; a threshold for selection of markers must be obtained by inspecting
+#' XY-plots of markers over a range of qall_weights values}
+#' \item{shift: if shiftmarkers is specified a column shift is added with
+#' for all markers the applied shift (for the unshifted markers the shift value
+#' is 0)}
+#' }
+#' qall_mult and/or qall_weights can be used to compare the quality
+#' of the SNPs within one analysis and one F1 population but not between analyses
+#' or between different F1 populations.\cr
+#' If parameter showAll is \code{TRUE} there are 3 additional columns for each
+#' segtype with names frqInvalid_<segtype>, Pvalue_<segtype> and
+#' matchParent_<segtype>; see the corresponding columns for bestfit for an
+#' explanation. These extra columns are inserted directly before the bestfit
+#' column.
+#' @examples 
+#' \dontrun{
+#' data("ALL_dosages")
+#' chk1<-checkF1(input_type="discrete",dosage_matrix=ALL_dosages,parent1="P1",parent2="P2",
+#' F1=setdiff(colnames(ALL_dosages),c("P1","P2")),polysomic=T,disomic=F,mixed=F,
+#' ploidy=4)
+#' data("gp_df")
+#' chk1<-checkF1(input_type="probabilistic",probgeno_df=gp_df,parent1="P1",parent2="P2",
+#' F1=setdiff(levels(gp_df$SampleName),c("P1","P2")),polysomic=T,disomic=F,mixed=F,
+#' ploidy=4)
+#' }
+#' @export
+checkF1 <- function(input_type = "discrete",
+                    dosage_matrix,
+                    probgeno_df,
                     parent1,
                     parent2,
                     F1,
                     ancestors=character(0),
-                    polysomic, disomic, mixed,
-                    ploidy, ploidy2,
+                    polysomic, 
+                    disomic, 
+                    mixed,
+                    ploidy, 
+                    ploidy2,
                     outfile = "",
                     critweight=c(1.0, 0.4, 0.4),
                     Pvalue_threshold=0.0001,
@@ -1025,11 +1067,20 @@ checkF1 <- function(dosage_matrix,
                     shiftParents=parentsScoredWithF1,
                     showAll=FALSE,
                     append_shf=FALSE) {
+  input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
+  
+  if(input_type == "discrete"){
+    dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  } else{
+    probgeno_df <- test_probgeno_df(probgeno_df)
+  }
+  
   if (ploidy %% 2 != 0) stop("checkF1: odd ploidy not allowed")
   if (missing(ploidy2) || is.na(ploidy2)) ploidy2 <- ploidy else
     if (ploidy2 %% 2 != 0) stop("checkF1: odd ploidy2 not allowed")
+  
   ploidyF1 <- (ploidy + ploidy2) / 2
-
+  
   if (!polysomic && !disomic && !mixed)
     stop("checkF1: at least one of polysomic, disomic and mixed must be TRUE")
   seginfo <- calcSegtypeInfo(ploidy, ploidy2)
@@ -1058,6 +1109,7 @@ checkF1 <- function(dosage_matrix,
         stop("checkF1: some markernames occur more than once in shiftmarkers")
     }
   }
+  
   seg_invalidrate <- 0.03 #assumed percentage of scoring errors leading to invalid dosages
   file.del <- is.na(outfile) || outfile == ""
   if (file.del) outfile <- "checkF1.tmp"
@@ -1073,8 +1125,13 @@ checkF1 <- function(dosage_matrix,
   # names of quality parameters:
   qnames <- c("q1_segtypefit"," q2_parents","q3_fracscored","qall_mult")
   if (length(critweight) == 3) qnames[5] <- "qall_weights"
-  mrknames <- rownames(dosage_matrix)
-
+  if(input_type == "discrete"){
+    mrknames <- rownames(dosage_matrix)
+  } else{
+    # mrknames <- as.character(probgeno_df$MarkerName)
+    mrknames <- sort(as.character(unique(probgeno_df$MarkerName)))
+  }
+  
   createResultsdf <- function(mrkcount) {
     #function within checkF1
     saf <- getOption("stringsAsFactors")
@@ -1131,7 +1188,7 @@ checkF1 <- function(dosage_matrix,
     options(stringsAsFactors = saf)
     bres
   } #createResultsdf within checkF1
-
+  
   segtypeBestSelcrit <- function(candidates) {
     #function within checkF1
     #candidates is a vector indexing the segtypes in results from which
@@ -1141,7 +1198,7 @@ checkF1 <- function(dosage_matrix,
     candSelcrit <- selcrit[candidates]
     candidates[which.max(candSelcrit)]
   } # segtypeBestSelcrit within checkF1
-
+  
   compareFit <- function(newsegtype, oldsegtype) {
     #function within checkF1
     #newsegtype, oldsegtype: two indices into results
@@ -1152,7 +1209,7 @@ checkF1 <- function(dosage_matrix,
       (results$Pvalue[newsegtype] >=
          min(0.01, 0.1 * results$Pvalue[oldsegtype]))
   } #compareFit within checkF1
-
+  
   shiftdosages <- function(dosages, shift, ploidyF1) {
     #dosages: vector of integer dosages, shift: one shift value
     dosages <- dosages + shift
@@ -1162,7 +1219,7 @@ checkF1 <- function(dosage_matrix,
     dosages[above] <- ploidyF1
     dosages
   }
-
+  
   #subsetting from a big dosage_matrix takes a lot of time
   #(approx 2 sec for each marker, in a file of ~26000 markers and 480 samples)
   #Therefore we subdivide it in batches of 100 markers
@@ -1171,23 +1228,64 @@ checkF1 <- function(dosage_matrix,
   while (batchsize * (batchnr-1) < length(mrknames)) {
     minmrk <- batchsize*(batchnr-1) + 1
     maxmrk <- min(length(mrknames), batchsize*batchnr)
-
-    batchscores <- dosage_matrix[rownames(dosage_matrix) %in% mrknames[minmrk:maxmrk],] #only 260 * 2 sec
-
+    
+    if(input_type == "discrete"){
+      batchscores <- dosage_matrix[mrknames[minmrk:maxmrk],] #only 260 * 2 sec
+    } else{
+      batchscores <- probgeno_df[probgeno_df$MarkerName %in% mrknames[minmrk:maxmrk],]
+    }
+    
     bres <- createResultsdf(maxmrk - minmrk + 1) #bres: batchresults
+    
+    ## If we use genotype probabilities, the most different part is the count of the probability
+    #function to count in each dosages, what is the sum of the probabilities
+    count_probabi <- function(ploidy,sc){
+      geno.count <- c()
+      for(i in 0:ploidy){
+        geno.ea <- sum(as.numeric(as.character(sc[[paste0("P",i)]])),na.rm=TRUE)
+        geno.count <- c(geno.count, geno.ea)
+      }
+      return(geno.count)
+    }
+    
+    
     for (mrk in minmrk:maxmrk) {
-      mrknr <- which(rownames(batchscores) == mrknames[mrk])
-      sc <- data.frame(SampleName=colnames(batchscores),
-                       geno=as.integer(batchscores[mrknr,]))
-      # mrknr <- rownames(batchscores)[mrknr] #marker number in fitPoly input
-
-      #get all the parent and ancestor genotypes in the order of the given vectors:
+      
+      if(input_type == "discrete"){
+        mrknr <- which(rownames(batchscores) == mrknames[mrk])
+        sc <- data.frame(SampleName=colnames(batchscores),
+                         geno=as.integer(batchscores[mrknr,]))
+        # mrknr <- rownames(batchscores)[mrknr] #marker number in fitPoly input
+      } else{
+        # mrknr <- which(batchscores$MarkerName == mrknames[mrk])
+        # #possible bug here if batchscores has a different column order than expected...
+        # sc <- data.frame(SampleName = names(batchscores)[3:length(batchscores)],
+        #                  geno = as.integer(batchscores[mrknr, 3:length(batchscores)]))
+        # # mrknr <- batchscores$marker[mrknr]
+        
+        sc <- batchscores[batchscores$MarkerName == mrknames[mrk],]
+        if ("marker" %in% names(sc)) mrknr <- sc$marker[1] else mrknr <- mrk
+      }
+      
       parent.geno <- list()
-      parent.geno[[1]] <- sc$geno[match(parent1, sc$SampleName)]
-      parent.geno[[2]] <- sc$geno[match(parent2, sc$SampleName)]
-      ancestors.geno <- sc$geno[match(ancestors, sc$SampleName)]
-      F1.geno <- sc$geno[sc$SampleName %in% F1] #F1 does not have to be ordered
-
+      
+      if(input_type == "discrete"){
+        #get all the parent and ancestor genotypes in the order of the given vectors:
+        parent.geno[[1]] <- sc$geno[match(parent1, sc$SampleName)]
+        parent.geno[[2]] <- sc$geno[match(parent2, sc$SampleName)]
+        ancestors.geno <- sc$geno[match(ancestors, sc$SampleName)]
+        F1.geno <- sc$geno[sc$SampleName %in% F1] #F1 does not have to be ordered
+      } else{
+        #probability use the maxgeno of parent
+        parent.geno[[1]] <- sc$maxgeno[match(parent1, sc$SampleName)]
+        parent.geno[[2]] <- sc$maxgeno[match(parent2, sc$SampleName)]
+        ancestors.geno <- sc$maxgeno[match(ancestors, sc$SampleName)]
+        #take the colsum of each category
+        chosen_col <- paste0("P",seq(0,ploidy,1))
+        F1.geno <- sc[sc$SampleName %in% F1,chosen_col]
+      }
+      
+      
       shift <- 0
       if (is.data.frame(shiftmarkers)) {
         whichshift <- which(shiftmarkers$MarkerName == mrknames[mrk])
@@ -1209,7 +1307,7 @@ checkF1 <- function(dosage_matrix,
           }
         }
       }
-
+      
       #get the consensus genotype and conflict status of each of the two parents:
       par.geno <- c(0, 0) #integer
       par.lowconf.geno <- c(0, 0) #integer
@@ -1221,16 +1319,28 @@ checkF1 <- function(dosage_matrix,
                                       maxNAfrac=0.499,
                                       lowconf.NAfrac=0.751)
         par.geno[parent] <- parresult$geno
-        par.lowconf.geno[parent] <- parresult$lowconf.geno
+        # Update: following line was converted to numeric in PG version - necessary?
+        par.lowconf.geno[parent] <- as.numeric(as.character(parresult$lowconf.geno))
         par.conflicts[parent] <- parresult$conflict
         par.NAfrac[parent] <- parresult$NAfrac
       }
-
-      #get the freq. distribution of the F1 samples:
-      F1.naCount <- sum(is.na(F1.geno))
-      F1.nobs <- length(F1.geno) - F1.naCount #the number of non-NA F1 samples
-      #F1.counts <- hist(F1.geno, breaks=seq(-0.5, ploidyF1+0.5, by=1), plot=FALSE)$counts
-      F1.counts <- tabulate(bin=F1.geno + 1, nbins=ploidyF1 + 1)
+      
+      if(input_type == "discrete"){
+        #get the freq. distribution of the F1 samples:
+        F1.naCount <- sum(is.na(F1.geno))
+        F1.nobs <- length(F1.geno) - F1.naCount #the number of non-NA F1 samples
+        F1.counts <- tabulate(bin=F1.geno + 1, nbins=ploidyF1 + 1)
+      } else{
+        F1.naCount <- sum(rowSums(is.na(F1.geno)) == ploidyF1 + 1)
+        F1.nobs <- nrow(F1.geno) - F1.naCount
+        F1.counts <- count_probabi(ploidy = ploidy,
+                                   sc = F1.geno)
+        #correct the errors
+        proba_correct <- 0.05 * nrow(F1.geno)/(ploidy + 1)
+        F1.counts[F1.counts < proba_correct] <- 0
+        F1.counts <- (F1.counts/sum(F1.counts))*F1.nobs  #re-normalize to the same individual number
+      }
+      
       #note that F1.counts[1] has the number of F1 samples with geno==0 etc !
       bestfit <- NA; bestParentfit <- NA;
       q <- rep(NA, length(qnames))
@@ -1246,8 +1356,12 @@ checkF1 <- function(dosage_matrix,
             getMatchParents(parGeno=par.geno, seginfoItem=seginfo[[s]])
           #calculate fraction invalid F1 scores given the current segtype:
           exp.geno <- seginfo[[s]]$expgeno #the genotypes that can occur given the segtype
-          F1.invalid <-
-            length(F1.geno[!(F1.geno %in% exp.geno)]) - F1.naCount #number of invalid scores
+          if(input_type == "discrete"){
+            F1.invalid <- length(F1.geno[!(F1.geno %in% exp.geno)]) - F1.naCount #number of invalid scores 
+          } else{
+            F1.invalid <- sum(F1.counts) - sum(F1.counts[exp.geno+1])
+          }
+          
           results$fracInvalid[s] <- F1.invalid / F1.nobs
           #calculate chi-square P-value given the current segtype and invalidP value:
           if (F1.nobs - F1.invalid > 0) {
@@ -1284,14 +1398,14 @@ checkF1 <- function(dosage_matrix,
         bestfit <- which.max(selcrit) #discards NA's
         if (bestfit == 0)
           stop(paste("Error in checkF1: bestfit is 0 at marker", mrknames[mrk]))
-
+        
         #select which segtype best fits the parental genotype(s)
         ParentFit <- which(results$matchParents %in% c("Yes","OneOK","Unknown"))
         bestParentfit <- segtypeBestSelcrit(ParentFit)
         if (bestParentfit == 0)
           stop(paste("Error in checkF1: bestParentfit is 0 at marker", mrknames[mrk]))
         #bestParentfit is 0 if all segtypes have matchParents=="No" (should never occur)
-
+        
         #Can we improve on bestParentfit by using low-confidence parental scores?
         lowParentFit <- NA
         lowc <- which(!is.na(par.lowconf.geno))
@@ -1367,7 +1481,7 @@ checkF1 <- function(dosage_matrix,
             } #two par.lowconf.geno, the combination was not acceptable
           } #two par.lowconf.geno
         } #at least one par.lowconf.geno
-
+        
         #Note that we don't attempt here to resolve mismatches between the final
         #par.geno and bestParentfit, nor to fill in missing par.geno if the
         #bestParentfit segtype would allow only one solution.
@@ -1375,13 +1489,19 @@ checkF1 <- function(dosage_matrix,
         #A further expansion to generate markers with all possible par.geno
         #allowed by the segtype and the known par.geno is done in
         #expandUnknownParents
-
+        
+        if(input_type == "discrete"){
+          F1_NAfrac <- F1.naCount/length(F1.geno)
+        } else {
+          F1_NAfrac <- F1.naCount/nrow(F1.geno)
+        }
+        
         # generate a set of quality parameters of the marker in general and
         # the fit of bestParentfit:
         q <- calc_qall(Pvalue_threshold, fracInvalid_threshold, fracNA_threshold,
                        Pvalue=results$Pvalue[bestParentfit],
                        fracInvalid=results$fracInvalid[bestParentfit],
-                       F1.NAfrac=F1.naCount / length(F1.geno),
+                       F1.NAfrac=F1_NAfrac,
                        matchParents=results$matchParents[bestParentfit],
                        bestfit=bestfit, bestParentfit=bestParentfit,
                        par.conflicts=par.conflicts,
@@ -1389,7 +1509,7 @@ checkF1 <- function(dosage_matrix,
                        critweight=critweight,
                        parentsScoredWithF1=parentsScoredWithF1)
       } # F1.nobs>10
-
+      
       #get the output line:
       bix <- mrk - minmrk + 1 #index to row in bres
       bres$m[bix] <- mrknr
@@ -1457,12 +1577,34 @@ checkF1 <- function(dosage_matrix,
   } #while batch
   output <- read.table(outfile, header=TRUE, sep="\t",
                        na.strings="", check.names=FALSE)
-  output <- chk2integer(output)
+  if(input_type == "discrete"){
+    output <- chk2integer(output)
+  }
+  
+  
   output$bestfit <- factor(as.character(output$bestfit), levels=allsegtypenames)
   output$bestParentfit <- factor(as.character(output$bestParentfit), levels=allsegtypenames)
   if (file.del) file.remove(outfile)
-  invisible(output)
+  
+  return(invisible(list("checked_F1" = output,
+                        "meta" = list(parent1 = parent1,
+                                      parent2 = parent2,
+                                      F1 = F1,
+                                      ancestors = ancestors,
+                                      polysomic = polysomic, 
+                                      disomic = disomic, 
+                                      mixed = mixed,
+                                      ploidy = ploidy, 
+                                      ploidy2 = ploidy2,
+                                      outfile = outfile,
+                                      critweight = critweight,
+                                      Pvalue_threshold = Pvalue_threshold,
+                                      fracInvalid_threshold = fracInvalid_threshold,
+                                      fracNA_threshold = fracNA_threshold,
+                                      shiftmarkers = shiftmarkers,
+                                      parentsScoredWithF1 = parentsScoredWithF1))))
 } #checkF1
+
 
 #' Check the quality of a linkage map using heatplots
 #' @description Perform a series of checks on a linkage map and visualise the results using heatplots. Also shows the discrepency between
@@ -1627,9 +1769,9 @@ check_map <- function (linkage_list,
     }
     par(mar = colbar.mar)
     colour.bar(col.data = colours, min = rcolmin, max = rcolmax, 
-                          nticks = 8, 
-                          ticks = round(seq(rcolmin, rcolmax, len = 8), 2), 
-                          cex.ticks = 0.8)
+               nticks = 8, 
+               ticks = round(seq(rcolmin, rcolmax, len = 8), 2), 
+               cex.ticks = 0.8)
     par(mar = orig.mar)
     plot(NULL, xlim = range(ds), ylim = range(ds), main = "LOD", 
          cex = 3, xlab = "cM", ylab = "cM")
@@ -1642,9 +1784,9 @@ check_map <- function (linkage_list,
     }
     par(mar = colbar.mar)
     colour.bar(col.data = colours, min = LODcolmin, max = LODcolmax, 
-                          nticks = 8, 
-                          ticks = round(seq(LODcolmin, LODcolmax, len = 8), 2), 
-                          cex.ticks = 0.8)
+               nticks = 8, 
+               ticks = round(seq(LODcolmin, LODcolmax, len = 8), 2), 
+               cex.ticks = 0.8)
     mtext(text = paste0(lgname, " map diagnostics"), 
           side = 3, outer = TRUE, cex = 2)
     if (plottype %in% c("pdf", "png")) {
@@ -1663,7 +1805,7 @@ check_map <- function (linkage_list,
 #' @param marker_assignment.P1 A marker assignment matrix for parent 1 with markernames as rownames and at least containing the column \code{"Assigned_LG"}; the output of \code{\link{homologue_lg_assignment}}.
 #' @param marker_assignment.P2 A marker assignment matrix for parent 2 with markernames as rownames and at least containing the column \code{"Assigned_LG"}; the output of \code{\link{homologue_lg_assignment}}.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL (by default) log is send to stdout.
-#' @param verbose Should messages be send to stdout or log?
+#' @param verbose Should messages be sent to stdout or log?
 #' @examples
 #' data("marker_assignments_P1"); data("marker_assignments_P2")
 #' check_marker_assignment(marker_assignments_P1,marker_assignments_P2)
@@ -1715,7 +1857,81 @@ check_marker_assignment <- function(marker_assignment.P1,
     close(log.conn)
   
   return(outlist)
-}
+} #check_marker_assignment
+
+
+
+#' check your dataset's maxP distribution
+#' @description Function to assess the distribution of maximum genotype probabilities (\code{maxP}), if these are available. The function
+#' plots a violin graph showing the distribution of the samples' \code{maxP}.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}
+#' }
+#' }
+#' @examples
+#' data("gp_df")
+#' check_maxP(gp_df)
+#' @return This function does not return any value, is simply a visualisation tool to help assess data quality.
+#' @export
+check_maxP <- function(probgeno_df){
+  
+  probgeno_df <- test_probgeno_df(probgeno_df)
+  
+  #1. Missing
+  proba <- probgeno_df$maxP
+  proba_NA <- sum(is.na(proba))  #nbr of missing
+  proba_nonNA <- proba[complete.cases(proba)]
+  writeLines(paste0(round(proba_NA/length(proba)*100,2),'% samples do not fit mixture model and result in missing values.'))
+  
+  #2. Random pick numbers for plot (otherwise this step takes too long)
+  sample_size <- 5000
+  if(length(proba)/10 < sample_size){
+    sample_size <- round(length(proba)/10)
+  }
+  plot_sample <- sample(proba,sample_size)
+  probability <- data.frame('maxP' = plot_sample,'Sample' = as.factor(""))
+  
+  p <- ggplot2::ggplot(probability, ggplot2::aes_string("Sample","maxP"))
+  suppressWarnings(print(p + ggplot2::geom_violin(fill = "dodgerblue",colour = "navyblue")))
+  
+  #3. each threshold number count
+  window_choice <- seq(0,1,0.05)
+  count_summary <- data.frame()
+  for(i in 1:(length(window_choice)-1)){
+    min <- window_choice[i]
+    max <- window_choice[i+1]
+    count <- length(proba_nonNA[proba_nonNA > min & proba_nonNA <= max])
+    count_summary <- rbind(count_summary,data.frame(paste0(min,' ~ ',max),count))
+  }
+  colnames(count_summary)[1] <- 'interval'
+  count_summary <- rbind(count_summary,data.frame('interval' = 'NA', 'count' = proba_NA))
+  count_summary$percent <- paste0(round(count_summary$count/length(proba)*100,2),'%')
+  writeLines('\nSummary of the number of samples within each probability interval:')
+  print.data.frame(count_summary)
+  
+} #check_maxP
+
 
 #' Cluster 1.0 markers into correct homologues per linkage group
 #' @description Clustering at one LOD score for all markers does usually not result in correct classification of homologues. Usually there are more clusters of (pseudo)homologues than expected. This function lets you inspect every linkage group separately and allows for clustering at a different LOD threshold per LG.
@@ -1988,6 +2204,17 @@ cluster_SN_markers <- function(linkage_df,
     linkage_df <- linkage_df[linkage_df[,"phase"]==phase_considered,]
   }
   
+  if(max(linkage_df[,LODscore]) < max(LOD_sequence)){
+    LOD_sequence <- LOD_sequence[LOD_sequence >= max(linkage_df[,LODscore])]
+    if(length(LOD_sequence) == 0) {
+      stop(paste("LOD_sequence only contains LOD values higher than present in the data. 
+           Clustering only possible up to",max(linkage_df[,LODscore])))
+    } else{
+      warning(paste("LOD_sequence contains values higher than present in the data. Removing values higher than",
+                    max(linkage_df[,LODscore])))
+    }
+  }
+  
   # define edges between SN markers
   edges <- linkage_df[linkage_df[,LODscore] >= min(LOD_sequence),
                       c("marker_a", "marker_b")]
@@ -1997,6 +2224,9 @@ cluster_SN_markers <- function(linkage_df,
   # make a network (graph)
   nw <- igraph::graph.data.frame(edges, directed = F)
   gcl <- igraph::groups(igraph::clusters(nw))
+  clsizes <- sapply(gcl,length)
+  gcl <- gcl[clsizes >= min_clust_size] 
+  
   ngroups <- length(gcl)
   groups <- stack(gcl)
   colnames(groups) <- c("marker", "cluster")
@@ -2031,6 +2261,7 @@ cluster_SN_markers <- function(linkage_df,
       gname <- as.character(i)
       groups[[gname]] <- groupsi
     }
+    
     names(groups) <- LOD_sequence
     groups.out <- groups
     
@@ -2041,9 +2272,6 @@ cluster_SN_markers <- function(linkage_df,
       homologue_numbers <- c(homologue_numbers, homNr)
       nonLinked <- total_markernr - nrow(groups[[i]])
       nonlinked_markers <- c(nonlinked_markers, nonLinked)
-      # write(paste("\nNumber of pseudohomologues at LOD >",
-      #             i, ":", homNr, "\n\n", nonLinked, "unlinked marker(s)\n", sep=" ")
-      #       ,log.conn)
     }
     
     par(mar = c(5, 5, 2, 5))
@@ -2060,9 +2288,10 @@ cluster_SN_markers <- function(linkage_df,
     segments(par("usr")[1],ploidy*LG_number,
              par("usr")[2],ploidy*LG_number,
              lty=2,lwd=2,col="red2")
+    expected <- ifelse(ploidy==2,1,ploidy)*LG_number
     text(x=mean(LOD_sequence),
-         y=ploidy*LG_number+1,
-         paste(ploidy*LG_number,"clusters expected"),
+         y=expected+1,
+         paste(expected,"clusters expected"),
          col="red2")
     par(new = TRUE)
     plot(
@@ -2087,7 +2316,6 @@ cluster_SN_markers <- function(linkage_df,
       cex = 1.2
     )
     
-    
     #unique cluster names for all thresholds
     for (i in seq(length(groups))) {
       groups[[i]]$LOD <- names(groups)[i]
@@ -2101,7 +2329,7 @@ cluster_SN_markers <- function(linkage_df,
     vertex_size <-
       tapply(groups.df$marker, groups.df$unique_cluster, length)
     
-    vertex_size <- vertex_size[vertex_size > min_clust_size]
+    vertex_size <- vertex_size[vertex_size >= min_clust_size]
     
     groups.df <-
       groups.df[groups.df$unique_cluster %in% names(vertex_size),]
@@ -2123,7 +2351,6 @@ cluster_SN_markers <- function(linkage_df,
     
     roots <- unique(groups[[as.character(minLOD)]]$unique_cluster)
     roots <- roots[roots %in% igraph::V(nw.cl)$name]
-    
     
     vertex_order <- igraph::V(nw.cl)
     
@@ -2184,9 +2411,14 @@ cluster_SN_markers <- function(linkage_df,
     l <- l[order(l[,"x"], l[,"y"]),]
     
     for(i in seq(length(groups.out))){
+      
       cluster_names <- rownames(l[l[,"y"] == i-1,,drop = FALSE])
       m <- matrix(unlist(strsplit(cluster_names, split = "_")), byrow = TRUE, ncol = 2)
       cluster_order <- m[,1]
+      
+      clmark <- groups.df[groups.df$LOD == LOD_sequence[i],"marker"]
+      groups.out[[i]] <- groups.out[[i]][groups.out[[i]]$marker %in% clmark,]
+      
       ps <- as.character(groups.out[[i]][,"cluster"])
       psm <- rep(NA, length(ps))
       for(j in seq(length(cluster_order))){
@@ -2240,17 +2472,9 @@ cluster_SN_markers <- function(linkage_df,
     )
   }
   
-  # Indicate whether all chromosomes / homologuess are (potentially) separated
-  if (ngroups < (LG_number)) {
-    message("Please note: the number of clusters is smaller than number of expected chromosomes.
-            Not all expected chromosomes are represented."
-    )
-  }
-  
-  if (ngroups < (LG_number * ploidy)) {
-    message("Please note: the number of clusters is smaller than number of expected homologues.
-            Not all expected homologues are represented."
-    )
+  # Indicate whether all chromosomes / homologues are (potentially) separated
+  if (ngroups < expected) {
+    message("Please note: the number of clusters was smaller than expected.")
   }
   
   if (!is.null(log))
@@ -2277,7 +2501,8 @@ cluster_SN_markers <- function(linkage_df,
 #' @param type Plot type, by default "karyotype". If "scatter" is requested a scatter plot is drawn, but only if the comparison is between 2 maps.
 #' @param \dots option to supply arguments to the \code{plot} function (e.g. \code{main =} to add a title to the plot)
 #' @return \code{NULL}
-#' @examples data("map1","map2","map3")
+#' @examples 
+#' data("map1","map2","map3")
 #' compare_maps(maplist=list("1a"=map1,"c08"=map2,"1b"=map3),bg.col=c("thistle","white","skyblue"))
 #' @export
 compare_maps <- function(maplist,
@@ -2531,8 +2756,8 @@ consensus_LG_names <- function(modify_LG,
   while(any(duplicated(changed_LGs)) & counter < 10){
     if(counter == 1)
       warning(paste0("Cannot simply rename LG ",
-                   paste0(changed_LGs[duplicated(changed_LGs)],collapse = ", "),
-                   ". Attempting a resolution...."))
+                     paste0(changed_LGs[duplicated(changed_LGs)],collapse = ", "),
+                     ". Attempting a resolution...."))
     
     for(i in which(duplicated(changed_LGs))){
       
@@ -2554,7 +2779,7 @@ consensus_LG_names <- function(modify_LG,
         }
       }
       
-      }
+    }
     counter <- counter + 1
   }
   
@@ -2586,20 +2811,20 @@ consensus_LG_names <- function(modify_LG,
 #' Convert marker dosages to the basic types.
 #' @description Convert marker dosages to the basic types which hold the same information and for which linkage calculations can be performed.
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
-#' @param outname output filename (deprecated for now)
 #' @param ploidy ploidy level of the plant species. If parents have different ploidy level, ploidy of parent1.
 #' @param ploidy2 ploidy level of the second parent. NULL if both parents have the same ploidy level.
 #' @param parent1 Character string specifying the first (usually maternal) parentname.
 #' @param parent2 Character string specifying the second (usually paternal) parentname.
-#' @param marker_conversion_info Logical. Should marker conversion information be returned?
+#' @param marker_conversion_info Logical, by default \code{FALSE}. Should marker conversion information be returned? This output can be useful for later map phasing step,
+#' if original marker coding is desired (which is most likely the case).
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
-#' @return A modified dosage matrix. If \code{marker_swap_info = TRUE}, this function returns a list.
+#' @return A modified dosage matrix. If \code{marker_conversion_info = TRUE}, this function returns a list, with both the converted dosage_matrix, and 
+#' information on the marker conversions performed per marker.
 #' @examples
 #' data("ALL_dosages")
 #' conv<-convert_marker_dosages(dosage_matrix=ALL_dosages, ploidy = 4)
 #' @export
 convert_marker_dosages <- function(dosage_matrix,
-                                   outname,
                                    ploidy,
                                    ploidy2 = NULL,
                                    parent1 = "P1",
@@ -2615,7 +2840,7 @@ convert_marker_dosages <- function(dosage_matrix,
       paste("There are dosages greater than",ploidy,"or less than 0 in the dataset.
             If they include parental dosages, markers are removed from the output.
             Otherwise the dosage is made missing.")
-      )
+    )
     dosage_matrix[unexpected_dosages] <- NA
     rm_markers <-
       apply(dosage_matrix[,c(parent1, parent2)], 1, function(x)
@@ -2649,7 +2874,6 @@ convert_marker_dosages <- function(dosage_matrix,
   
   P1_conversion <- par[,parent1] == ploidy & par[,parent2] < ploidy2/2
   P2_conversion <- par[,parent2] == ploidy2 & par[,parent1] < ploidy/2
-  
   
   onepar_conversion <- P1_conversion | P2_conversion
   
@@ -2710,7 +2934,10 @@ convert_marker_dosages <- function(dosage_matrix,
   
   # get stats of marker conversions
   par <- dosage_matrix[, c(parent1, parent2)]
+  # minus_conversion
   par_swapped <- par != par_orig
+  #Bug May 2020: these were incorrectly recorded as having only single parent conversion.
+  par_swapped[minus_conversion & !onepar_conversion,] <- TRUE 
   par_swapped_num <- apply(par_swapped, 1, sum)
   
   # find non-segregating markers
@@ -2763,13 +2990,10 @@ convert_marker_dosages <- function(dosage_matrix,
   
   write("\n####Marker dosage frequencies:\n",
         file = log.conn)
-  # write(paste0("\t", colnames(parental_info), collapse = ""),
-  #       append = TRUE, file = log.conn)
-  #sink(log.conn)
-  #print(parental_info)
+
   write(knitr::kable(parental_info),
         log.conn)
-  #suppressWarnings(sink())
+
   write(paste0("\nmarkers not converted: ", sum(par_swapped_num == 0)),
         file = log.conn)
   write(paste0("\nmarkers 1 parent converted: ", sum(par_swapped_num == 1)),
@@ -2780,13 +3004,63 @@ convert_marker_dosages <- function(dosage_matrix,
         file = log.conn)
   if (!is.null(log))
     close(log.conn)
-  #write.csv(dosage_matrix, paste(outname,".csv",sep=""))
   
   if (marker_conversion_info)
     return(list(dosage_matrix = dosage_matrix, marker_conversion_info = par_swapped))
   return(dosage_matrix)
   
-}
+} #convert_marker_dosages
+
+#' Convert (probabilistic) genotype calling results from polyRAD to input compatible with polymapR
+#' @param RADdata An RADdata (S3 class) object; output of the function \link[polyRAD]{PipelineMapping2Parents} having followed
+#' the prior steps needed in the polyRAD pipeline. See the polyRAD vignette for details.
+#' @return A data frame which include columns: 
+#' MarkerName, SampleName,P0 ~ Pploidy (e.g. P0 ~ P4 for tetraploid, which represents
+#' the probability assigning to this dosage), maxgeno (the most likely dosage),
+#' and maxP (the maximum probability)
+#' @examples
+#' data("exampleRAD_mapping")
+#' convert_polyRAD(RADdata = exampleRAD_mapping)
+#' @export
+convert_polyRAD <- function(RADdata){
+  genotype_tmp <- RADdata$genotypeLikelihood[[1]]
+  loci <- dimnames(genotype_tmp)[[3]] 
+  output <- do.call(rbind,lapply(loci, function(l){
+    tmp <- t(genotype_tmp[,,l])
+    colnames(tmp) <- paste0('P',colnames(tmp))
+    tmp_new <- data.frame("MarkerName" = replicate(nrow(tmp),l),
+                          "SampleName" = rownames(tmp),
+                          tmp,
+                          'maxgeno' = as.numeric(apply(tmp,1,which.max)) - 1, #class - 1 become the dosage
+                          "maxP" = as.numeric(apply(tmp,1,max)))
+    rownames(tmp_new) <- NULL
+    tmp_new
+  }))
+  return(output)
+} #convert_polyRAD
+
+#' Convert (probabilistic) genotype calling results from updog to input compatible with polymapR. 
+#' @param mout An object of class multidog; output of the function \link[updog]{multidog}.
+#' @return A data frame which include columns: 
+#' MarkerName, SampleName,P0 ~ Pploidy (e.g. P0 ~ P4 for tetraploid, which represents
+#' the probability assigning to this dosage), maxgeno (the most likely dosage),
+#' and maxP (the maximum probability)
+#' @examples
+#' data("mout")
+#' convert_updog(mout)
+#' @export
+convert_updog <- function(mout){
+  probaset <- mout$inddf[,grep("Pr_",colnames(mout$inddf))]
+  ploidy <- mout$snpdf[1,"ploidy"]
+  colnames(probaset) <- c(paste0("P",seq(0,ploidy)))
+  
+  output <- data.frame("MarkerName" = mout$inddf[,"snp"],
+                       "SampleName" = mout$inddf[,"ind"],
+                       probaset,
+                       "maxgeno" = mout$inddf[,"geno"],#fout$geno,
+                       "maxP" = mout$inddf[,"maxpostprob"])#fout$maxpostprob)
+  return(output)
+} #convert_updog
 
 #'@title Check if dosage scores may have to be shifted
 #'@description fitPoly sometimes uses a "shifted" model to assign dosage
@@ -2880,7 +3154,7 @@ correctDosages <- function(chk,
   chk <- chk2integer(chk) #chk <- polymapR:::chk2integer(chk)
   if (is.factor(chk$bestfit)) chk$bestfit <- as.character(chk$bestfit)
   NAcol <- which(names(chk) == "F1_NA") # last before parental samples
-
+  
   #calculate a (possibly very low conf) new parental consensus:
   #(the one in chk may be based partly on bestParentfit)
   for (p in 1:2) {
@@ -2904,7 +3178,7 @@ correctDosages <- function(chk,
   nonNA <- function(x) sum(!is.na(x))
   is0 <- function(x) sum(x==0, na.rm=TRUE)
   isploidy <- function(x) sum(x==ploidy, na.rm=TRUE)
-
+  
   scores.nonNA <- apply(dosage_matrix[,3:ncol(dosage_matrix)],1,nonNA)
   # scores.frc0 <- tapply(scores$geno, scores$MarkerName, FUN=is0)
   scores.frc0 <- apply(dosage_matrix[,3:ncol(dosage_matrix)],1,is0)
@@ -2929,7 +3203,7 @@ correctDosages <- function(chk,
   shf_segtype <- paste(potShifts[mf ,1],
                        (potShifts[mf ,2] + potShifts[mf ,3]), sep= "_")
   #    shifted segtype: original first dosage + shift
-
+  
   match_p_seg <- function(segtype, p1, p2) {
     # for one segtype: do the parental consensus dosages (p12) match it?
     if (is.na(p1) && is.na(p2)) return(TRUE)
@@ -2939,7 +3213,7 @@ correctDosages <- function(chk,
     if (is.na(p2)) return(p1 %in% si[,1])
     return(any(si[,1]==p1 & si[,2]==p2))
   }
-
+  
   goodshifts <- mapply(FUN=match_p_seg, shf_segtype, shfpar[,1,drop = FALSE], shfpar[,2,drop = FALSE])
   shiftmf <- rep(0, sum(mf))
   shiftmf[goodshifts] <- potShifts$shift[mf][goodshifts]
@@ -2950,7 +3224,7 @@ correctDosages <- function(chk,
   #bothpokmf[goodshifts] <- sum_isna == 0
   #onepokmf[goodshifts] <- sum_isna == 1
   #bothpnamf[goodshifts] <- sum_isna == 2
-
+  
   nmrk <- nrow(chk)
   P1na = rep(NA, nmrk)
   P2na = rep(NA, nmrk)
@@ -2973,7 +3247,7 @@ correctDosages <- function(chk,
   P1na[mf] <- p1namf
   P2na[mf] <- p2namf
   result$ParNA <- P1na + P2na #0, 1 or 2
-
+  
   #sort result into same order as original chk:
   result <- result[order(ch.ord),]
   invisible(result)
@@ -3109,12 +3383,17 @@ createTetraOriginInput <- function(maplist,
 #' Create a phased homologue map list using the original dosages
 #' @description \code{create_phased_maplist} is a function for creating a phased maplist, using
 #' integrated map positions and original marker dosages.
+#' @param input_type Can be either one of 'discrete' or 'probabilistic'. For the former (default), at least \code{dosage_matrix.conv} must be supplied,
+#' while for the latter \code{chk} must be supplied. 
 #' @param maplist A list of maps. In the first column marker names and in the second their position.
 #' @param dosage_matrix.conv Matrix of marker dosage scores with markers in rows and individuals in columns. Note that dosages must be
 #' in converted form, i.e. after having run the \code{\link{convert_marker_dosages}} function. Errors may result otherwise.
 #' @param dosage_matrix.orig Optional, by default \code{NULL}.The unconverted dosages (i.e. raw dosage data before using
 #' the \code{\link{convert_marker_dosages}} function). Required if \code{original_coding} is \code{TRUE}.
+#' @param probgeno_df Probabilistic genotypes, for description see e.g. \code{\link{gp_overview}}. Required if probabilistic genotypes are used.
+#' @param chk Output list as returned by function \code{\link{checkF1}}. Required if probabilistic genotypes are used.
 #' @param remove_markers Optional vector of marker names to remove from the maps. Default is \code{NULL}.
+#' @param original_coding Logical. Should the phased map use the original marker coding or not? By default \code{FALSE}.
 #' @param N_linkages Number of significant linkages (as defined in \code{\link{homologue_lg_assignment}}) required for high-confidence linkage group assignment.
 #' @param lower_bound Numeric. Lower bound for the rate at which homologue linkages (fraction of total for that marker) are recognised.
 #' @param ploidy Integer. Ploidy of the organism.
@@ -3123,22 +3402,26 @@ createTetraOriginInput <- function(maplist,
 #' @param marker_assignment.2 A marker assignment matrix for parent 2 with markernames as rownames and at least containing the column \code{"Assigned_LG"}.
 #' @param parent1 character vector with names of the samples of parent 1
 #' @param parent2 character vector with names of the samples of parent 2
-#' @param original_coding Logical. Should the phased map use the unconverted dosage coding or not?
+#' @param marker_conversion_info One of the list elements generated by the function \code{\link{convert_marker_dosages}}. Required if \code{original_coding} is \code{TRUE}.
 #' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
-#' @param verbose Logical, by default \code{TRUE}. Should unphased markers be recorded?
+#' @param verbose Logical, by default \code{TRUE}. Should details of the phasing process be given?
 #' @examples
 #' \dontrun{
 #' data("integrated.maplist", "screened_data3", "marker_assignments_P1","marker_assignments_P2")
-#' create_phased_maplist(integrated.maplist,
+#' create_phased_maplist(maplist = integrated.maplist,
 #'                      dosage_matrix.conv = screened_data3,
 #'                      marker_assignment.1=marker_assignments_P1,
 #'                      marker_assignment.2=marker_assignments_P2,
 #'                      ploidy = 4)}
 #' @export
-create_phased_maplist <- function(maplist,
+create_phased_maplist <- function(input_type = "discrete",
+                                  maplist,
                                   dosage_matrix.conv,
                                   dosage_matrix.orig = NULL,
+                                  probgeno_df,
+                                  chk,
                                   remove_markers = NULL,
+                                  original_coding = FALSE,
                                   N_linkages = 2,
                                   lower_bound = 0.05,
                                   ploidy,
@@ -3147,14 +3430,24 @@ create_phased_maplist <- function(maplist,
                                   marker_assignment.2,
                                   parent1 = "P1",
                                   parent2 = "P2",
-                                  original_coding = FALSE,
+                                  marker_conversion_info = NULL,
                                   log = NULL,
                                   verbose = TRUE) {
+  input_type <- match.arg(input_type, choices = c("discrete", "probabilistic"))
   
-  if(original_coding & is.null(dosage_matrix.orig)) stop("Uncoverted dosage matrix should also be specified if original_coding = TRUE")
+  if(input_type == "discrete"){
+    if(original_coding & is.null(dosage_matrix.orig)) stop("Unconverted dosage matrix should also be specified if original_coding = TRUE")
+    if(original_coding & is.null(marker_conversion_info)) stop("marker_conversion_info should also be specified if original_coding = TRUE. \nThis can be obtained by re-running convert_marker_dosages with parameter marker_conversion_info = TRUE, and is then part of the list output of that function") 
+  }
   
   mapped_markers <- unlist(lapply(maplist, function(x) as.character(x$marker)))
-  if(!all(mapped_markers %in% rownames(dosage_matrix.conv))) stop("Not all markers on map have corresponding dosages! If duplicated markers were added back to maps, make sure to use an appropriate dosage matrix!")
+  
+  if(input_type == "discrete"){
+    if(!all(mapped_markers %in% rownames(dosage_matrix.conv))) stop("Not all markers on map have corresponding dosages! If duplicated markers were added back to maps, make sure to use an appropriate dosage matrix!")
+  } else{
+    if(!all(mapped_markers %in% chk$checked_F1$MarkerName)) stop("Not all markers on map were processed by checkF1! If duplicated markers were added back to maps, make sure to use appropriate input chk!")
+    # ploidy <- chk1$meta$ploidy
+    }
   
   if (is.null(log)) {
     log.conn <- stdout()
@@ -3166,15 +3459,35 @@ create_phased_maplist <- function(maplist,
   
   if(is.null(ploidy2)) ploidy2 <- ploidy
   
-  if(ploidy == ploidy2){
-    palindromes <- rownames(dosage_matrix.conv)[which(dosage_matrix.conv[,parent1] != dosage_matrix.conv[,parent2] &
-                                                        abs(dosage_matrix.conv[,parent1] - (0.5*ploidy)) == abs(dosage_matrix.conv[,parent2]-(0.5*ploidy2)))]
-    
-    ## If there are any unconverted palindromes, convert them:
-    if(any(dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]))
-      dosage_matrix.conv[palindromes[dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]],] <-
-        ploidy - dosage_matrix.conv[palindromes[dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]],]
+  if(input_type == "probabilistic"){ 
+    # ALL_MT <- chk$checked_F1
+    ALL_MT <- assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
+    rownames(ALL_MT) <- ALL_MT$MarkerName
+    ALL_MT <- ALL_MT[,c("parent1", "parent2")] 
+    colnames(ALL_MT) <- c("P1","P2")
   }
+  
+  if(ploidy == ploidy2){
+    if(input_type == "discrete"){
+      palindromes <- rownames(dosage_matrix.conv)[which(dosage_matrix.conv[,parent1] != dosage_matrix.conv[,parent2] &
+                                                          abs(dosage_matrix.conv[,parent1] - (0.5*ploidy)) == abs(dosage_matrix.conv[,parent2]-(0.5*ploidy2)))]
+      
+      ## If there are any unconverted palindromes, convert them:
+      if(any(dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]))
+        dosage_matrix.conv[palindromes[dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]],] <-
+          ploidy - dosage_matrix.conv[palindromes[dosage_matrix.conv[palindromes,parent1] > dosage_matrix.conv[palindromes,parent2]],]
+      
+    } else{
+      palindromes <- rownames(ALL_MT)[which(ALL_MT[,parent1] != ALL_MT[,parent2] &
+                                              abs(ALL_MT[,parent1] - (0.5*ploidy)) == abs(ALL_MT[,parent2]-(0.5*ploidy2)))]
+      
+      ## If there are any unconverted palindromes, convert them:
+      if(any(ALL_MT[palindromes,parent1] > ALL_MT[palindromes,parent2]))
+        ALL_MT[palindromes[ALL_MT[palindromes,parent1] > ALL_MT[palindromes,parent2]],] <-
+          ploidy - ALL_MT[palindromes[ALL_MT[palindromes,parent1] > ALL_MT[palindromes,parent2]],]
+      
+    }
+      }
   
   # Begin by separating the SxN and NxS linkages:
   SxN_assigned <- marker_assignment.1[marker_assignment.1[,parent1]==1 &
@@ -3186,7 +3499,7 @@ create_phased_maplist <- function(maplist,
     p1_assigned <- marker_assignment.1
     noSN <- TRUE
   }
-
+  
   NxS_assigned <- marker_assignment.2[marker_assignment.2[,parent1]==0 &
                                         marker_assignment.2[,parent2]==1,]
   if(nrow(NxS_assigned) > 0){
@@ -3236,7 +3549,7 @@ create_phased_maplist <- function(maplist,
   p1.markers <- rownames(p1_assigned[p1_assigned[,parent1]!=0,])
   p2.markers <- rownames(p2_assigned[p2_assigned[,parent2]!=0,])
   
-  ## Assuming markers are converted here; have to treat palindrome markers in P2 carefully:
+  ## Assuming markers are converted here; have to treat palindrome markers carefully:
   P1different <- rownames(p1_assigned[rownames(p1_assigned) %in% p1.markers & p1_assigned[,parent1] != P1linked,])
   P2different <- rownames(p2_assigned[setdiff(which(rownames(p2_assigned) %in% p2.markers & p2_assigned[,parent2] != P2linked),
                                               which(rownames(p2_assigned) %in% palindromes & ploidy2 - p2_assigned[,parent2] == P2linked)),])
@@ -3270,8 +3583,9 @@ create_phased_maplist <- function(maplist,
   p1_assigned <- p1_assigned[!rownames(p1_assigned) %in% P1different,]
   p2_assigned <- p2_assigned[!rownames(p2_assigned) %in% P2different,]
   
-  rownames(P1rates) <- rownames(p1_assigned)
-  rownames(P2rates) <- rownames(p2_assigned)
+  ## Why is this step needed? Seems redundant:
+  # rownames(P1rates) <- rownames(p1_assigned)
+  # rownames(P2rates) <- rownames(p2_assigned)
   
   # return simplex x nulliplex markers
   if(!noSN) p1_assigned <- rbind(SxN_assigned,p1_assigned)
@@ -3319,7 +3633,7 @@ create_phased_maplist <- function(maplist,
       temp <- P1rates[match(as.character(outmap$marker[r]),rownames(P1rates)),]
       if(length(which(temp!=0)) > 0) a[(1:ploidy)[which(temp!=0)]] <- 1
       
-      temp <- P2rates[match(outmap$marker[r],rownames(P2rates)),]
+      temp <- P2rates[match(as.character(outmap$marker[r]),rownames(P2rates)),]
       if(length(which(temp!=0)) > 0) a[((ploidy+1):(ploidy+ploidy2))[which(temp!=0)]] <- 1
       
       return(a)
@@ -3337,13 +3651,26 @@ create_phased_maplist <- function(maplist,
     # recode using the original coding:
     if(original_coding){
       
-      orig_parents <- dosage_matrix.orig[match(outmap$marker,rownames(dosage_matrix.orig)),c(parent1,parent2)]
+      # orig_parents <- dosage_matrix.orig[match(as.character(outmap$marker),rownames(dosage_matrix.orig)),c(parent1,parent2)]
+      if(input_type == "discrete"){
+        orig_parents <- dosage_matrix.orig[as.character(outmap$marker),c(parent1,parent2)]
+      } else{
+        orig_parents <- ALL_MT[as.character(outmap$marker),c(parent1,parent2)]
+      }
+      
       orig_mat <- hom_mat
+      ci <- marker_conversion_info[as.character(outmap$marker),]
       
       for(r in 1:nrow(orig_mat)){
-        if(sum(hom_mat[r,1:ploidy]) != orig_parents[r,1]) orig_mat[r,1:ploidy] <- (hom_mat[r,1:ploidy]+1)%%2
-        if(sum(hom_mat[r,(ploidy+1):(ploidy+ploidy2)]) != orig_parents[r,2])
-          orig_mat[r,(ploidy+1):(ploidy+ploidy2)] <- (hom_mat[r,(ploidy+1):(ploidy+ploidy2)]+1)%%2
+        # if(sum(hom_mat[r,1:ploidy]) != orig_parents[r,1]) orig_mat[r,1:ploidy] <- (hom_mat[r,1:ploidy]+1)%%2
+        #   
+        #   if(sum(hom_mat[r,(ploidy+1):(ploidy+ploidy2)]) != orig_parents[r,2])
+        #     orig_mat[r,(ploidy+1):(ploidy+ploidy2)] <- (hom_mat[r,(ploidy+1):(ploidy+ploidy2)]+1)%%2
+        
+        if(ci[r,1]) orig_mat[r,1:ploidy] <- (hom_mat[r,1:ploidy]+1)%%2
+        
+        if(ci[r,2]) orig_mat[r,(ploidy+1):(ploidy+ploidy2)] <- (hom_mat[r,(ploidy+1):(ploidy+ploidy2)]+1)%%2
+        
       }
       outmap <- cbind(outmap,orig_mat)
     } else{
@@ -3359,29 +3686,46 @@ create_phased_maplist <- function(maplist,
   phased_markers <- unlist(lapply(maplist.out, function(x) as.character(x$marker)))
   
   if(original_coding){
-    mapped.dosages <- dosage_matrix.orig[mapped_markers,]
-  } else{
-    mapped.dosages <- dosage_matrix.conv[mapped_markers,]
+    if(input_type == "discrete"){
+      mapped.dosages <- dosage_matrix.orig[mapped_markers,]
+    } else{
+      mapped.dosages <- ALL_MT[mapped_markers,] #I don't understand why this is used in both instances..
+    }
+    
+  } else{ #converted coding used..
+    if(input_type == "discrete"){
+      mapped.dosages <- dosage_matrix.conv[mapped_markers,]
+    } else{
+      mapped.dosages <- as.matrix(ALL_MT[mapped_markers,]) #I don't understand why this is used in both instances..
+    }
+    
   }
   
   if(verbose){
-    mds.b4 <- marker_data_summary(dosage_matrix = mapped.dosages,
+
+    mds <- marker_data_summary(dosage_matrix = mapped.dosages,
                                   ploidy = (ploidy+ploidy2)/2,
                                   parent1 = parent1,
                                   parent2 = parent2,
-                                  pairing = "random", verbose = FALSE)
-    mds.aft <- marker_data_summary(dosage_matrix = dosage_matrix.conv[phased_markers,],
-                                   ploidy = (ploidy+ploidy2)/2,
-                                   parent1 = parent1,
-                                   parent2 = parent2,
-                                   pairing = "random", verbose = FALSE)
+                                  pairing = "random",
+                                  shortform = TRUE,
+                                  verbose = FALSE)
     
-    write(paste("\nMapped marker breakdown before phasing:\n_______________________________________\n"),log.conn)
-    write(knitr::kable(mds.b4$parental_info,format="markdown"), log.conn)
-    write("\n", log.conn)
+    # mds.aft <- marker_data_summary(dosage_matrix = dosage_matrix.conv[phased_markers,],
+    #                                ploidy = (ploidy+ploidy2)/2,
+    #                                parent1 = parent1,
+    #                                parent2 = parent2,
+    #                                pairing = "random", 
+    #                                shortform = TRUE,
+    #                                verbose = FALSE)
+
+    
+    # write(paste("\nMapped marker breakdown before phasing:\n_______________________________________\n"),log.conn)
+    # write(knitr::kable(mds.b4$parental_info,format="markdown"), log.conn)
+    # write("\n", log.conn)
     
     write(paste("\nPhased marker breakdown:\n_______________________________________\n"),log.conn)
-    write(knitr::kable(mds.aft$parental_info,format="markdown"), log.conn)
+    write(knitr::kable(mds$parental_info,format="markdown"), log.conn)
     write("\n", log.conn)
     
   }
@@ -3460,7 +3804,7 @@ define_LG_structure <- function(cluster_list,
                       by = "marker")
     colnames(LGhom.df) <- c("SxN_Marker","LG","homologue")
   }
-
+  
   LGhom.df$LG <-  as.numeric(LGhom.df$LG)
   LGhom.df$homologue <-  as.numeric(LGhom.df$homologue)
   
@@ -3491,9 +3835,38 @@ define_LG_structure <- function(cluster_list,
 
 
 #' Linkage analysis between all markertypes within LG.
-#' @description \code{finish_linkage_analysis} is a wrapper for \code{\link{linkage}}. Performs linkage calculations between all markertypes within a linkage group.
+#' @description \code{finish_linkage_analysis} is a wrapper for \code{\link{linkage}}, or in the case of probabilistic genotypes, \code{\link{linkage.gp}}.
+#' The function performs linkage calculations between all markertypes within a linkage group.
+#' @param input_type Can be either one of 'discrete' or 'probabilistic'. For the former (default), \code{dosage_matrix} must be supplied,
+#' while for the latter \code{probgeno_df} and \code{chk} must be supplied. 
 #' @param marker_assignment A marker assignment matrix with markernames as rownames and at least containing the column \code{"Assigned_LG"}.
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}}
+#' }
+#' @param chk Output list as returned by function \code{\link{checkF1}}. This argument is only needed if probabilistic genotypes are used.
+
 #' @param marker_combinations A matrix with four columns specifying marker combinations to calculate linkage.
 #' If NULL all combinations are used for which there are rf functions.
 #' Dosages of markers should be in the same order as specified in the names of rf functions.
@@ -3507,7 +3880,7 @@ define_LG_structure <- function(cluster_list,
 #' @param prefPars The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 #' See the function \code{\link{test_prefpairing}} and the vignette for more details.
 #' @param LG_number Number of linkage groups (chromosomes).
-#' @param verbose Should messages be send to stdout or log?
+#' @param verbose Should messages be sent to stdout or log?
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #' @param \dots (Other) arguments passed to \code{\link{linkage}}
 #' @return Returns a matrix with marker assignments. Number of linkages of 1.0 markers are artificial.
@@ -3515,17 +3888,20 @@ define_LG_structure <- function(cluster_list,
 #' \dontrun{
 #' data("screened_data3", "marker_assignments_P1")
 #' linkages_list_P1<-finish_linkage_analysis(marker_assignment=marker_assignments_P1,
-#'                                               dosage_matrix=screened_data3,
-#'                                               target_parent="P1",
-#'                                               other_parent="P2",
-#'                                               convert_palindrome_markers=FALSE,
-#'                                               ploidy=4,
-#'                                               pairing="random",
-#'                                               LG_number=5)
-#'                                               }
+#'                                           dosage_matrix=screened_data3,
+#'                                           target_parent="P1",
+#'                                           other_parent="P2",
+#'                                           convert_palindrome_markers=FALSE,
+#'                                           ploidy=4,
+#'                                           pairing="random",
+#'                                           LG_number=5)
+#'                                           }
 #' @export
-finish_linkage_analysis <- function(marker_assignment,
+finish_linkage_analysis <- function(input_type = "discrete",
+                                    marker_assignment,
                                     dosage_matrix,
+                                    probgeno_df,
+                                    chk,
                                     marker_combinations = NULL,
                                     target_parent = "P1",
                                     other_parent = "P2",
@@ -3538,12 +3914,22 @@ finish_linkage_analysis <- function(marker_assignment,
                                     verbose = TRUE,
                                     log = NULL,
                                     ...) {
-  dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
+  
+  if(input_type == "discrete"){
+    dosage_matrix <- test_dosage_matrix(dosage_matrix)
+    
+    if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+      stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+    
+  } else{
+    probgeno_df <- test_probgeno_df(probgeno_df)
+    pardose <- assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
+  }
+  
   pairing <- match.arg(pairing)
   
-  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
-    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
-  
+
   #initialise:
   ploidy.F1 <- ploidy
   sn.ignore <- "_0.1_"
@@ -3554,7 +3940,7 @@ finish_linkage_analysis <- function(marker_assignment,
     
     if(ploidy2 == ploidy) stop("ploidy2 only needs to be specified if it differs from ploidy, otherwise leave as default (NULL).")
     if(ploidy2 > ploidy) stop("Currently in cross-ploidy mapping, parent1 has to have the higher ploidy level.")
-    if(!target_parent %in% c("P1","P2")) stop("To use cross-ploidy functionality, please rename parent1 as P1 and parent2 as P2 in colnames() of your dosage_matrix.")
+    if(!target_parent %in% c("P1","P2")) stop("To use cross-ploidy functionality, please rename parent1 as P1 and parent2 as P2 (e.g. in colnames() of your dosage_matrix).")
     
     ploidy.F1 <- (ploidy + ploidy2)/2
     
@@ -3629,19 +4015,45 @@ finish_linkage_analysis <- function(marker_assignment,
         write(paste0("Running LG", lg, "..."), log.conn)
       }
       markers <- rownames(marker_assignment)[marker_assignment[,"Assigned_LG"] == lg]
-      r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,],
-                                                markertype1 = mtype1,
-                                                markertype2 = mtype2,
-                                                target_parent = target_parent,
-                                                other_parent = other_parent,
-                                                convert_palindrome_markers = convert_palindrome_markers,
-                                                ploidy = ploidy,
-                                                ploidy2 = ploidy2,
-                                                pairing = pairing,
-                                                prefPars = prefPars,
-                                                verbose = F,
-                                                ...)
-    }
+      
+      if(input_type == "discrete"){
+        r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,],
+                                                  markertype1 = mtype1,
+                                                  markertype2 = mtype2,
+                                                  target_parent = target_parent,
+                                                  other_parent = other_parent,
+                                                  convert_palindrome_markers = convert_palindrome_markers,
+                                                  ploidy = ploidy,
+                                                  ploidy2 = ploidy2,
+                                                  pairing = pairing,
+                                                  prefPars = prefPars,
+                                                  verbose = F,
+                                                  ...)
+      } else{
+        probgeno.lg <- probgeno_df[probgeno_df$MarkerName %in% markers,]
+        chk.lg <- list(checked_F1 = chk$checked_F1[as.character(chk$checked_F1$MarkerName) %in% markers,],
+                        meta = chk$meta)
+        pardose.lg <- pardose[pardose$MarkerName %in% markers,]
+        
+        if(nrow(chk.lg$checked_F1) > 1){
+        
+        r_LOD_list[[paste0("LG", lg)]] <- linkage.gp(probgeno_df = probgeno.lg,
+                                                     chk = chk.lg,
+                                                     pardose = pardose.lg,
+                                                     markertype1 = mtype1,
+                                                     markertype2 = mtype2,
+                                                     target_parent = target_parent,
+                                                     # ploidy = ploidy,
+                                                     # ploidy2 = ploidy2,
+                                                     prefPars = prefPars,
+                                                     verbose = F,
+                                                     ...)
+        } else{
+          r_LOD_list[[paste0("LG", lg)]] <- NULL
+        }
+      }
+    } #for(lg in lgs)...
+    
     r_LOD_list_name <- paste0("r_LOD_list_", paste(mtype1,
                                                    collapse = "."), "_", paste(mtype2_name, collapse = "."))
     assign(r_LOD_list_name, get("r_LOD_list"))
@@ -3650,7 +4062,7 @@ finish_linkage_analysis <- function(marker_assignment,
       setTxtProgressBar(pb, i)
   }
   
-  for (i in lgs) { #seq(LG_number)
+  for (i in lgs) { 
     combined_mat <- data.frame(marker_a = character(), marker_b = character(),
                                r = numeric(), LOD = numeric(), phase = character())
     for (list in r_LOD_lists) {
@@ -3664,8 +4076,8 @@ finish_linkage_analysis <- function(marker_assignment,
   }
   if (!is.null(log))
     close(log.conn)
-  return(mget(paste0("LG", lgs))) #seq(LG_number)
-}
+  return(mget(paste0("LG", lgs))) 
+} #finish_linkage_analysis
 
 #' Visualize and get all markertype combinations for which there are functions in polymapR
 #'
@@ -3716,9 +4128,124 @@ get_markertype_combinations <- function(ploidy,
   return(fnames.df)
 }
 
+
+#' gp_overview
+#' @description Function to generate an overview of genotype probabilities across a population
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or equivalently, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}
+#' }
+#' }
+#' @param cutoff a filtering threshold, by default 0.7, to identify individuals with more than \code{alpha} 
+#' non-missing (maximum) genotype probabilities falling below this cut-off. In other words, by using this
+#' default settings (\code{cutoff} = 0.7 and \code{alpha} = 0.1), you require that 90% of markers for an individual were assigned a probability of more than 0.7
+#' in one of the possible genotype dosage classes. This can help identify problematic individuals with many examples of 
+#' diffuse genotype calls. Lowering the threshold allows more diffuse calls to be accepted.
+#' @param alpha Option to specify the quantile of an individuals' scores that will be used to test against \code{cutoff}, by default 0.1.
+#' @return a list with the following elements:
+#' \item{probgeno_df}{
+#' Input data, filtered based on chosen \code{cutoff}
+#' }
+#' \item{population_overview}{
+#' data.frame containing summary statistics of each individual's genotyping scores
+#' }
+#' @examples
+#' \dontrun{
+#' data("gp_df")
+#' gp_overview(gp_df)
+#' }
+#' @export
+gp_overview <- function(probgeno_df,
+                        cutoff = 0.7,
+                        alpha = 0.1){
+  probgeno_df <- test_probgeno_df(probgeno_df)
+  
+  individual_temp <- as.data.frame(
+    do.call(rbind,lapply(levels(probgeno_df$SampleName) ,function(i){
+      temp <- probgeno_df[probgeno_df$SampleName %in% i,]
+      na.count <- sum(is.na(temp$maxP))
+      mean <- mean(temp$maxP,na.rm = TRUE)
+      sd <- sd(temp$maxP, na.rm = TRUE)
+      min <- min(temp$maxP, na.rm = TRUE)
+      less_than_cutoff <- sum(temp$maxP <= cutoff,na.rm = TRUE)
+      Qtle <- as.numeric(quantile(temp$maxP, na.rm = TRUE, probs = alpha))
+      c(mean,sd,min,round(na.count/nrow(temp),2),Qtle,less_than_cutoff/nrow(temp))
+    }))
+  )
+  colnames(individual_temp) <- c('mean','SD','min','NA',paste(alpha,'quantile'),paste('less than',cutoff))
+  rownames(individual_temp) <- as.character(unique(probgeno_df$SampleName))
+  
+  ##boxplot to show each standard's number
+  par(mfrow = c(2,3))
+  sapply(colnames(individual_temp),function(c){
+    boxplot(individual_temp[[c]],main = c, xlab = c,
+            cex.axis = 1.2, cex.main = 2, cex.lab = 1.5)
+  })
+  
+  ##set cutoff
+  if(any(individual_temp[,5] <= cutoff)){
+    remove_ind <- rownames(individual_temp)[individual_temp[,5] <= cutoff]
+    writeLines(paste0(paste0(remove_ind,collapse = ','),' have been removed.'))
+    probgeno_df <- droplevels(probgeno_df[!(probgeno_df$SampleName %in% remove_ind),])
+  }
+  
+  par(mfrow = c(1,1)) #return to original par
+  
+  return(list('probgeno_df' = probgeno_df,
+              'population_overview' = individual_temp))
+} #gp_overview
+
 #' Assign markers to linkage groups and homologues.
-#' @description This is a wrapper combining \code{\link{linkage}} and \code{\link{assign_linkage_group}}. It is used to assign all marker types to linkage groups by using linkage information with 1.0 markers. It allows for input of marker assignments for which this analysis has already been performed.
-#' @param dosage_matrix A dosage matrix.
+#' @description This is a wrapper combining \code{\link{linkage}} (or \code{\link{linkage.gp}}) and \code{\link{assign_linkage_group}}. 
+#' It is used to assign all marker types to linkage groups by using linkage information with 1.0 markers. It allows for input of marker assignments for which this analysis has already been performed.
+#' @param input_type Can be either one of 'discrete' or 'probabilistic'. For the former (default), \code{dosage_matrix} must be supplied,
+#' while for the latter \code{probgeno_df} and \code{chk} must be supplied. 
+#' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}}
+#' }
+#' @param chk Output list as returned by function \code{\link{checkF1}}. This argument is only needed if probabilistic genotypes are used.
 #' @param assigned_list List of \code{data.frames} with marker assignments for which the assignment analysis is already performed.
 #' @param assigned_markertypes List of integer vectors of length 2. Specifying the markertypes in the same order as assigned_list.
 #' @param SN_functions A vector of function names to be used. If NULL all remaining linkage functions with SN markers are used.
@@ -3738,14 +4265,17 @@ get_markertype_combinations <- function(ploidy,
 #' @examples
 #' \dontrun{
 #' data("screened_data3", "P1_SxS_Assigned", "P1_DxN_Assigned", "LGHomDf_P1_1")
-#' Assigned_markers<-homologue_lg_assignment(screened_data3,
-#'                          assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
-#'                          assigned_markertypes = list(c(1,1), c(2,0)),
-#'                          LG_hom_stack = LGHomDf_P1_1,ploidy=4,LG_number = 5,
-#'                          write_intermediate_files=FALSE)
+#' Assigned_markers<-homologue_lg_assignment(dosage_matrix = screened_data3,
+#'                                           assigned_list = list(P1_SxS_Assigned, P1_DxN_Assigned),
+#'                                           assigned_markertypes = list(c(1,1), c(2,0)),
+#'                                           LG_hom_stack = LGHomDf_P1_1,ploidy=4,LG_number = 5,
+#'                                           write_intermediate_files=FALSE)
 #'                          }
 #' @export
-homologue_lg_assignment <- function(dosage_matrix,
+homologue_lg_assignment <- function(input_type = "discrete",
+                                    dosage_matrix,
+                                    probgeno_df,
+                                    chk,
                                     assigned_list,
                                     assigned_markertypes,
                                     SN_functions = NULL,
@@ -3761,17 +4291,29 @@ homologue_lg_assignment <- function(dosage_matrix,
                                     write_intermediate_files = TRUE,
                                     log = NULL,
                                     ...) {
+  input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
   LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
-  dosage_matrix <- test_dosage_matrix(dosage_matrix)
   
-  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
-    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  if(input_type == "discrete"){
+    dosage_matrix <- test_dosage_matrix(dosage_matrix)
+    if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+      stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  } else{
+    probgeno_df <- test_probgeno_df(probgeno_df)
+    pardose <- assign_parental_dosage(chk = chk, 
+                                      probgeno_df = probgeno_df)
+  }
   
   assigned_markers <- lapply(assigned_list, rownames)
   assigned_markers <- do.call("c", assigned_markers)
-  filt_dosdat <-
-    dosage_matrix[!rownames(dosage_matrix) %in% assigned_markers,]
-
+  
+  if(input_type == "discrete"){
+    filt_dosdat <-
+      dosage_matrix[!rownames(dosage_matrix) %in% assigned_markers,]
+  } else{
+    filt_score <- probgeno_df[!probgeno_df$MarkerName %in% assigned_markers,] #this was logically incorrect in Yanlin's version (lacked !)
+  }
+  
   if(pairing == "random") {
     pairing_abbr <- "r"
   } else if(pairing == "preferential"){
@@ -3788,7 +4330,7 @@ homologue_lg_assignment <- function(dosage_matrix,
     if(!target_parent %in% c("P1","P2")) stop("To use cross-ploidy functionality, please rename parent1 as P1 and parent2 as P2 in colnames() of your dosage_matrix.")
     
     ploidy.F1 <- (ploidy + ploidy2)/2
-      
+    
     if(ploidy2 == 2 & target_parent != "P1") {
       sn.grep1 <- "_0.1_"
       sn.grep2 <- "_0.1_0.1"
@@ -3828,7 +4370,7 @@ homologue_lg_assignment <- function(dosage_matrix,
   }
   
   #add a progress bar
-  if(is.null(log) & length(marker_combinations) > 0){
+  if(!is.null(log) & length(marker_combinations) > 0){
     pb <-
       txtProgressBar(
         min = 0,
@@ -3857,30 +4399,43 @@ homologue_lg_assignment <- function(dosage_matrix,
     mtype1 <- marker_combinations[i, 1:2]
     mtype2 <- marker_combinations[i, 3:4]
     
-    linkage_df <- linkage(
-      dosage_matrix = filt_dosdat,
-      markertype1 = mtype1,
-      markertype2 = mtype2,
-      target_parent = target_parent,
-      other_parent = other_parent,
-      convert_palindrome_markers = convert_palindrome_markers,
-      LOD_threshold = 0,
-      ploidy = ploidy,
-      ploidy2 = ploidy2,
-      pairing = pairing,
-      verbose = FALSE,
-      ...
-    )
-    
+    if(input_type == "discrete"){
+      linkage_df <- linkage(
+        dosage_matrix = filt_dosdat,
+        markertype1 = mtype1,
+        markertype2 = mtype2,
+        target_parent = target_parent,
+        other_parent = other_parent,
+        convert_palindrome_markers = convert_palindrome_markers,
+        LOD_threshold = 0,
+        ploidy = ploidy,
+        ploidy2 = ploidy2,
+        pairing = pairing,
+        verbose = FALSE,
+        ...
+      )
+    } else{
+      linkage_df <- linkage.gp(
+        probgeno_df = filt_score,
+        chk = chk,
+        pardose = pardose,
+        markertype1 = mtype1,
+        markertype2 = mtype2,
+        target_parent = target_parent,
+        LOD_threshold = 0,
+        # ploidy = ploidy,
+        # ploidy2 = ploidy2,
+        verbose = FALSE,
+        ...
+      )
+    }
+
     if (write_intermediate_files) {
       mname1 <- paste(marker_combinations[i, 1:2], collapse = "x")
       mname2 <- paste(marker_combinations[i, 3:4], collapse = "x")
-      # write.table(linkage_df,
-      #             paste0(target_parent, "_", mname1, "_", mname2, ".txt"),
-      #             sep = "\t")
       saveRDS(linkage_df,paste0(target_parent, "_", mname1, "_", mname2, ".RDS"))
     }
-    
+  
     assignedData <- assign_linkage_group(
       linkage_df = linkage_df,
       LG_hom_stack = LG_hom_stack,
@@ -3911,17 +4466,29 @@ homologue_lg_assignment <- function(dosage_matrix,
   }
   
   if(!is.null(log)) sink(log.conn, append = TRUE)
-
-  marker_assignments <-
-    merge_marker_assignments(
-      dosage_matrix = dosage_matrix,
-      target_parent = target_parent,
-      other_parent = other_parent,
-      LG_hom_stack = LG_hom_stack,
-      SN_linked_markers = assigned_list,
-      ploidy = target.ploidy,
-      LG_number = LG_number
-    )
+  
+  if(input_type == "discrete"){
+    marker_assignments <-
+      merge_marker_assignments(
+        dosage_matrix = dosage_matrix,
+        target_parent = target_parent,
+        other_parent = other_parent,
+        LG_hom_stack = LG_hom_stack,
+        SN_linked_markers = assigned_list,
+        ploidy = target.ploidy,
+        LG_number = LG_number
+      )
+  } else{
+    #Note: this gp version of the original function is not exported 
+    marker_assignments <-
+      merge_marker_assignments.gp(MarkerType = pardose,
+                                  target_parent = target_parent,#.new,
+                                  other_parent = other_parent,#.new,
+                                  LG_hom_stack = LG_hom_stack,
+                                  SN_linked_markers = assigned_list,
+                                  ploidy = target.ploidy,
+                                  LG_number = LG_number)
+  }
   
   if(!is.null(log)) sink()
   
@@ -3935,12 +4502,12 @@ homologue_lg_assignment <- function(dosage_matrix,
 #' @description \code{linkage} is used to calculate recombination frequency, LOD and phase within one type of marker or between two types of markers.
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
 #' @param markertype1 A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.
-#' @param markertype2 A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the funciton will calculate
+#' @param markertype2 A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the function will calculate
 #' linkage within the markertype as specified by \code{markertype1}.
 #' The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.
 #' @param target_parent Character string specifying the target parent as provided in the columnnames of dosage_matrix
 #' @param other_parent Character string specifying the other parent as provided in the columnnames of dosage_matrix
-#' @param G2_test Apply a G2 test (LOD of indepedence) in addition to the LOD of linkage.
+#' @param G2_test Apply a G2 test (LOD of independence) in addition to the LOD of linkage.
 #' @param convert_palindrome_markers Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3? If unsure, set to TRUE.
 #' @param LOD_threshold Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.
 #' @param ploidy Integer. The ploidy of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.
@@ -3949,14 +4516,15 @@ homologue_lg_assignment <- function(dosage_matrix,
 #' @param prefPars The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 #' See the function \code{\link{test_prefpairing}} and the vignette for more details.
 #' @param combinations_per_iter Optional integer. Number of marker combinations per iteration.
-#' @param iter_RAM A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, espacially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.
+#' @param iter_RAM A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, especially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.
 #' @param ncores Number of cores to use. Works both for Windows and UNIX (using \code{doParallel}). Use \code{parallel::detectCores()} to find out how many cores you have available.
-#' @param verbose Should messages be send to stdout?
+#' @param verbose Should messages be sent to stdout?
 #' @param full_output Logical, by default \code{FALSE}. If \code{TRUE}, the complete output over all phases and showing marker combination counts is returned.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #'
 #' @return
 #' Returns a data.frame with columns:
+#' \itemize{
 #' \item{marker_a}{
 #'   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 #' }
@@ -3972,6 +4540,7 @@ homologue_lg_assignment <- function(dosage_matrix,
 #' \item{phase}{
 #'   phase between markers
 #' }
+#' }
 #' @examples
 #' data("screened_data3")
 #' SN_SN_P1 <- linkage(dosage_matrix = screened_data3,
@@ -3984,7 +4553,7 @@ homologue_lg_assignment <- function(dosage_matrix,
 #'                    )
 #' @export
 linkage <- function(dosage_matrix,
-                    markertype1 = c(1, 0),
+                    markertype1 = c(1,0),
                     markertype2 = NULL,
                     target_parent = "P1",
                     other_parent = "P2",
@@ -3996,10 +4565,10 @@ linkage <- function(dosage_matrix,
                     pairing = c("random", "preferential"),
                     prefPars = c(0, 0),
                     combinations_per_iter = NULL,
-                    verbose = TRUE,
-                    full_output = FALSE,
                     iter_RAM = 500,
                     ncores = 1,
+                    verbose = TRUE,
+                    full_output = FALSE,
                     log = NULL) {
   time_start <- Sys.time()
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
@@ -4047,7 +4616,7 @@ linkage <- function(dosage_matrix,
     }
   }
   
-  # No obvious way to implement this in aneuploids, current workaround:
+  # Current workaround for odd ploidy populations:
   if(ploidy != ploidy2 & target_parent == "P2") {
     target_parent <- "P1"
     other_parent <- "P2"
@@ -4458,7 +5027,706 @@ linkage <- function(dosage_matrix,
   # class(r_LOD_tot) <- c("linkage_df", class(r_LOD_tot))
   return(r_LOD_tot)
   
-}
+} #linkage
+
+#' Calculate recombination frequency, LOD and phase using genotype probabilities
+#' @description \code{linkage.gp} is used to calculate recombination frequency, LOD and phase within one type of marker or between two types of markers.
+#' @param probgeno_df A data frame as read from the scores file produced by function \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}}
+#' }
+#' @param chk Output list as returned by function \code{\link{checkF1}}
+#' @param pardose Option to include the most likely (discrete) parental dosage scores, used mainly for internal calls of this function. By default \code{NULL}
+#' @param markertype1 A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent} (and the second in the other parent).
+#' @param markertype2 A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the function will calculate
+#' linkage within the markertype as specified by \code{markertype1}.
+#' The first element specifies the dosage in \code{target_parent} (and the second in the other parent).
+#' @param target_parent Which parent is being targeted (only acceptable options are "P1" or "P2"), ie. which parent is of specific interest? 
+#' If this is the maternal parent, please specify as "P1". If the paternal parent, please use "P2". The actual identifiers of the two parents are
+#' entered using the arguments \code{parent1_replicates} and \code{parent2_replicates}.
+#' @param G2_test Apply a G2 test (LOD of independence) in addition to the LOD of linkage.
+#' @param LOD_threshold Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.
+#' @param prefPars The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
+#' See the function \code{\link{test_prefpairing}} and the vignette for more details.
+#' @param combinations_per_iter Optional integer. Number of marker combinations per iteration.
+#' @param iter_RAM A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, especially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.
+#' @param ncores Number of cores to use. Works both for Windows and UNIX (using \code{doParallel}). Use \code{parallel::detectCores()} to find out how many cores you have available.
+#' @param verbose Should messages be sent to stdout?
+#' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
+#' @return
+#' Returns a data.frame with columns:
+#' \itemize{
+#' \item{marker_a}{
+#'   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
+#' }
+#' \item{marker_b}{
+#'   second marker of comparison. It has the type of markertype2 if specified.
+#' }
+#' \item{r}{
+#'   (estimated) recombinations frequency
+#' }
+#' \item{LOD}{
+#'   (estimated) LOD score
+#' }
+#' \item{phase}{
+#'   phase between markers
+#' }
+#' }
+#' @examples
+#' data("gp_df","chk1")
+#' SN_SN_P1.gp <- linkage.gp(probgeno_df = gp_df,
+#'                           chk = chk1,
+#'                           markertype1 = c(1,0),
+#'                           target_parent = "P1")
+#' @export
+linkage.gp <- function(probgeno_df,
+                       chk,
+                       pardose = NULL,
+                       markertype1 = c(1,0),
+                       markertype2 = NULL,
+                       target_parent = match.arg(c("P1","P2")),
+                       G2_test = FALSE,
+                       LOD_threshold = 0,
+                       prefPars = c(0, 0),
+                       combinations_per_iter = NULL,
+                       iter_RAM = 500,
+                       ncores = 2,
+                       verbose = TRUE,
+                       log = NULL){
+  time_start <- Sys.time()
+  
+  probgeno_df <- test_probgeno_df(probgeno_df)
+  
+  if(is.null(pardose)) {
+    pardose <- assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
+  } else{
+    ## Subset pardose:
+    pardose <- pardose[pardose$MarkerName %in% unique(probgeno_df$MarkerName),]
+  }
+  
+  
+  #Extract meta data
+  F1 <- chk$meta$F1
+  parent1_replicates <- chk$meta$parent1
+  parent2_replicates <- chk$meta$parent2
+  ploidy <- chk$meta$ploidy
+  ploidy2 <- ifelse(is.null(chk$meta$ploidy2),chk$meta$ploidy,chk$meta$ploidy2)
+  
+  if (is.null(log)) {
+    log.conn <- stdout()
+  }else {
+    matc <- match.call()
+    write.logheader(matc, log)
+    log.conn <- file(log, "a")
+  }
+  win <- Sys.info()["sysname"] == "Windows"
+  
+  if (win) {
+    cl <- parallel::makeCluster(ncores)
+    doParallel::registerDoParallel(cl)
+  } else {
+    doParallel::registerDoParallel(cores = ncores)
+  }
+
+  if(length(unique(probgeno_df$MarkerName)) < 3){
+    stop("Please check probgeno_df: not enough markers for linkage analysis.")
+  }
+  if(!any(unique(probgeno_df$SampleName) %in% parent1_replicates) || !any(unique(probgeno_df$SampleName) %in% parent2_replicates)){
+    stop("Please check probgeno_df: not enough information for parents.")
+  }
+  if(length(which(unique(probgeno_df$SampleName) %in% F1)) < 11){
+    stop("Please check the probgeno_df. There is no enough individuals for linkage anlaysis.")
+  }
+  if (identical(markertype1, markertype2)) {
+    markertype2 <- NULL
+  }
+  # if(is.null(ploidy2)) ploidy2 <- ploidy
+  
+  prog_ploidy <- (ploidy + ploidy2)/2
+  
+  if (!prog_ploidy %in% c(3, 4, 6)) {
+    stop(paste("F1 populations of ploidy", prog_ploidy, "are not currently catered for."))
+  }
+  
+  ## Here we still use dosage_matrix instead of dosage_data because we do not filter for the marker type
+  ## Find all marker's P1 and P2
+  score_P <- probgeno_df[probgeno_df$SampleName %in% parent1_replicates | probgeno_df$SampleName %in% parent2_replicates,]
+  markers <- as.character(unique(score_P$MarkerName))
+  
+  #make sure markers appear in the PossibleMarkerType
+  markers <- markers[markers %in% pardose$MarkerName]
+  
+  convert_probability_score <- function(MT_mat = RealMT,
+                                        expected_MT = markertype1,
+                                        target_parent = "P1",
+                                        scores_mat = probgeno_df,
+                                        ploidy = ploidy){
+    if(target_parent == "P1"){
+      expected_MT <- paste0(expected_MT,collapse = ".")
+      Tpart <- 1
+      NTpart <- 2
+    }else{
+      expected_MT <- paste0(c(expected_MT[2],expected_MT[1]),collapse = ".")
+      Tpart <- 2
+      NTpart <- 1
+    }
+    
+    MT_mat$MT <- paste0(MT_mat$parent1, ".",MT_mat$parent2)
+    
+    if(any(MT_mat$MT != expected_MT)){
+      change_markers <- MT_mat[which(MT_mat$MT != expected_MT),]
+      sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers$MarkerName),]
+      #Step 1: reverse all: 0 to 4, 1 to 3, 2 keep as 2
+      dosc <- list()
+      for(c in 0:ploidy){
+        dosc[[as.character(c)]] <- sub_scores_mat[[paste0("P",c)]]
+      }
+      for(c in 0:ploidy){
+        sub_scores_mat[paste0("P",c)] <- dosc[[as.character(ploidy-c)]]
+      }
+      change_markers_new <- ploidy - change_markers[,c(2,3)]
+      change_markers_new$MT <-  paste0(change_markers_new$parent1, ".",change_markers_new$parent2)
+      change_markers_new <- cbind("MarkerName" = change_markers$MarkerName,change_markers_new)
+      scores_mat[scores_mat$MarkerName %in% as.character(change_markers$MarkerName),] <- sub_scores_mat
+      
+      #Step 2: make the 2 - 0
+      if(any(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)])){
+        change_markers_new1 <- change_markers_new[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),]
+        sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new1$MarkerName),]
+        for(t in 0:(ploidy/2-1)){
+          sub_scores_mat[paste0("P",t)] <-   sub_scores_mat[paste0("P",(ploidy/2 + t))]+  sub_scores_mat[paste0("P",t)]
+        }
+        change_markers_new1[paste0("parent",Tpart)]<- change_markers[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),
+                                                                     paste0("parent",Tpart)]
+        change_markers_new1[paste0("parent",NTpart)] <- replicate(nrow(change_markers_new1),0)
+        
+        change_markers_new[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),]<- change_markers_new1
+        change_markers_new$MT <- paste0(change_markers_new$parent1,".",change_markers_new$parent2)
+        scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new1$MarkerName),] <- sub_scores_mat
+        
+      }
+      
+      #Step 3: substract by ploidy/2
+      if(any(change_markers_new$MT != expected_MT)){
+        change_markers_new2 <- change_markers_new[which(change_markers_new$MT != expected_MT),]
+        sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new2$MarkerName),]
+        
+        dosc <- list()
+        for(c in 0:ploidy){
+          dosc[[as.character(c)]] <- sub_scores_mat[[paste0("P",c)]]
+        }
+        for(c in 0:ploidy){
+          sub_scores_mat[paste0("P",c)] <- dosc[[as.character(ploidy-c)]]
+        }
+        
+        change_markers_new3 <- ploidy - change_markers_new2[,c(2,3)]
+        change_markers_new3$MT <-  paste0(change_markers_new3$parent1, ".",change_markers_new3$parent2)
+        change_markers_new3 <- cbind("MarkerName" = change_markers_new2$MarkerName,change_markers_new3)
+        change_markers_new[which(change_markers_new$MT != expected_MT),] <- change_markers_new3
+        scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new3$MarkerName),] <- sub_scores_mat
+        
+        if(any(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)])){
+          change_markers_new4 <- change_markers_new3[which(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)]),]
+          sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new4$MarkerName),]
+          
+          for(t in 0:(ploidy/2-1)){
+            sub_scores_mat[paste0("P",t)] <-   sub_scores_mat[paste0("P",(ploidy/2 + t))]+  sub_scores_mat[paste0("P",t)]
+          }
+          change_markers_new4[paste0("parent",Tpart)]<- change_markers_new2[which(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)]),
+                                                                            paste0("parent",Tpart)]
+          change_markers_new4[paste0("parent",NTpart)] <- replicate(nrow(change_markers_new4),0)
+          change_markers_new[change_markers_new$MarkerName %in% as.character(change_markers_new4$MarkerName),] <- change_markers_new4
+          
+          change_markers_new$MT <- paste0(change_markers_new$parent1,".",change_markers_new$parent2)
+          scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new4$MarkerName),] <- sub_scores_mat
+        }
+      }
+      
+      if(any(change_markers_new$MT != expected_MT)){
+        writeLines("There is some errors")
+      }
+      
+    }
+    return(scores_mat)
+  } #convert_probability_score
+  
+  pardose$markertype <- paste0(pardose$parent1, ".",pardose$parent2)
+  
+  #filter the possiblemarkertype
+  if(nrow(pardose) != 0){
+    #if these is no markertype2, only pick out the markers of markertype1
+    if(is.null(markertype2)){
+      #check whether there is a need to convert dosages
+      if(target_parent == "P1"){
+        MT <- markertype1
+      }else{
+        MT <- c(markertype1[2],markertype1[1])
+      }
+      #find all possible marker type
+      
+      if(any(MT %in% c(0,ploidy))){
+        zero_loc <- which(MT %in% c(0,ploidy))
+        non_zero_loc <- which(!MT %in% c(0,ploidy))
+        
+        zero <- c(0,4)
+        non_zero <- unique(c(MT[non_zero_loc],ploidy-MT[non_zero_loc]))
+        
+        if(length(non_zero) == 0){
+          MT_matrix <- data.frame("Var1" = zero,
+                                  "Var2" = zero)
+          MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2)  #all possible MT - character
+        }else{
+          if(zero_loc < non_zero_loc){
+            MT_matrix <- expand.grid(zero,non_zero)
+            MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2) #all possible MT - character
+          }else{
+            MT_matrix <- expand.grid(non_zero,zero)
+            MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2)
+          }
+        }
+        
+        
+      }else{
+        MT_c <- ploidy - MT
+        MT_sum <- unique(c(paste0(MT, collapse = "."), paste0(MT_c, collapse = ".")))
+      }
+      
+      PossibleMarker <- as.character(pardose[pardose$markertype %in% MT_sum,]$MarkerName)
+      
+      if(length(PossibleMarker) != 0){
+        if(length(PossibleMarker) == 1){
+          combinations <- data.frame(PossibleMarker,PossibleMarker)
+        }else{
+          combinations <- t(combn(PossibleMarker,2))
+        }
+        colnames(combinations) <- c("markera","markerb")
+        rownames(combinations) <- seq(1, nrow(combinations),1)
+        
+        #Do the marker type conversion
+        RealMT <- pardose[pardose$MarkerName %in% PossibleMarker,c("MarkerName","parent1","parent2")]
+        
+        probgeno_df1 <- convert_probability_score(MT_mat = RealMT,
+                                                  expected_MT = markertype1,
+                                                  target_parent = target_parent,
+                                                  scores_mat = probgeno_df,
+                                                  ploidy = ploidy)
+        probgeno_df <- probgeno_df1
+      }else{
+        message("There is not enough markers")
+        return(NULL)
+      }
+    }else{ #there is markertype1 and markertype2
+      if(target_parent == "P1"){
+        MT1 <- markertype1
+        MT2 <- markertype2
+      }else{
+        MT1 <- c(markertype1[2], markertype1[1])
+        MT2 <-  c(markertype2[2], markertype2[1])
+      }
+      #find all possibilities of MT
+      if(any(MT1  %in% c(0,ploidy))){
+        zero_loc <- which(MT1  %in% c(0,ploidy))
+        non_zero_loc <- which(!MT1  %in% c(0,ploidy))
+        
+        zero <- c(0,ploidy) #BUG? replaced 4 with ploidy..
+        non_zero <- unique(c(MT1[non_zero_loc],ploidy-MT1[non_zero_loc]))
+        
+        if(length(non_zero) == 0){
+          MT1_matrix <- data.frame("Var1" = zero,
+                                   "Var2" = zero)
+          MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2)  #all possible MT - character
+        }else{
+          if(zero_loc < non_zero_loc){
+            MT1_matrix <- expand.grid(zero,non_zero)
+            MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2) #all possible MT - character
+          }else{
+            MT1_matrix <- expand.grid(non_zero,zero)
+            MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2) #all possible MT - character
+          }
+        }
+        
+        
+      }else{
+        MT1_c <- ploidy - MT1
+        MT1_sum <- unique(c(paste0(MT1, collapse = "."), paste0(MT1_c, collapse = ".")))
+      }
+      
+      if(any(MT2  %in% c(0,ploidy))){
+        zero_loc <- which(MT2  %in% c(0,ploidy))
+        non_zero_loc <- which(!MT2  %in% c(0,ploidy))
+        
+        zero <- c(0,ploidy)
+        non_zero <- unique(c(MT2[non_zero_loc],ploidy-MT2[non_zero_loc]))
+        
+        if(length(non_zero) == 0){
+          MT2_matrix <- data.frame("Var1" = zero,
+                                   "Var2" = zero)
+          MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2)  #all possible MT - character
+        }else{
+          if(zero_loc < non_zero_loc){
+            MT2_matrix <- expand.grid(zero,non_zero)
+            MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2) #all possible MT - character
+          }else{
+            MT2_matrix <- expand.grid(non_zero,zero)
+            MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2) #all possible MT - character
+          }
+        }
+        
+        
+      }else{
+        MT2_c <- ploidy - MT2
+        MT2_sum <- unique(c(paste0(MT2, collapse = "."), paste0(MT2_c, collapse = ".")))
+      }
+      
+      Possiblemarker1 <-  as.character(pardose[pardose$markertype %in% MT1_sum,]$MarkerName)
+      Possiblemarker2 <-  as.character(pardose[pardose$markertype %in% MT2_sum,]$MarkerName)
+      
+      if(length(Possiblemarker1) != 0 & length(Possiblemarker2 != 0)){
+        combinations <- expand.grid(Possiblemarker1,Possiblemarker2)
+        colnames(combinations) <- c("markera","markerb")
+        rownames(combinations) <- seq(1, nrow(combinations),1)
+        
+        RealMT1 <- pardose[pardose$MarkerName %in% Possiblemarker1,c("MarkerName","parent1","parent2")]
+        RealMT2 <- pardose[pardose$MarkerName %in% Possiblemarker2,c("MarkerName","parent1","parent2")]
+        
+        probgeno_df1 <- convert_probability_score(MT_mat = RealMT1,
+                                                  expected_MT = markertype1,
+                                                  target_parent = target_parent,
+                                                  scores_mat = probgeno_df,
+                                                  ploidy = ploidy)
+        
+        probgeno_df2 <- convert_probability_score(MT_mat = RealMT2,
+                                                  expected_MT = markertype2,
+                                                  target_parent = target_parent,
+                                                  scores_mat = probgeno_df1,
+                                                  ploidy = ploidy)
+        probgeno_df <- probgeno_df2
+      }else{
+        combinations <- data.frame()
+        message("There is not enough markers")
+        
+        return(NULL)
+      }
+      
+    }
+  } #the return is after filtering, the already made marker combinations
+  
+  seginfo <- calcSegtypeInfo(ploidy, ploidy2) #obtain the seginfo for further use
+  polysomic <- chk$meta$polysomic
+  disomic <- chk$meta$disomic 
+  mixed <- chk$meta$mixed
+  
+  seginfo <- selSegtypeInfo(seginfo, polysomic, disomic, mixed)
+  seginfoSummary <- segtypeInfoSummary(seginfo)
+  
+  if(polysomic){
+    pairing <- "random"
+    pairing_abbr <- "r"
+  }
+  if(disomic){
+    if(polysomic) stop("Cannot run linkage.gp function if both polysomic and disomic are TRUE. Please re-run checkF1 with one of these options FALSE")
+    pairing <- "preferential"
+    pairing_abbr <- "p"
+  }
+  
+  ##Here we need to call the segregation table according to the ploidy
+  if(is.null(markertype2)){
+    fname <- paste0(pairing_abbr, prog_ploidy, "_", paste0(markertype1, collapse = "."), "_", paste0(markertype1, collapse = "."))
+    
+  }else{
+    fname <- paste0(pairing_abbr, prog_ploidy, "_", paste0(markertype1, collapse = "."), "_", paste0(markertype2, collapse = "."))
+    
+  }
+  seg.fname <- paste0("seg_p", ploidy, "_", pairing)
+  seg <- get(seg.fname)
+  segpos <- c(0:prog_ploidy)
+  segoff <- seg[, 3:ncol(seg)]
+  segpar <- seg[, c("dosage1", "dosage2")]
+  
+  if (is.null(combinations_per_iter)) {
+    expected_nr_comparisons <- nrow(combinations)
+    bites_needed <- 14 * expected_nr_comparisons
+    reserve_RAM <- iter_RAM * 1e+06
+    number_of_iterations <- ceiling(bites_needed/reserve_RAM)
+    combinations_per_iter <- ceiling(nrow(combinations)/number_of_iterations)
+    if (number_of_iterations == 1)
+      reserve_RAM <- bites_needed
+    if (verbose) {
+      message(paste0("Number of combinations per iteration: ",
+                     combinations_per_iter, "\nReserving approximately ",
+                     round((reserve_RAM + (110 * combinations_per_iter))/1e+06),
+                     "MB RAM per iteration"))
+    }
+  }
+  
+  split_factor <- ceiling((1:nrow(combinations))/combinations_per_iter)
+  combinations_list <- split(as.data.frame(combinations), split_factor,drop = TRUE)
+  if (verbose) {
+    message(paste("In total", nrow(combinations), "combinations, which will run in",
+                  length(unique(split_factor)), "iteration(s)...",
+                  sep = " "))
+  }
+  
+  
+  if(is.null(markertype2)){
+    offspring_dosage1 <- offspring_dosage2 <- segpos[segoff[segpar$dosage1 == markertype1[1] &
+                                                              segpar$dosage2 == markertype1[2], ] > 0]
+  }else{
+    offspring_dosage1 <- segpos[segoff[segpar$dosage1 == markertype1[1] &
+                                         segpar$dosage2 == markertype1[2], ] > 0]
+    
+    offspring_dosage2 <- segpos[segoff[segpar$dosage1 == markertype2[1] &
+                                         segpar$dosage2 == markertype2[2], ] > 0]
+  }
+  
+  dosage_combinations <- expand.grid(offspring_dosage1, offspring_dosage2)
+  dosage_levels <- paste0("n_", dosage_combinations[, 1], dosage_combinations[, 2])  #make the name looks like: n_00, n_10, n_01, n_11
+  rownames(dosage_combinations) <- dosage_levels
+  
+  convert_scores <- function(scores,
+                             markername,
+                             samplename){
+    TempArray <- array(0, dim = c(length(samplename),ploidy+1,length(markername)),
+                       dimnames = list(c(samplename),
+                                       paste0("P",seq(0,ploidy)),
+                                       c(markername)))
+    for(m in markername){
+      O_temp <- scores[scores$MarkerName == m,]
+      rownames(O_temp) <- O_temp$SampleName
+      TempArray[,,m] <- as.matrix(O_temp[samplename,paste0("P",seq(0,ploidy))])
+    }
+    return(TempArray)
+  }
+  
+  array <- convert_scores(scores = probgeno_df,
+                          markername = unique(c(as.character(combinations[,1]),as.character(combinations[,2]))),
+                          samplename = as.character(unique(probgeno_df$SampleName))[as.character(unique(probgeno_df$SampleName)) %in% F1])
+  
+  rfun <- get(fname)
+  
+  r_LOD_tot <- foreach::foreach(i = 1:length(combinations_list),
+                                .combine = rbind, .inorder = F) %dopar% {
+                                  
+                                  combs <- as.matrix(combinations_list[[i]])
+                                  
+                                  if(nrow(combs) > 1){
+                                    a <- array[,,combs[,1]]
+                                    b <- array[,,combs[,2]]
+                                    compare_vec <- matrix(nrow = nrow(combs),ncol = length(dosage_levels))
+                                    for (l in 1:length(dosage_levels)){
+                                      proba <- a[,paste0("P",as.character(dosage_combinations[l, 1])),]
+                                      probb <- b[,paste0("P",as.character(dosage_combinations[l, 2])),]
+                                      colnames(proba) <- colnames(probb)  <- NULL
+                                      sum <- colSums(proba * probb, na.rm = TRUE)
+                                      compare_vec[,l] <- sum
+                                    }
+                                  }else if(nrow(combs) == 1){
+                                    a <- array[,,combs[,1]]
+                                    b <- array[,,combs[,2]]
+                                    compare_vec <- matrix(nrow = nrow(combs),ncol = length(dosage_levels))
+                                    for (l in 1:length(dosage_levels)){
+                                      proba <- a[,paste0("P",as.character(dosage_combinations[l, 1]))]
+                                      probb <- b[,paste0("P",as.character(dosage_combinations[l, 2]))]
+                                      colnames(proba) <- colnames(probb)  <- NULL
+                                      sum <- sum(proba * probb, na.rm = TRUE)
+                                      compare_vec[,l] <- sum
+                                    }
+                                  }else{
+                                    compare_vec <- NULL
+                                  }
+                                  
+                                  count_matrix <- compare_vec
+                                  
+                                  if (G2_test) {
+                                    off1coords <- sapply(offspring_dosage1, function(n) which(n == dosage_combinations[, 1]))
+                                    off2coords <- sapply(offspring_dosage2, function(n) which(n == dosage_combinations[, 2]))
+                                    offspring1sums <- matrix(sapply(1:ncol(off1coords),
+                                                                    function(c) rowSums(count_matrix[, off1coords[,c], drop = F])), ncol = ncol(off1coords))
+                                    offspring2sums <- matrix(sapply(1:ncol(off2coords),
+                                                                    function(c) rowSums(count_matrix[, off2coords[,c], drop = F])), ncol = ncol(off2coords))
+                                    Totals <- rowSums(count_matrix)
+                                    Sumcounts <- cbind(offspring1sums, offspring2sums)
+                                    combos <- expand.grid(1:length(offspring_dosage1),
+                                                          (length(offspring_dosage1) + 1):(length(offspring_dosage1) + length(offspring_dosage2)))
+                                    expected_counts <- matrix(sapply(1:nrow(combos),
+                                                                     function(r) Sumcounts[, combos[r, 1]] * Sumcounts[,combos[r, 2]]/Totals), ncol = nrow(combos))
+                                    G <- 2 * rowSums(matrix(sapply(1:ncol(count_matrix),
+                                                                   function(c) count_matrix[, c, drop = F] * (log(pmax(count_matrix[,c, drop = F], 1)) - log(pmax(expected_counts[,
+                                                                                                                                                                                  c, drop = F], 1)))), ncol = ncol(count_matrix)))
+                                    df <- (length(offspring_dosage1) - 1) * (length(offspring_dosage2) - 1)
+                                    if (df > 1) {
+                                      e <- exp(-G/(2 * (df - 1)))
+                                      G1 <- ((4 - e) * e - 3) * (df - 1) + G
+                                      LOD_independence <- G1/(2 * log(10))
+                                    }else {
+                                      LOD_independence <- G/(2 * log(10))
+                                    }
+                                  }
+                                  
+                                  summary_linkage <- data.frame()
+                                  
+                                  if(!is.null(compare_vec)){
+                                    colnames(count_matrix) <- dosage_levels
+                                    count <- count_matrix
+                                    if(pairing == "random"){
+                                      r_list <- rfun(count)
+                                      r_list1 <- rfun(round(count))
+                                      if(any(r_list$r_mat < 0) & all(r_list1$r_mat > 0)) {
+                                        r_list$r_mat[r_list$r_mat < 0] <- r_list1$r_mat[r_list$r_mat < 0]
+                                      }
+                                    }
+                                    if(pairing == "preferential"){
+                                      r_list <- rfun(count, p1 = prefPars[1], p2 = prefPars[2])
+                                      r_list1 <- rfun(round(count), p1 = prefPars[1], p2 = prefPars[2])
+                                      if(any(r_list$r_mat < 0) & all(r_list1$r_mat > 0)) {
+                                        r_list$r_mat[which(r_list$r_mat < 0),] <- r_list1$r_mat[which(r_list$r_mat < 0),]
+                                      }
+                                    }
+                                    
+                                    
+                                    r_over_0.5 <- r_list$r_mat >= 0.5
+                                    r_list$r_mat[r_over_0.5] <- 1
+                                    
+                                    # based on phasing strategy chose phasing
+                                    if (r_list$phasing_strategy == "MLL") {
+                                      if (!any(is.na(r_list$logL_mat))) {
+                                        # normal case
+                                        r_list$logL_mat[r_over_0.5] <- -1e4
+                                        phase_num <- apply(r_list$logL_mat, 1, which.max)
+                                        
+                                      } else {
+                                        # exceptional case (happens only for few linkage functions)
+                                        # works with missing values
+                                        r_list$logL_mat[r_over_0.5] <- NA
+                                        phase_num <- vector(length = nrow(r_list$logL_mat))
+                                        for (i in seq(nrow(r_list$logL_mat))) {
+                                          max_logL <- which.max(r_list$logL_mat[i,])
+                                          if (length(max_logL) == 0) {
+                                            phase_num[i] <- which.min(r_list$r_mat[i,])
+                                          } else if (is.na(r_list$r_mat[i, max_logL])) {
+                                            phase_num[i] <- which.min(r_list$r_mat[i,])
+                                          } else {
+                                            phase_num[i] <- max_logL
+                                          }
+                                        }
+                                      }
+                                      
+                                    } else if (r_list$phasing_strategy == "MINR") {
+                                      phase_num <- apply(r_list$r_mat, 1, function(x) {
+                                        which.min(x)[1]
+                                      }
+                                      )
+                                    } else {
+                                      stop("Unknown phasing strategy. Check rf functions.")
+                                    }
+                                    
+                                    # fix for NA values of r
+                                    if(any(is.na(phase_num))){
+                                      if(!"unknown" %in% r_list$possible_phases)
+                                        r_list$possible_phases <- c(r_list$possible_phases,"unknown")
+                                      phase_num[is.na(phase_num)] <- length(r_list$possible_phases)
+                                    }
+                                    
+                                    phase <- r_list$possible_phases[phase_num]
+                                    
+                                    # r based on choice of phase
+                                    r_mat_phase <- cbind(r_list$r_mat, phase_num)
+                                    r <- apply(r_mat_phase, 1, function(x) {
+                                      x[x["phase_num"]]
+                                    })
+                                    
+                                    # LOD based on choice of phase
+                                    LOD_mat_phase <- cbind(r_list$LOD_mat, phase_num)
+                                    LOD <- apply(LOD_mat_phase, 1, function(x) {
+                                      x[x["phase_num"]]
+                                    })
+                                    
+                                    rm(r_list)
+                                    
+                                    r_LOD <- data.frame(combs, r, LOD, phase)
+                                    
+                                    negative_r <- which(r_LOD$r < 0 | r_LOD$r == 1)
+                                    r_LOD$r[negative_r] <- 0.499
+                                    r_LOD$LOD[negative_r] <- 0
+                                    levels(r_LOD$phase) <- c(levels(r_LOD$phase), "unknown")
+                                    r_LOD$phase[negative_r] <- "unknown"
+                                    
+                                    r_LOD$LOD[r_LOD$LOD < 0] <- 0
+                                    
+                                    r_LOD <- r_LOD[r_LOD$LOD >= LOD_threshold,]
+                                    
+                                    colnames(r_LOD)[1:2] <- c("marker_a", "marker_b")
+                                    if(G2_test){
+                                      r_LOD <-
+                                        cbind(r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")], LOD_independence)
+                                    } else {
+                                      r_LOD <-
+                                        r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")]
+                                    }
+                                    
+                                    summary_linkage <- rbind(summary_linkage, r_LOD)
+                                    
+                                  }
+                                  return(summary_linkage)
+                                }
+  
+  #print the information out
+  if (win)
+    parallel::stopCluster(cl)
+  
+  if (verbose) {
+    message(paste0("\nTotal marker combinations: ", nrow(r_LOD_tot),
+                   " at LOD cutoff of ", LOD_threshold))
+    
+    time_end <- Sys.time()
+  
+    # matc <- match.call()
+    # write.logheader(matc, log)
+    # log.conn <- file(log, "a")
+    
+    timediff <- as.numeric(time_end - time_start, units = "mins")
+    
+    write(
+      paste(
+        "\nFor",
+        nrow(r_LOD_tot),
+        "marker combinations LOD, r and phase written to output. Calculated on a",
+        Sys.info()["sysname"],
+        "machine using",
+        ncores,
+        "cores, taking",
+        round(timediff, 2),
+        "minutes"
+      ),
+      log.conn
+    )
+    
+  }
+  
+  if (!is.null(log)) close(log.conn)
+  
+  return(r_LOD_tot)
+  
+} #linkage.gp
 
 
 #' Perform binning of markers.
@@ -4643,107 +5911,6 @@ marker_binning <-
   }
 
 
-#' Bin markers that are in a nested list
-#' @description This is a wrapper for \code{\link{marker_binning}}.
-#' It applies \code{\link{marker_binning}} to a nested list as output of \code{\link{split_linkage_info}}
-#' @param dosage_matrix A dosage \code{matrix}
-#' @param linkage_list A nested \code{list} with linkage group on the first level and homologue on the second.
-#' @param r_thresh Numeric. Threshold at which markers are binned. Is calculated if NA.
-#' @param lod_thresh Numeric. Threshold at which markers are binned. Is calculated if NA.
-#' @param return_removed_marker_info Logical. Should removed marker information be returned? If TRUE, output is a
-#' list containing the linkage list with binned markers removed and a dataframe with removed marker information.
-#' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
-#' @param \dots Arguments passed to \code{\link{marker_binning}}
-#' @return A list of linkage \code{data.frames} with binned markers removed.
-#' If \code{return_removed_marker_info = TRUE}, a list containing the above linkage dataframes (linkage_list) and a dataframe
-#' with removed marker information, called removed_markers.
-#' @examples
-#' data("screened_data3", "all_linkages_list_P1_split")
-#' mb<-marker_binning_list(screened_data3,
-#'                      all_linkages_list_P1_split,
-#'                      target_parent="P1",
-#'                      other_parent="P2")
-#' @export
-marker_binning_list <-
-  function(dosage_matrix, linkage_list,
-           r_thresh = NA, lod_thresh = NA,
-           return_removed_marker_info = FALSE, log = NULL, ...
-  ) {
-    dosage_matrix <- test_dosage_matrix(dosage_matrix)
-    if (is.null(log)) {
-      log.conn <- stdout()
-    } else {
-      matc <- match.call()
-      write.logheader(matc, log)
-      log.conn <- file(log, "a")
-    }
-    
-    
-    thresholds <- calc_binning_thresholds(dosage_matrix)
-    
-    if (is.na(r_thresh)) {
-      r_thresh <-
-        thresholds["r_thresh"]#Lets user over-rule this calculation if desired
-      write(paste(
-        "\nRecombination frequency threshold:", signif(r_thresh, 3)
-      ), log.conn)
-    }
-    if (is.na(lod_thresh)) {
-      lod_thresh <- thresholds["lod_thresh"]
-      write(paste("\nLOD threshold:", signif(lod_thresh,3)), log.conn)
-    }
-    
-    removed_markers <-
-      data.frame(
-        removed_marker = character(), representing_marker = character(),
-        LG = character(), homologue = character()
-      )
-    
-    homlen <- sapply(linkage_list, length)
-    mleft_table <- matrix(nrow = length(linkage_list),
-                          ncol = max(homlen))
-    dimnames(mleft_table) <-
-      list(names(linkage_list), paste0("homologue",1:max(homlen)))
-    
-    rem.df <- NULL
-    
-    for (LG in names(linkage_list)) {
-      for (hom in names(linkage_list[[LG]])) {
-        linkdat <- linkage_list[[LG]][[hom]]
-        binning_out_list <- marker_binning(dosage_matrix,
-                                           linkdat,
-                                           r_thresh = r_thresh,
-                                           lod_thresh = lod_thresh,
-                                           ...)
-        mleft_table[LG, hom] <- binning_out_list$left
-        linkage_list[[LG]][[hom]] <- binning_out_list$binned_df
-        mr <- binning_out_list$removed
-        if (!is.null(mr))
-          rem.df <- cbind(mr, LG, homologue = hom)
-        removed_markers <- rbind(removed_markers, rem.df)
-        rem.df <- NULL
-      }
-    }
-    #rem_df <- as.data.frame(removed_markers)
-    rem_t <- table(removed_markers$LG, removed_markers$homologue)
-    removed_markers$LG <- gsub("LG", "", removed_markers$LG)
-    removed_markers$homologue <-
-      gsub("homologue", "", removed_markers$homologue)
-    write("\n####Markers removed:", log.conn)
-    write(knitr::kable(removed_markers), log.conn)
-    write("\n####Frequency table of removed markers:", log.conn)
-    write(knitr::kable(rem_t), log.conn)
-    write("\n####Frequency table of remaining markers:", log.conn)
-    write(knitr::kable(mleft_table), log.conn)
-    
-    if (!is.null(log))
-      close(log.conn)
-    
-    if (return_removed_marker_info)
-      return(list(linkage_list = linkage_list,
-                  removed_markers = removed_markers))
-    return(linkage_list)
-  }
 
 
 #' Summarize marker data
@@ -4757,6 +5924,7 @@ marker_binning_list <-
 #'  this genotype as incompatible. Incompatible dosages are greater than maximum number of alleles than can be inherited or
 #'  smaller than the minimum number of alleles that can be inherited.
 #' @param verbose Logical, by default \code{TRUE} - should intermediate messages be written to stout?
+#' @param shortform Logical, by default \code{FALSE}. Returns only a shortened output with parental dosage summary, used internally by some functions.
 #' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
 #' @return Returns a list containing the following components:
 #' \item{parental_info}{
@@ -4779,10 +5947,11 @@ marker_data_summary <- function(dosage_matrix,
                                 parent2 = "P2",
                                 progeny_incompat_cutoff = 0.1,
                                 verbose = TRUE,
+                                shortform = FALSE,
                                 log = NULL) {
-
+  
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
-
+  
   if (is.null(log)) {
     log.conn <- stdout()
   } else {
@@ -4790,28 +5959,28 @@ marker_data_summary <- function(dosage_matrix,
     write.logheader(matc, log)
     log.conn <- file(log, "a")
   }
-
+  
   pardos <- dosage_matrix[, c(parent1, parent2)]
-
+  
   if(any(is.na(pardos))){
     NAmark <- rownames(pardos)[is.na(pardos[,parent1]) | is.na(pardos[,parent2])]
     warning("There are parental scores with missing values. These are not considered in the analysis.
             It is recommended to remove those before proceeding to further steps.")
     dosage_matrix <- dosage_matrix[!rownames(dosage_matrix) %in% NAmark, ]
     if(verbose) write(paste(c("\nThe following marker have missing values in their parental scores:",
-                  NAmark, "\n"), collapse = "\n\n"), file = log.conn)
+                              NAmark, "\n"), collapse = "\n\n"), file = log.conn)
   }
-
-
+  
+  
   pairing <- match.arg(pairing)
-
+  
   add_P_to_table <- function(table) {
     #add parent info to table
     colnames(table) <- paste0("P2_", colnames(table))
     rownames(table) <- paste0("P1_", rownames(table))
     return(table)
   }
-
+  
   test_row <- function(x, lu, parpos = c(1, 2)) {
     #analyse offspring incompatibility for a marker
     #with lu as lookup table for maximum and minimum offspring dosages
@@ -4824,27 +5993,29 @@ marker_data_summary <- function(dosage_matrix,
   #######################################
   nm <- nrow(dosage_matrix)
   end_col <- ncol(dosage_matrix)
-
+  
   if(verbose) write("Calculating parental info...", stdout())
-
+  
   # contingency table number of markers
-
+  
   parental_info <-
     table(as.factor(dosage_matrix[,	parent1]), as.factor(dosage_matrix[,	parent2]))
-
+  
   parental_info <- add_P_to_table(parental_info)
-
+  
+  if(!shortform){
+  
   #Checking offspring compatability
-
+  
   if(verbose) write("Checking compatability between parental and offspring scores...",
-        stdout())
-
+                    stdout())
+  
   parpos <- which(colnames(dosage_matrix) %in% c(parent1, parent2))
-
+  
   progeny <- dosage_matrix[,-parpos]
-
+  
   nr_offspring <- ncol(progeny)
-
+  
   seg.fname <- paste0("seg_p", ploidy, "_", pairing)
   seg <- get(seg.fname)#,envir=getNamespace("polymapR"))
   segpar <- seg[, c("dosage1", "dosage2")]
@@ -4852,24 +6023,24 @@ marker_data_summary <- function(dosage_matrix,
   segoff <- seg[, 3:ncol(seg)]
   segoff <- segoff > 0
   segpos <- c(0:ploidy)
-
+  
   lu_min_max <- apply(segoff, 1, function(x) {
     a <- segpos[x]
     min <- min(a)
     max <- max(a)
     return(c(min, max))
   })
-
+  
   rownames(lu_min_max) <- c("min", "max")
   lu <- cbind(segpar, t(lu_min_max))
-
+  
   expected_dosage <-
     apply(dosage_matrix, 1, test_row, lu = lu, parpos = parpos)
-
+  
   #NA should be "TRUE", now "FALSE"
   expected_dosage <- t(expected_dosage)
   if(length(which(is.na(progeny))) > 0) expected_dosage[is.na(progeny)] <- TRUE
-
+  
   #two factorial table of parental dosages with percentage of "FALSE" per factor combination
   progeny_incompat <- colSums(!expected_dosage)
   na_progeny <- colSums(is.na(progeny))
@@ -4877,7 +6048,7 @@ marker_data_summary <- function(dosage_matrix,
     progeny_incompat / (nrow(expected_dosage) - na_progeny)
   progeny_incompat <-
     colnames(progeny)[perc_incompat > progeny_incompat_cutoff]
-
+  
   nr_incompat <- rowSums(!expected_dosage)
   offspring_incompat <- tapply(
     nr_incompat,
@@ -4887,34 +6058,39 @@ marker_data_summary <- function(dosage_matrix,
   )
   offspring_incompat <- round(offspring_incompat, 2)
   offspring_incompat <- add_P_to_table(offspring_incompat)
-
+  
   summary <-
     list(parental_info, offspring_incompat, progeny_incompat)
   names(summary) <-
     c("parental_info",
       "offspring_incompatible",
       "progeny_incompatible")
-
+  
   for (i in c(1, 2)) {
     if(verbose) {
       write(paste0("\n####", names(summary)[i], "\n"),
-          file = log.conn)
-    #sink(log.conn)
-    write(knitr::kable(summary[[i]]),
-          log.conn)
+            file = log.conn)
+      #sink(log.conn)
+      write(knitr::kable(summary[[i]]),
+            log.conn)
     }
     #suppressWarnings(sink())
   }
-
+  
   if(verbose) write("\n####Incompatible individuals:\n", log.conn)
   if (length(progeny_incompat) == 0 & verbose)
     write("None\n", log.conn)
-
+  
   if(verbose) write(summary$progeny_incompatible, log.conn)
-
+  
+  } else{
+    summary <- list()
+    summary$parental_info <- parental_info
+  }
+  
   if (!is.null(log))
     close(log.conn)
-
+  
   return(summary)
 } #marker_data_summary()
 
@@ -5101,7 +6277,7 @@ merge_homologues <-
 
 #' Merge marker assignments
 #' @description \code{merge_marker_assignments} Merges 1.0 backbone object with marker assignment objects
-#' @param dosage_matrix A dosage \code{matrix}.
+#' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
 #' @param target_parent Character string specifying target parent.
 #' @param other_parent Character string specifying other parent.
 #' @param LG_hom_stack data.frame specifying 1.0 marker assignments to linkage groups and homologues.
@@ -5137,7 +6313,7 @@ merge_marker_assignments <- function(dosage_matrix,
   rownames(LG_hom_stack) <- markers_LG_hom_stack
   colnames(LG_hom_stack) <- c("Assigned_LG", "Assigned_Homolog")
   comb <- as.matrix(do.call(rbind, SN_linked_markers))
-
+  
   #Add SxN markers
   SN_LG_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_LG"], function(x) {
     a <- rep(0, LG_number)
@@ -5151,21 +6327,21 @@ merge_marker_assignments <- function(dosage_matrix,
     cbind(c(as.numeric(as.character(LG_hom_stack[, "Assigned_LG"])), comb[, "Assigned_LG"]), LG_mat)
   rownames(LG_mat) <- c(markers_LG_hom_stack, rownames(comb))
   colnames(LG_mat)[1] <- "Assigned_LG"
-
-
+  
+  
   SN_hom_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_Homolog"], function(x) {
     a <- rep(0, ploidy)
     a[x] <- 1
     return(a)
   }),nrow = ploidy, dimnames = list(paste0("Hom", 1:ploidy),markers_LG_hom_stack)
   ))
-
+  
   counts_hom_mat <- rbind(SN_hom_mat, comb[, paste0("Hom", 1:ploidy)])
   
   assigned_hom_mat <- matrix(c(LG_hom_stack[, "Assigned_Homolog"],
                                rep(NA, (ploidy - 1) * nrow(LG_hom_stack))),
                              ncol = ploidy)
-
+  
   ##incorporate number of linkages per homologue
   assigned_hom_mat <-
     rbind(assigned_hom_mat, comb[, paste0("Assigned_hom", 1:ploidy)])
@@ -5173,7 +6349,7 @@ merge_marker_assignments <- function(dosage_matrix,
   Assigned_LG_hom <- cbind(LG_mat, counts_hom_mat, assigned_hom_mat)
   
   matched_rows <- match(rownames(Assigned_LG_hom),rownames(dosage_matrix))
-
+  
   if(any(is.na(matched_rows))){
     stop("Could not find all assigned markers in dosage_matrix. Please check supplied dosage_matrix is correct.")
   }
@@ -5184,7 +6360,7 @@ merge_marker_assignments <- function(dosage_matrix,
   Assigned_LG_hom <-
     as.matrix(cbind(parental_dosages, Assigned_LG_hom))
   class(Assigned_LG_hom) <- "integer"
-
+  
   if (is.null(log)) {
     log.conn <- stdout()
   } else {
@@ -5211,211 +6387,7 @@ merge_marker_assignments <- function(dosage_matrix,
   return(Assigned_LG_hom)
 }
 
-#' Align and integrate maps
-#' @description Align homologues to the same orientation and integrates maps using LPmerge
-#' @param maplist_P1,maplist_P2 A list of length=ploidy, with data.frames containing markernames and position.
-#' @param parent_ID_1,parent_ID_2 Character string with parent IDs
-#' @param connection_threshold The number of markers two homologues should have in common to have a significant connection
-#' @param LPmerge_interval The \code{max.interval} value used for \code{\link[LPmerge]{LPmerge}}
-#' @param single_LPmerge Logical, by default \code{FALSE}. If \code{TRUE} then only a single merge with max.interval = LPmerge_interval
-#' will be run, otherwise all intervals up to LPmerge_interval will also be tested.
-#' @param plot_graph Should the connection network be drawn?
-#' @param ploidy The ploidy of the organism
-#' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
-#' @examples
-#' data("maplist_P1_subset","maplist_P2_subset")
-#' \dontrun{
-#' ## Example temporarily suspended (April 2018): LPmerge CRAN issues
-#' integrated_map_LG2<-orient_and_merge_maps(maplist_P1=maplist_P1_subset[["LG4"]],
-#'                                             maplist_P2=maplist_P2_subset[["LG4"]],
-#'                                             plot_graph = TRUE, ploidy = 4)
-#'}
-#' @export
-orient_and_merge_maps <- function(maplist_P1,
-                                  maplist_P2,
-                                  parent_ID_1 = "P1",
-                                  parent_ID_2 = "P2",
-                                  connection_threshold = 2,
-                                  LPmerge_interval = 4,
-                                  single_LPmerge = FALSE,
-                                  plot_graph = FALSE,
-                                  ploidy,
-                                  log = NULL) {
-  if (is.null(log)) {
-    log.conn <- stdout()
-  } else {
-    matc <- match.call()
-    write.logheader(matc, log)
-    log.conn <- file(log, "a")
-  }
-  
-  names(maplist_P1) <- paste0(parent_ID_1, "_", names(maplist_P1))
-  names(maplist_P2) <- paste0(parent_ID_2, "_", names(maplist_P2))
-  map_list <- c(maplist_P1,  maplist_P2)
-  
-  hom_names <- names(map_list)
-  overlap_mat <-
-    matrix(ncol = length(hom_names), nrow = length(hom_names))
-  colnames(overlap_mat) <- rownames(overlap_mat) <- hom_names
-  for (name in hom_names) {
-    overlap_mat[name,] <- sapply(map_list, function(x) {
-      length(intersect(x$marker, map_list[[name]]$marker))
-    })
-  }
-  overlap_mat[lower.tri(overlap_mat)] <- NA
-  overlap_mat[overlap_mat <= connection_threshold] <- 0
-  
-  my_graph <-
-    igraph::graph.adjacency(overlap_mat, mode = "undirected", weighted = TRUE,
-                            diag = FALSE)
-  
-  if (plot_graph) {
-    gw <- igraph::E(my_graph)$weight
-    igraph::plot.igraph(
-      my_graph,
-      main = "Map connections:",
-      edge.width = 5 * (gw - min(gw)) / (max(gw) - min(gw))
-    )
-  }
-  
-  get_reversals <- function(hom_names, overlap_mat, map_list) {
-    cor_mat <- matrix(ncol = length(hom_names), nrow = length(hom_names))
-    colnames(cor_mat) <- rownames(cor_mat) <- hom_names
-    combs <- t(combn(hom_names, 2))
-    for (i in seq(nrow(combs))) {
-      n1 <- combs[i,1]
-      n2 <- combs[i,2]
-      nm <- merge(map_list[[n1]], map_list[[n2]], by = "marker")
-      cor <- cor(nm$position.x, nm$position.y)
-      cor <- round(cor, 0)
-      cor_mat[n1,n2] <- cor
-    }
-    overlap_mat[cor_mat == -1] <- 0
-    rev_graph <- igraph::graph.adjacency(overlap_mat,
-                                         mode = "undirected",
-                                         diag = FALSE)
-    sub_clusters <- igraph::groups(igraph::clusters(rev_graph))
-    if (length(sub_clusters) == 1)
-      return(NULL)
-    
-    sub_lengths <- sapply(sub_clusters, length)
-    return(sub_clusters[[which.min(sub_lengths)]])
-  }
-  
-  if (igraph::vertex.connectivity(my_graph) > 0) {
-    reversals <- get_reversals(hom_names, overlap_mat, map_list)
-    if(length(reversals) > 0){
-      write("####Homologues reversed:\n", log.conn)
-      write(c(reversals, "\n"), log.conn)
-    }
-    map_list_rev <- map_list[reversals]
-    map_list_rev <- lapply(map_list_rev, function(x) {
-      x$position <- max(x$position) - x$position
-      return(x)
-    })
-    
-    map_list[reversals] <- map_list_rev
-    
-    if(!single_LPmerge){
-      rmse.output <- capture.output(
-        Integrated_maps <-
-          LPmerge::LPmerge(
-            map_list,max.interval = 1:LPmerge_interval
-          )
-      )
-      
-      ## Select the map with the minimum RMSE:
-      min.rmse <- which.min(
-        as.numeric(
-          sapply(
-            strsplit(rmse.output[grep(pattern = "mean ",rmse.output)],"mean "),
-            function(x) x[2])
-        )
-      )
-      
-      if(min.rmse %in% seq(length(Integrated_maps))) {
-        LPmerge_out_list <- Integrated_maps[[min.rmse]]
-      } else{
-        stop("Unable to select minimum RMSE from LPmerge printed output. Suggest to retry with argument single_LPmerge = TRUE.")
-      }
-    } else{ #No need to select, only a single LPmerge max.interval is used
-      LPmerge_out_list <-
-        LPmerge::LPmerge(
-          map_list,max.interval = LPmerge_interval)
-    }
-    
-    ##########################################################################################################
-  } else{
-    #There are some un-connected sub-graphs. Can only integrate these, not all maps.
-    ##########################################################################################################
-    message(
-      "Not possible to re-orient all underlying graphs. Proceeding with largest connected sub-graphs"
-    )
-    
-    sub_clusters <- igraph::groups(igraph::clusters(my_graph))
-    sub_lengths <- sapply(sub_clusters, length)
-    
-    LPmerge_out_list <- list()
-    
-    for (cluster_number in seq(length(sub_clusters))) {
-      cluster <- sub_clusters[[cluster_number]]
-      if (length(cluster) == 1) {
-        LPmerge_out_list[[paste0("cluster_", cluster_number)]] <-
-          map_list[cluster]
-        next
-      }
-      sub_overlap <- overlap_mat[cluster, cluster]
-      sub_map_list <- map_list[cluster]
-      reversals <- get_reversals(cluster, sub_overlap, sub_map_list)
-      if(length(reversals) > 0){
-        write("####Homologues reversed:\n", log.conn)
-        write(c(reversals, "\n"), log.conn)
-      }
-      map_list_rev <- sub_map_list[reversals]
-      map_list_rev <- lapply(map_list_rev, function(x) {
-        x$position <- max(x$position) - x$position
-        return(x)
-      })
-      
-      sub_map_list[reversals] <- map_list_rev
-      
-      if(!single_LPmerge){
-        rmse.output <- capture.output(
-          Integrated_maps <-
-            LPmerge::LPmerge(
-              sub_map_list,max.interval = 1:LPmerge_interval
-            )
-        )
-        
-        ## Select the map with the minimum RMSE:
-        min.rmse <- which.min(
-          as.numeric(
-            sapply(
-              strsplit(rmse.output[grep(pattern = "mean ",rmse.output)],"mean "),
-              function(x) x[2])
-          )
-        )
-        
-        if(min.rmse %in% seq(length(Integrated_maps))) {
-          LPmerge_out_list[[paste0("cluster_", cluster_number)]] <-
-            Integrated_maps[[min.rmse]]
-        } else{
-          stop("Unable to select minimum RMSE from LPmerge printed output. Suggest to retry with argument single_LPmerge = TRUE.")
-        }
-      } else{
-        LPmerge_out_list[[paste0("cluster_", cluster_number)]] <-
-          LPmerge::LPmerge(
-            sub_map_list,max.interval = LPmerge_interval)
-      }
-      
-    }
-  }
-  
-  if (!is.null(log))
-    close(log.conn)
-  
-  return(LPmerge_out_list)
-}
+
 
 #' Plotting 1.0 links between homologues
 #' @description \code{overviewSNlinks} is written to enable merging of homologue fractions.
@@ -5463,7 +6435,7 @@ overviewSNlinks <- function(linkage_df,
   legend(
     "topleft",
     pch = 19,
-    col = c("limegreen", "dodgerblue"),
+    col = c("limegreen", "red3"),
     legend = c("coupling", "repulsion"),
     cex = 1.25,
     bty = "n"
@@ -5564,30 +6536,31 @@ PCA_progeny <-
            highlight = NULL,
            colors = NULL,
            log = NULL) {
-
+    
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
-
+    
     if (length(highlight) != length(colors))
       stop("Arguments highlight and colors should have the same length")
+    
     class(dosage_matrix) <- "numeric"
-
+    
     na.imputed <- apply(dosage_matrix, 1, function(x) {
       m <- mean(x, na.rm = T)
       x[is.na(x)] <- m
       return(x)
     })
-
+    
     fit <- prcomp(na.imputed)
     cox <- 1
     coy <- 2
-
+    
     # get scores
     scores <- fit$x[, c(cox, coy)]
-
+    
     # calculate variance explained
     ve1 <- fit$sdev[cox] ^ 2 / sum(fit$sdev ^ 2)
     ve2 <- fit$sdev[coy] ^ 2 / sum(fit$sdev ^ 2)
-
+    
     # score plot
     plot(
       0,
@@ -5601,7 +6574,7 @@ PCA_progeny <-
       cex.axis = 1.2
     )
     text(scores[, 1], scores[, 2], rownames(scores), cex = 0.5)
-
+    
     if (!is.null(highlight)) {
       for (i in seq(highlight)) {
         if(length(highlight[[i]]) > 0)
@@ -5614,7 +6587,7 @@ PCA_progeny <-
     }
     abline(0, 0, lty = 2)
     abline(v = 0, lty = 2)
-
+    
     if (!is.null(log)) {
       matc <- match.call()
       write.logheader(matc, log)
@@ -5648,6 +6621,14 @@ phase_SN_diploid <- function(linkage_df,
   }
   
   chm.clusters <- cluster_list[[as.character(LOD_chm)]]
+  
+  if(any(is.na(chm.clusters$cluster))){
+    warning(paste("The following markers had no cluster assigned and were removed:",
+                  paste0(chm.clusters$marker[is.na(chm.clusters$cluster)], collapse = ", ")))
+    
+    #Is 2 rows enough here? Seems a bit low..
+    if(nrow(chm.clusters) < 2) stop("Insufficient marker information to proceed. Suggest to re-check cluster_list!")
+  }
   
   linkage_df <- test_linkage_df(linkage_df)
   
@@ -5736,6 +6717,24 @@ phase_SN_diploid <- function(linkage_df,
   LGhom.df$homologue <-  as.factor(LGhom.df$homologue)
   LGhom.df$LG <-  as.factor(LGhom.df$LG)
   
+  if(ncol(table(LGhom.df$LG,LGhom.df$homologue)) > 2){
+    warning("More than 2 couplings-groupings detected in some linkage groups. Deleting these...\nPerhaps try cluster_SN_markers at a higher LOD score?")
+    
+    message("Incorrect solution:")
+    print(table(LGhom.df$LG,LGhom.df$homologue))
+    
+    affected_lg <- unique(as.character((LGhom.df[!LGhom.df$homologue %in% c(1,2),"LG"])))
+    
+    for(lg in affected_lg){
+      temp <- LGhom.df[LGhom.df$LG == lg,]
+      save_homs <- names(sort(table(temp$homologue),decreasing = T)[1:2])
+      unlinked_markers <- c(unlinked_markers,temp[!temp$homologue %in% save_homs,"SxN_Marker"])
+      LGhom.df <- LGhom.df[-which(LGhom.df$LG == lg & !LGhom.df$homologue %in% save_homs),]
+    }
+    
+    LGhom.df <- droplevels(LGhom.df)
+  }
+  
   # write unlinked markers to standard out
   if (length(unlinked_markers) > 0) {
     write(paste0("\n####SxN Marker(s) lost in clustering step at LOD ",LOD_chm,":\n"), log.conn)
@@ -5780,6 +6779,8 @@ plot_hom_vs_LG <- function(map_df,
 #' @description \code{plot_linkage_df} plots r versus LOD, colour separated for different phases.
 #' @param linkage_df A linkage data.frame as output of \code{\link{linkage}}.
 #' @param r_max Maximum r value to plot
+#' @param stepsize Size of window in recombination frequency to generate mean LOD score. Larger values will reduce plot density.
+#' @param add_legend Logical, should a legend be added to the plot?
 #' @param \dots Arguments passed to base plot function
 #' @examples
 #' data("SN_SN_P1")
@@ -5787,13 +6788,13 @@ plot_hom_vs_LG <- function(map_df,
 #' @export
 plot_linkage_df <- function(linkage_df,
                             r_max = 0.5,
+                            stepsize = 0.001,
+                            add_legend = TRUE,
                             ...){
-  # if(!any(class(linkage_df) == "linkage_df")){
-  # stop("Class should be linkage_df")
-  # }
+  
   all_phases <- levels(as.factor(linkage_df$phase))
   
-  ## Assume there are at most 6 phasings..
+  ## Assume there are at most 9 phasings..
   colours <-
     c(
       "limegreen",
@@ -5806,8 +6807,9 @@ plot_linkage_df <- function(linkage_df,
       "darkorange1",
       "cyan"
     )
+  
   ## There can be up to 9 phases with DxD + DxD pairs
-  linkage_df <- linkage_df[linkage_df[,"r"]<=r_max,]
+  linkage_df <- linkage_df[linkage_df[,"r"] <= r_max,]
   
   with(linkage_df,
        plot(
@@ -5818,22 +6820,30 @@ plot_linkage_df <- function(linkage_df,
          ylab = "LOD",
          ...
        ))
+  
+  
   for (p in 1:length(all_phases)) {
     phase_level <- as.character(all_phases[p])
-    phase_col <- colours[p]
     
-    temp_data <- linkage_df[linkage_df$phase == phase_level,]
+    temp.df <- linkage_df[linkage_df$phase == phase_level & complete.cases(linkage_df$LOD),]
     
-    with(temp_data[complete.cases(temp_data$LOD),],
-         points(r, LOD, col = phase_col,...))
+    rseq <- seq(-0.01,0.51,stepsize)
+    bins <- findInterval(temp.df$r,rseq)
+    
+    LOD.means <- tapply(temp.df$LOD,bins,mean)
+    
+    points(rseq[as.numeric(names(LOD.means))], LOD.means, 
+           col = colours[p],...)
+    
   }
-  legend("topright",
-         col = colours[1:length(all_phases)],
-         pch = 1,
-         as.character(all_phases),
-         cex=0.8)
   
-}
+  if(add_legend) legend("topright",
+                        col = colours[1:length(all_phases)],
+                        pch = 1,
+                        as.character(all_phases),
+                        cex=0.8)
+  
+} #plot_linkage_df 
 
 
 #' Plot linkage maps
@@ -6158,6 +7168,7 @@ r_LOD_plot <- function(linkage_df,
 #' @param cutoff Correlation coefficient cut off. At this correlation coefficient, individuals are merged. If NULL user input will be asked after plotting.
 #' @param plot_cor Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
+#' @param saveCOV = "PearsonCC"
 #' @return A matrix similar to dosage_matrix, with merged duplicate individuals.
 #' @examples
 #' \dontrun{
@@ -6170,13 +7181,14 @@ screen_for_duplicate_individuals <-
   function(dosage_matrix,
            cutoff = NULL,
            plot_cor = T,
-           log = NULL) {
+           log = NULL,
+           saveCOV = "PearsonCC") {
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     cor.dosage_matrix <-
       cor(dosage_matrix, use = "pairwise.complete.obs")
     diag(cor.dosage_matrix) <- NA
     cor.dosage_matrix[lower.tri(cor.dosage_matrix)] <- NA
-
+    
     if (is.null(log)) {
       log.conn <- stdout()
     } else {
@@ -6184,14 +7196,10 @@ screen_for_duplicate_individuals <-
       write.logheader(matc, log)
       log.conn <- file(log, "a")
     }
-
+    
     if (plot_cor) {
-      # plot(density(c(cor.dosage_matrix[!is.na(cor.dosage_matrix)])),
-      #      main="Similarity between individuals",
-      #      xaxp=c(0.5,1,50))
-
       corvec <- c(cor.dosage_matrix[!is.na(cor.dosage_matrix)])
-
+      
       plot(
         corvec,
         ylab = "Pearson's correlation coefficient",
@@ -6221,7 +7229,7 @@ screen_for_duplicate_individuals <-
           points(1, corvec[1], col = rgb(0.5, 0, 0.5, 0.4), pch = 20)
       }
     }
-
+    
     if (is.null(cutoff)) {
       cutoff <- as.numeric(readline("Input similarity threshold:  "))
       while (cutoff > 1 | is.na(cutoff) | cutoff < 0) {
@@ -6243,7 +7251,7 @@ screen_for_duplicate_individuals <-
                pch = 20)
       }
     }
-
+    
     combsAboveCutoff <-
       which(cor.dosage_matrix > cutoff, arr.ind = T)
     nw <- igraph::graph.data.frame(combsAboveCutoff, directed = F)
@@ -6275,7 +7283,7 @@ screen_for_duplicate_individuals <-
             
           }
           
-          } else{ #only 2 members in this group, so a true duplicate example
+        } else{ #only 2 members in this group, so a true duplicate example
           write(paste(c(
             "\nCombining",group[1],"&",group[2],"into",group[1]
           ), collapse = " "), log.conn)
@@ -6298,11 +7306,117 @@ screen_for_duplicate_individuals <-
     } else {
       write("\nNo duplicates found\n", log.conn)
     }
-
+    
     if (!is.null(log))
       close(log.conn)
+    
+    if (!is.null(saveCOV)){
+      number <- length(corvec)
+      variation <- var(corvec)
+      rangec <- paste0(round(range(corvec),digits = 2), collapse = "_")
+      CovFile <- data.frame("Number" = number,
+                            "Variation" = variation,
+                            "Range" = rangec)
+      write.csv(CovFile, paste0(saveCOV,".csv"))
+    }
+    
     return(dosage_matrix)
+  } #screen_for_duplicate_individuals
+
+
+#' Screen for duplicate individuals using weighted genotype probabilities
+#' @description \code{screen_for_duplicate_individuals.gp} identifies and merges duplicate individuals based on probabilistic genotypes.
+#' See \code{\link{screen_for_duplicate_individuals}} for the original function.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}
+#' }
+#' }
+#' @param ploidy The ploidy of parent 1
+#' @param parent1 character vector with the sample names of parent 1
+#' @param parent2 character vector with the sample names of parent 2
+#' @param F1 character vector with the sample names of the F1 individuals
+#' @param cutoff Correlation coefficient cut off to declare duplicates. At this correlation coefficient, individuals are merged. If \code{NULL} user input will be asked after plotting.
+#' @param plot_cor Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.
+#' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
+#' @param saveCOV A file name where the Pearson's correlation coefficient's variation, number, and mean can be saved
+#' @return A data frame similar to input \code{probgeno_df}, but with duplicate individuals merged. 
+#' @export
+screen_for_duplicate_individuals.gp <- function(probgeno_df,
+                                                ploidy,
+                                                parent1 = "P1",
+                                                parent2 = "P2",
+                                                F1,
+                                                cutoff = 0.95,
+                                                plot_cor = TRUE,
+                                                saveCOV = "PeasonCC",
+                                                log = NULL){
+  probgeno_df <- test_probgeno_df(probgeno_df)
+  
+  #make all threshold add up to 1
+  sum <- rep(0, nrow(probgeno_df))
+  for(p in 0:ploidy){
+    poly <- paste0("P",p)
+    s <- probgeno_df[[poly]]
+    sum <- sum + s
   }
+  
+  #get the proba probgeno_df
+  t <- rep(0, nrow(probgeno_df))
+  for(p in 0:ploidy){
+    poly <- paste0("P",p)
+    s <- probgeno_df[[poly]]*p/sum
+    t <- t + s
+  }
+  probgeno_df$probascores <- t
+  
+  dosages <- do.call(rbind, lapply(as.character(unique(probgeno_df$MarkerName)),
+                                   function(m) c(
+                                       mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent1,"probascores"]),
+                                       mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent2,"probascores"]),
+                                       probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% F1,"probascores"]
+                                     )))
+ 
+  colnames(dosages) <- c("P1", "P2", F1)
+  rownames(dosages) <- as.character(unique(probgeno_df$MarkerName))
+  
+  check2 <- screen_for_duplicate_individuals(dosage_matrix = as.matrix(dosages),
+                                                  cutoff = cutoff, 
+                                                  plot_cor = plot_cor, 
+                                                  saveCOV = saveCOV,
+                                                  log = log)
+  ind <- colnames(check2)
+  
+  if(all(c("P1", "P2") %in% ind)){
+    pg1 <- probgeno_df[probgeno_df$SampleName %in% c(ind,parent1,parent2),]
+  }else{
+    writeLines("There is something wrong with the parents. Please check it!")
+    pg1 <- NULL
+  }
+  return(pg1)
+} #screen_for_duplicate_individuals.gp
+
+
 
 #' Screen for and remove duplicated markers
 #' @description \code{screen_for_duplicate_markers} identifies and merges duplicate markers.
@@ -6310,14 +7424,20 @@ screen_for_duplicate_individuals <-
 #' @param merge_NA Logical. Should missing values be imputed if non-NA in duplicated marker? By default, \code{TRUE}.
 #' If \code{FALSE} the dosage scores of representing marker are represented in the filtered_dosage_matrix.
 #' @param plot_cluster_size Logical. Should an informative plot about duplicate cluster size be given? By default, \code{TRUE}.
+#' @param ploidy Ploidy level of parent 1. Only needed if \code{estimate_bin_size} is \code{TRUE}
+#' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. 
+#' Only needed if \code{estimate_bin_size} is \code{TRUE}
+#' @param LG_number Expected number of chromosomes (linkage groups). Only needed if \code{estimate_bin_size} is \code{TRUE}
+#' @param estimate_bin_size Logical, by default \code{FALSE}. If \code{TRUE}, a very rudimentary calculation is made to estimate
+#' the average size of a marker bin, assuming a uniform distribution of cross-over events and on average one cross-over per bivalent.  
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #' @return
 #' A list containing:
 #' \itemize{
-#' \item{bin_list} list of binned markers. The list names are the representing markers.
-#' This information can later be used to enrich the map with binned markers.
-#' \item{filtered_dosage_matrix} dosage_matrix with merged duplicated markers.
-#' The markers will be given the name of the marker with least missing values.
+#' \item{bin_list} {list of binned markers. The list names are the representing markers.
+#' This information can later be used to enrich the map with binned markers.}
+#' \item{filtered_dosage_matrix} {dosage_matrix with merged duplicated markers.
+#' The markers will be given the name of the marker with least missing values.}
 #' }
 #' @examples
 #' data("screened_data3")
@@ -6326,8 +7446,13 @@ screen_for_duplicate_individuals <-
 screen_for_duplicate_markers <- function(dosage_matrix,
                                          merge_NA = TRUE,
                                          plot_cluster_size = TRUE,
+                                         ploidy,
+                                         ploidy2 = NULL,
+                                         LG_number,
+                                         estimate_bin_size = FALSE,
                                          log = NULL){
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  
   rn_orig <- rownames(dosage_matrix)
   ddo <- dosage_matrix[do.call(order, as.data.frame(dosage_matrix)),]
   clmat <- matrix(integer(), ncol =2)
@@ -6336,78 +7461,123 @@ screen_for_duplicate_markers <- function(dosage_matrix,
     if(all(diff[!is.na(diff)]==0))
       clmat <- rbind(clmat, c(i, i+1))
   }
-
+  
   nw <- igraph::graph_from_data_frame(d= as.data.frame(clmat), directed = FALSE)
   gcl_nw <- igraph::groups(igraph::clusters(nw))
-
+  
   if(length(gcl_nw) == 0) { #No groups detected (no duplicates), effective abort:
     return(list(bin_list = NULL, filtered_dosage_matrix = dosage_matrix))
   } else{
+    
+    if(plot_cluster_size) plot(sapply(gcl_nw, length),
+                               ylab = "Cluster size",
+                               cex.lab = 1.2, cex.axis = 1.2,
+                               col = rgb(1,0,0, alpha = 0.5),
+                               pch = 20)
+    
+    
+    dupnums <- as.integer(do.call(c, gcl_nw))
+    rn <- rownames(ddo)
+    ddo_wo_dups <- ddo[-dupnums,]
+    bin_list <- list()
+    
+    mergeFun1 <- function(sub, repr){
+      nwdos <- colMeans(sub, na.rm = TRUE)
+      return(nwdos)
+    }
+    
+    mergeFun <- function(sub, repr){
+      nwdos <- sub[repr,]
+      return(nwdos)
+    }
+    
+    if(merge_NA){
+      mergeFun <- mergeFun1
+    }
+    
+    nwdos_list <- list()
+    
+    if(length(gcl_nw) > 1) pb <- txtProgressBar(min = 1, max = length(gcl_nw), style = 3)
+    
+    for(i in seq(length(gcl_nw))){
+      sub <- ddo[as.integer(gcl_nw[[i]]),]
+      narate <- apply(sub, 1, function(x) sum(is.na(x)))
+      repr <- names(narate)[which.min(narate)]
+      nwdos <- mergeFun(sub, repr)
+      nwdos_list[[repr]] <- nwdos
+      bin_list[[repr]] <- names(narate)[-(which.min(narate))]
+      if(length(gcl_nw) > 1) setTxtProgressBar(pb, i)
+    }
+    
+    nwdos_mat <- do.call(rbind, nwdos_list)
+    outmat <- rbind(nwdos_mat, ddo_wo_dups)
+    leftm <- rn_orig[rn_orig %in% rownames(outmat)]
+    outmat <- outmat[leftm,]
+    class(outmat) <- "integer"
+    
+    if (is.null(log)) {
+      log.conn <- stdout()
+    } else {
+      matc <- match.call()
+      write.logheader(matc, log)
+      log.conn <- file(log, "a")
+    }
+    
+    write(paste0("\nMarked and merged ", nrow(dosage_matrix)-nrow(outmat), " duplicated markers"),
+          file = log.conn)
+    
 
-
-
-  if(plot_cluster_size) plot(sapply(gcl_nw, length),
-                            ylab = "Cluster size",
-                            cex.lab = 1.2, cex.axis = 1.2,
-                            col = rgb(1,0,0, alpha = 0.5),
-                            pch = 20)
-
-
-  dupnums <- as.integer(do.call(c, gcl_nw))
-  rn <- rownames(ddo)
-  ddo_wo_dups <- ddo[-dupnums,]
-  bin_list <- list()
-
-  mergeFun1 <- function(sub, repr){
-    nwdos <- colMeans(sub, na.rm = TRUE)
-    return(nwdos)
+    #Estimate the expected distribution of bin sizes
+    if(estimate_bin_size){
+      
+      if(is.null(ploidy2)) ploidy2 <- ploidy
+          
+      pop.size <- ncol(dosage_matrix) - 2
+      nmark <- nrow(dosage_matrix)
+      
+      #estimate number of cross-over breaks across the genome and the whole population
+      nbreaks <- LG_number*pop.size*(ploidy/2 + ploidy2/2)
+      
+      mds <- marker_data_summary(dosage_matrix = dosage_matrix,
+                                 parent1 = colnames(dosage_matrix)[1],
+                                 parent2 = colnames(dosage_matrix)[2],
+                                 pairing = "random",#doesn't matter
+                                 ploidy = ploidy,
+                                 shortform = T, 
+                                 verbose = F)
+      
+      ntype <- length(mds$parental_info[mds$parental_info!= 0]) #total nr of marker segregation types in the data
+      
+      bin.size <- round(nmark/(ntype*nbreaks),2)
+      
+      if(bin.size > 2) {
+        write(paste("At a very rough estimate, there should be about",round(bin.size) - 1,"markers in each bin, although this assumes the distribution of markers as well as the distribution of recombination break-points are uniform across the genome."),file = log.conn)
+      } else if (bin.size > 1 & bin.size <= 2){
+        write("Your population size and number of markers appear to be relatively well-balanced.", file = log.conn)
+      } else{
+        write("Your marker set appears to be somewhat small to fully exploit the genetic resolution afforded by your mapping population!", file = log.conn)
+      }
+      
+      bs <- data.frame("pop.size" = pop.size,
+                       "nmark" = nmark,
+                       "N_LG" = LG_number,
+                       "P1_xo" = LG_number*ploidy*pop.size/2,
+                       "P2_xo" = LG_number*ploidy2*pop.size/2,
+                       "Tot_xo" = nbreaks,
+                       "n_marker_types" = ntype,
+                       "bin.size" = bin.size)
+      
+      write(knitr::kable(bs), file = log.conn)
+    }
+    
+    
+    if (!is.null(log))
+      close(log.conn)
+    
+    
+    return(list(bin_list = bin_list, filtered_dosage_matrix = outmat))
   }
-
-  mergeFun <- function(sub, repr){
-    nwdos <- sub[repr,]
-    return(nwdos)
-  }
-
-  if(merge_NA){
-    mergeFun <- mergeFun1
-  }
-
-  nwdos_list <- list()
   
-  if(length(gcl_nw) > 1) pb <- txtProgressBar(min = 1, max = length(gcl_nw), style = 3)
-  
-  for(i in seq(length(gcl_nw))){
-    sub <- ddo[as.integer(gcl_nw[[i]]),]
-    narate <- apply(sub, 1, function(x) sum(is.na(x)))
-    repr <- names(narate)[which.min(narate)]
-    nwdos <- mergeFun(sub, repr)
-    nwdos_list[[repr]] <- nwdos
-    bin_list[[repr]] <- names(narate)[-(which.min(narate))]
-    if(length(gcl_nw) > 1) setTxtProgressBar(pb, i)
-  }
-
-  nwdos_mat <- do.call(rbind, nwdos_list)
-  outmat <- rbind(nwdos_mat, ddo_wo_dups)
-  leftm <- rn_orig[rn_orig %in% rownames(outmat)]
-  outmat <- outmat[leftm,]
-  class(outmat) <- "integer"
-
-  if (is.null(log)) {
-    log.conn <- stdout()
-  } else {
-    matc <- match.call()
-    write.logheader(matc, log)
-    log.conn <- file(log, "a")
-  }
-
-  write(paste0("\nMarked and merged ", nrow(dosage_matrix)-nrow(outmat), " duplicated markers"),
-        file = log.conn)
-
-  if (!is.null(log))
-    close(log.conn)
-
-  return(list(bin_list = bin_list, filtered_dosage_matrix = outmat))
-  }
 }
 
 
@@ -6607,41 +7777,41 @@ SNSN_LOD_deviations <- function(linkage_df,
                                 plot_expected=TRUE,
                                 alpha = c(0.05,0.2),
                                 phase=c("coupling","repulsion")){
-
+  
   linkage_df<-linkage_df[linkage_df[,"phase"]==phase,]
   phase <- match.arg(phase)
-
+  
   LODc <- function(r,N_o) N_o*((1-r)*log10(1-r) + r*log10(pmax(r,1e-6)) + log10(2))
   LODr <- function(r,N_o) N_o*(((ploidy/2-1+r)*log10(ploidy/2-1+r) +
                                   (ploidy/2-r)*log10(ploidy/2-r))/(ploidy-1) +
                                  log10(2/(ploidy-1)))
-
+  
   upr <- if(phase=="coupling"){
     LODc(linkage_df$r,N*(1+alpha[1]))
   }else{
     LODr(linkage_df$r,N*(1+alpha[1]))
   }
-
+  
   lwr <- if(phase=="coupling"){
     LODc(linkage_df$r,N*(1-alpha[2]))
   } else{
     LODr(linkage_df$r,N*(1-alpha[2]))
   }
-
+  
   devs<-rep(0,nrow(linkage_df))
   upr.outliers <- linkage_df$LOD>upr
   lwr.outliers <- linkage_df$LOD<lwr
   outliers <- upr.outliers+lwr.outliers>0
-
+  
   devs[upr.outliers] <- (linkage_df$LOD-upr)[upr.outliers]
   devs[lwr.outliers] <- (lwr-linkage_df$LOD)[lwr.outliers]
-
+  
   devs[is.na(devs)] <- 0
-
+  
   if(plot_expected){
     r_LOD_plot(linkage_df)
     s<-seq(0,0.5,0.01)
-
+    
     if(phase=="coupling"){
       lines(s,LODc(s,N*(1+alpha[1])),lwd=2,lty=3)
       lines(s,LODc(s,N*(1-alpha[2])),lwd=2,lty=3)
@@ -6651,68 +7821,11 @@ SNSN_LOD_deviations <- function(linkage_df,
     }
     points(linkage_df$r[outliers],linkage_df$LOD[outliers],pch=8)
   }
-
+  
   return(devs)
 }
 
 
-#' Split linkage information into homologues
-#' @description After running \code{\link{finish_linkage_analysis}} recombination frequency, LOD and phase are grouped by linkage group.
-#' This functions classifies them into homologue within the linkage group.
-#' @param all_linkages A list of linkage information divided by linkage group as output of \code{\link{finish_linkage_analysis}}.
-#' @param marker_assignment A complete marker assignment \code{data.frame} containing all markers.
-#' @param ploidy Integer. The ploidy level of the plant species.
-#' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
-#' @return A nested list with linkage group on the first level and homologue on the second.
-#' @examples
-#' data("marker_assignments_P1", "all_linkages_list_P1")
-#' splitted_list<-split_linkage_info(all_linkages_list_P1, marker_assignments_P1, ploidy = 4)
-#' @export
-split_linkage_info <-
-  function(all_linkages,
-           marker_assignment,
-           ploidy,
-           log = NULL) {
-    LG_number <- length(all_linkages)
-    for (linkage_group in 1:LG_number) {
-      assignment_subset <-
-        marker_assignment[marker_assignment[, "Assigned_LG"] == linkage_group,]
-      homologue_assignment <-
-        assignment_subset[, paste0("Assigned_hom", 1:ploidy)]
-      homologue_list <-
-        split(homologue_assignment, seq(nrow(homologue_assignment)))
-      names(homologue_list) <- rownames(assignment_subset)
-      homologue_df <- stack(homologue_list)
-      homologue_df <- homologue_df[!is.na(homologue_df$values),]
-      colnames(homologue_df) <- c("homologue", "marker")
-
-      LG_name <- paste0("LG", linkage_group)
-
-      all_linkages_subset <- all_linkages[[LG_name]]
-
-      linkage_info_list <- list()
-      homs <- unique(homologue_df$homologue)
-      homs <- homs[order(homs)]
-      for(hom in homs){
-        x <- as.character(homologue_df$marker[homologue_df$homologue == hom])
-        if(length(x) > 1){
-          sub <- all_linkages_subset[all_linkages_subset$marker_a %in% x &
-                                       all_linkages_subset$marker_b %in% x
-                                     ,]
-          linkage_info_list[[paste0("homologue", hom)]] <- sub
-        }
-      }
-      assign(LG_name, get("linkage_info_list"))
-    }
-
-    if (!is.null(log)) {
-      matc <- match.call()
-      write.logheader(matc, log)
-    }
-
-    return(mget(paste0("LG", 1:length(all_linkages))))
-
-  }
 
 #' Check for and estimate preferential pairing
 #' @description Identify closely-mapped repulsion-phase simplex x nulliplex markers and test these
@@ -6726,7 +7839,7 @@ split_linkage_info <-
 #' @param ploidy The ploidy level of the species, by default 4 (tetraploid) is assumed.
 #' @param min_cM The smallest distance to be considered a true distance on the linkage map, by default distances less than 0.5 cM are considered essentially zero.
 #' @param adj.method Method to correct p values of Binomial test for multiple testing, by default the FDR correction is used, other options are available, inherited from \code{\link{p.adjust}}
-#' @param verbose Should messages be send to stdout? If \code{NULL} log is send to stdout.
+#' @param verbose Should messages be sent to stdout? If \code{NULL} log is send to stdout.
 #' @examples
 #' data("ALL_dosages","integrated.maplist","LGHomDf_P1_1")
 #' P1pp <- test_prefpairing(ALL_dosages,integrated.maplist,LGHomDf_P1_1,ploidy=4)
@@ -6960,7 +8073,7 @@ write.pwd <-
 #' @param outputdir Directory to which TetraploidSNPMap files are written, by default written to "TetraploidSNPMap_QTLfiles" folder
 #' @param filename Character string of filename stem to write the output files to, by default "TSNPM" with linkage groups names appended
 #' @param ploidy The ploidy of the species, currently only 4 is supported by TetraploidSNPMap
-#' @param verbose Should messages be send to stdout?
+#' @param verbose Should messages be sent to stdout?
 #' @return \code{NULL}
 #' @examples
 #' \dontrun{
@@ -7081,11 +8194,11 @@ write_pwd_list <-
            dir = getwd(),
            log = NULL) {
     bin <- ifelse(binned, "binned", "not binned")
-
+    
     for (LG_name in names(linkages_list)) {
       LG_dir <- file.path(dir, LG_name)
       dir.create(LG_dir, showWarnings = FALSE)
-
+      
       for (homologue_name in names(linkages_list[[LG_name]])) {
         linkage_df <- linkages_list[[LG_name]][[homologue_name]]
         pwd_file <-
@@ -7121,11 +8234,11 @@ write_pwd_list <-
               sep = " "
             )
           )
-
+        
         write.pwd(linkage_df, pwd_file, file_info)
-
+        
       }
-
+      
     }
     if (!is.null(log)) {
       matc <- match.call()

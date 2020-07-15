@@ -4,9 +4,17 @@
 \alias{createTetraOriginInput}
 \title{Create input files for TetraOrigin using an integrated linkage map list and marker dosage matrix}
 \usage{
-createTetraOriginInput(maplist, dosage_matrix, bin_size = NULL,
-  bounds = NULL, remove_markers = NULL, outdir = "TetraOrigin",
-  output_stem = "TetraOrigin_input", plot_maps = TRUE, log = NULL)
+createTetraOriginInput(
+  maplist,
+  dosage_matrix,
+  bin_size = NULL,
+  bounds = NULL,
+  remove_markers = NULL,
+  outdir = "TetraOrigin",
+  output_stem = "TetraOrigin_input",
+  plot_maps = TRUE,
+  log = NULL
+)
 }
 \arguments{
 \item{maplist}{A list of maps. In the first column marker names and in the second their position.}

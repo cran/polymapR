@@ -4,8 +4,15 @@
 \alias{compare_maps}
 \title{Compare linkage maps, showing links between connecting markers common to neighbouring maps}
 \usage{
-compare_maps(maplist, chm.wd = 0.2, bg.col = "white",
-  links.col = "grey42", thin.links = NULL, type = "karyotype", ...)
+compare_maps(
+  maplist,
+  chm.wd = 0.2,
+  bg.col = "white",
+  links.col = "grey42",
+  thin.links = NULL,
+  type = "karyotype",
+  ...
+)
 }
 \arguments{
 \item{maplist}{A list of maps. This is probably most conveniently built on-the-fly in the function call itself.

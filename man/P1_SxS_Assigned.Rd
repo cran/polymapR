@@ -10,12 +10,26 @@
 \alias{marker_assignments_P1}
 \alias{marker_assignments_P2}
 \title{A \code{data.frame} with marker assignments}
-\format{A data.frame with at least the following columns:
+\format{
+A data.frame with at least the following columns:
 \itemize{
  \item Assigned_LG. The assigned linkage group
  \item Assigend_hom1. The homologue with most linkages
 }
-The columns LG1 - LGn and Hom1 - Homn give the number of hits per marker for that linkage group/homologue. Assigned_hom2 .. gives the nth homologue with most linkages.}
+The columns LG1 - LGn and Hom1 - Homn give the number of hits per marker for that linkage group/homologue. Assigned_hom2 .. gives the nth homologue with most linkages.
+
+An object of class \code{matrix} (inherits from \code{array}) with 301 rows and 14 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 301 rows and 14 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 111 rows and 14 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 101 rows and 14 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 1094 rows and 16 columns.
+
+An object of class \code{matrix} (inherits from \code{array}) with 1127 rows and 16 columns.
+}
 \usage{
 P1_SxS_Assigned
 

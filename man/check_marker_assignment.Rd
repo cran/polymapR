@@ -4,8 +4,12 @@
 \alias{check_marker_assignment}
 \title{Check for consistent marker assignment between both parents}
 \usage{
-check_marker_assignment(marker_assignment.P1, marker_assignment.P2,
-  log = NULL, verbose = TRUE)
+check_marker_assignment(
+  marker_assignment.P1,
+  marker_assignment.P2,
+  log = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{marker_assignment.P1}{A marker assignment matrix for parent 1 with markernames as rownames and at least containing the column \code{"Assigned_LG"}; the output of \code{\link{homologue_lg_assignment}}.}
@@ -14,7 +18,7 @@ check_marker_assignment(marker_assignment.P1, marker_assignment.P2,
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL (by default) log is send to stdout.}
 
-\item{verbose}{Should messages be send to stdout or log?}
+\item{verbose}{Should messages be sent to stdout or log?}
 }
 \value{
 Returns a list of matrices with corrected marker assignments.

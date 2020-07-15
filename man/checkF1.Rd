@@ -4,15 +4,62 @@
 \alias{checkF1}
 \title{Identify the best-fitting F1 segregation types}
 \usage{
-checkF1(dosage_matrix, parent1, parent2, F1, ancestors=character(0),
-polysomic, disomic, mixed, ploidy, ploidy2, outfile,
-critweight=c(1.0, 0.4, 0.4),
-Pvalue_threshold=0.0001, fracInvalid_threshold=0.05,
-fracNA_threshold=0.25, shiftmarkers, parentsScoredWithF1=TRUE,
-shiftParents=parentsScoredWithF1, showAll=FALSE, append_shf=FALSE)
+checkF1(
+  input_type = "discrete",
+  dosage_matrix,
+  probgeno_df,
+  parent1,
+  parent2,
+  F1,
+  ancestors = character(0),
+  polysomic,
+  disomic,
+  mixed,
+  ploidy,
+  ploidy2,
+  outfile = "",
+  critweight = c(1, 0.4, 0.4),
+  Pvalue_threshold = 1e-04,
+  fracInvalid_threshold = 0.05,
+  fracNA_threshold = 0.25,
+  shiftmarkers,
+  parentsScoredWithF1 = TRUE,
+  shiftParents = parentsScoredWithF1,
+  showAll = FALSE,
+  append_shf = FALSE
+)
 }
 \arguments{
+\item{input_type}{Can be either one of 'discrete' or 'probabilistic'. For the former (default), a \code{dosage_matrix} must be supplied,
+while for the latter a \code{probgeno_df} must be supplied.}
+
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
+
+\item{probgeno_df}{A data frame as read from the scores file produced by function
+\code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+\itemize{
+\item{SampleName}{
+Name of the sample (individual)
+}
+\item{MarkerName}{
+Name of the marker
+}
+\item{P0}{
+Probabilities of dosage score '0'
+}
+\item{P1...}{
+Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+}
+\item{maxP}{
+Maximum genotype probability identified for a particular individual and marker combination
+}
+\item{maxgeno}{
+Most probable dosage for a particular individual and marker combination
+}
+\item{geno}{
+Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}
+}
+}}
 
 \item{parent1}{character vector with the sample names of parent 1}
 
@@ -42,7 +89,7 @@ preferential chromosome pairing)}
 \item{ploidy2}{The ploidy of parent 2. If omitted it is
 assumed to be equal to ploidy.}
 
-\item{outfile}{the file to write the output to; if NA a temporary file
+\item{outfile}{the tab-separated text file to write the output to; if NA a temporary file
 checkF1.tmp is created in the current working directory and deleted at end}
 
 \item{critweight}{NA or a numeric vector containing the weights of three quality
@@ -64,14 +111,13 @@ the q3 quality parameter will be set to 0)}
 
 \item{shiftmarkers}{if specified, shiftmarkers must be a data frame with
 columns MarkerName and shift; for the markernames that match exactly
-(upper/lowercase etc) those in \code{dosage_matrix}, the dosages are increased by the
+(upper/lowercase etc) those in the input (either \code{dosage_matrix} or \code{probgeno_df}), the dosages are increased by the
 amount specified in column shift,
 e.g. if shift is -1, dosages 2..ploidy are converted to 1..(ploidy-1)
 and dosage 0 is a combination of old dosages 0 and 1, for all samples.
-The segregation check
-is then performed with the shifted dosages.
+The segregation check is then performed with the shifted dosages.
 A shift=NA is allowed, these markers will not be shifted.
-The sets of markers in \code{dosage_matrix} and shiftmarkers
+The sets of markers in the input (either \code{dosage_matrix} or \code{probgeno_df}) and shiftmarkers
 may be different, but markers may occur only once in shiftmarkers.
 A column shift is added at the end of the returned data frame.\cr
 If parameter shiftParents is \code{TRUE}, the parental and ancestor scores are
@@ -82,7 +128,9 @@ and the same \code{fitPoly} run as the F1, else \code{FALSE}.
 If \code{TRUE}, their fraction missing scores
 and conflicts tell something about the quality of the scoring. If \code{FALSE}
 (e.g. when the F1 is triploid and the parents are diploid and tetraploid) the
-quality of the F1 scores can be independent of that of the parents}
+quality of the F1 scores can be independent of that of the parents.\cr
+If not specified, \code{TRUE} is assumed if ploidy2 == ploidy and \code{FALSE} if
+ploidy2 != ploidy}
 
 \item{shiftParents}{only used if parameter shiftmarkers is specified. If \code{TRUE},
 apply the shifts also to the parental and ancestor scores.
@@ -98,7 +146,10 @@ any of the functions in this package but may prevent duplicated marker names
 when using other software.}
 }
 \value{
-A data frame with one row per markers, with the following columns:
+A list containing two elements, \code{checked_F1} and \code{meta}. \code{meta} is itself
+a list that stores the parameter settings used in running \code{checkF1} which can 
+be useful for later reference. The first element (\code{checked_F1}) contains the actual results: a data
+frame with one row per marker, with the following columns:
 \itemize{
 \item{m: the sequential number of the marker (as assigned by \code{fitPoly})}
 \item{MarkerName: the name of the marker, with _shf appended if the marker
@@ -169,8 +220,8 @@ column.
 }
 \description{
 For a given set of F1 and parental samples, this function
-finds the best-fitting segregation type. It can perform a dosage shift prior
-to selecting the segregation type.
+finds the best-fitting segregation type using either discrete or probabilistic input data. 
+It can also perform a dosage shift prior to selecting the segregation type.
 }
 \details{
 For each marker is tested how well the different segregation types
@@ -192,4 +243,16 @@ the diploid is initially scored as nulliplex-duplex-quadruplex (dosage 0, 2
 or 4); that must be converted to the true diploid dosage scores (0, 1 or 2).
 Similar corrections are needed with other combinations, such as a diploid
 parent scored together with a hexaploid population etc.
+}
+\examples{
+\dontrun{
+data("ALL_dosages")
+chk1<-checkF1(input_type="discrete",dosage_matrix=ALL_dosages,parent1="P1",parent2="P2",
+F1=setdiff(colnames(ALL_dosages),c("P1","P2")),polysomic=T,disomic=F,mixed=F,
+ploidy=4)
+data("gp_df")
+chk1<-checkF1(input_type="probabilistic",probgeno_df=gp_df,parent1="P1",parent2="P2",
+F1=setdiff(levels(gp_df$SampleName),c("P1","P2")),polysomic=T,disomic=F,mixed=F,
+ploidy=4)
+}
 }

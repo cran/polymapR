@@ -4,9 +4,14 @@
 \alias{write_nested_list}
 \title{Write out a nested list}
 \usage{
-write_nested_list(nested_list, directory, save_as_object = FALSE,
-  object_prefix = directory, extension = if (save_as_object) ".Rdata"
-  else ".txt", ...)
+write_nested_list(
+  nested_list,
+  directory,
+  save_as_object = FALSE,
+  object_prefix = directory,
+  extension = if (save_as_object) ".Rdata" else ".txt",
+  ...
+)
 }
 \arguments{
 \item{nested_list}{A nested list.}
@@ -29,5 +34,5 @@ Write a nested list into a directory structure
 data("all_linkages_list_P1_subset")
 write_nested_list(nested_list = all_linkages_list_P1_subset,
                   directory = "all_linkages_P1",
-                  sep="\\t")}
+                  sep="\t")}
 }
