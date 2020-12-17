@@ -66,7 +66,7 @@ install.packages("polymapR")
 <a name="sect3"></a>
 
 ## 3. Logging function calls and output
-Most exported functions in `polymapR` have a `log` argument. The default setting is `NULL`. In that case, all messages are returned to the standard output, which means your R console if you are calling the functions interactively. However, if it is set to a file name (*e.g.* `log.Rmd` or `log.txt`) all function calls and output are written to that file. It automatically creates one if it does not exist yet. The log file is written in R markdown (http://rmarkdown.rstudio.com/). The advantage of markdown is that it is readable as plain text, but it can also easily be rendered into a nicely formatted html or pdf. In order to do so, give your logfile a .Rmd extension and use the `knitr` package to turn it into a pdf, docx or html. 
+Most exported functions in `polymapR` have a `log` argument. The default setting is `NULL`. In that case, all messages are returned to the standard output, which means your R console if you are calling the functions interactively. However, if it is set to a file name (*e.g.* `log.Rmd` or `log.txt`) all function calls and output are written to that file. It automatically creates one if it does not exist yet. The log file is written in R markdown (https://rmarkdown.rstudio.com/). The advantage of markdown is that it is readable as plain text, but it can also easily be rendered into a nicely formatted html or pdf. In order to do so, give your logfile a .Rmd extension and use the `knitr` package to turn it into a pdf, docx or html. 
 
 <a name="sect4"></a>
 
@@ -815,7 +815,7 @@ This function can also visualise phased hexaploid maps, or triploid maps (tetrap
 `MDSMap` produces output that can be examined each time a map is produced, namely the principal coordinate plots with the principal curve (on which the map is based) - highlighting possible outlying markers that do not associate well with the rest of the markers, and a plot of the nearest-neighbour fit (nnfit) for the markers along each linkage group, giving an indication of markers with high stress. Both of these can help the user to evaluate the quality of the map (for more details, we recommend reading the `MDSMap` publication [@Hackett2016]) and often results in a number of rounds of mapping, where problematic markers are identified and removed followed by subsequent remapping and re-evaluation. Once the maps have been produced it is also an idea to get a general overview of the map quality using the `check_map` function. Note that by default this function expects lists as input arguments, enabling diagnostics to be run over all maps. Here we run it for a single linkage group, LG1:
 
 ```{r, eval = FALSE}
-check_map(linkage_list = list(LG1 = linkages$LG1), maplist = list(LG1 = integrated.maplist$LG1))
+check_map(linkage_list = linkages[1], maplist = integrated.maplist[1])
 ```
 
 
@@ -829,7 +829,7 @@ knitr::include_graphics("figures/LG1_check_map_plotB.png")
 
 
 For each map produced, there are 3 diagnostic plots. The first of these shows the differences between the pairwise estimates of recombination frequency and the effective estimate of recombination frequency based on the map itself (the multi-point estimate of the recombination frequency) . These differences are compared to the LOD score for each pairwise estimate. An overall estimate of the weighted root mean square error of these differences (weighted by the LOD scores) is printed on the console. In general, we expect that if the difference between the expected and realised recombination frequency is high, the LOD should be low. If this is not the case, something went wrong in the final mapping step.
-The second plot shows the comparison between a marker's map position and the recombination frequency estimates to all other markers. In gerenal we expect that small recombination frequency estimates come from nearby markers and should therefore be concentrated around the diagonal, which are shown as light green regions. Areas of light green off the diagonal suggest a sub-optimal map order.
+The second plot shows the comparison between a marker's map position and the recombination frequency estimates to all other markers. In general we expect that small recombination frequency estimates come from nearby markers and should therefore be concentrated around the diagonal, which are shown as light green regions. Areas of light green off the diagonal suggest a sub-optimal map order.
 The third plot is similar to the previous except that LOD values are shown in place of recombination frequencies. Again, we expect a concentration of higher LOD scores around the diagonal. By default, LOD scores less than 5 are not shown to make things clearer, but this value can be varied using the `lod.thresh` argument.
 
 <a name="sect15"></a>

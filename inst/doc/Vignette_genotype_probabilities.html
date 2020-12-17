@@ -12,7 +12,7 @@
 
 <meta name="author" content="Peter M. Bourke, Yanlin Liao" />
 
-<meta name="date" content="2020-07-15" />
+<meta name="date" content="2020-12-15" />
 
 <title>Using genotype probabilities in polymapR</title>
 
@@ -319,7 +319,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Using genotype probabilities in polymapR</h1>
 <h4 class="author">Peter M. Bourke, Yanlin Liao</h4>
-<h4 class="date">2020-07-15</h4>
+<h4 class="date">2020-12-15</h4>
 
 
 
@@ -429,8 +429,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tbody>
 </table>
 <p>However, there are some advantages to probabilistic genotypes - in cases where uncertainty exists in the genotype assignment, it might not be obvious how to discretise the genotype scores. This may lead to observations being marked as missing data or even being entirely removed from the dataset, depending on what filtering thresholds are used.</p>
-<p>Probabilistic genotypes are a standard output from many polyploid genotype calling procedures. This vignette assumes the R package <code>fitPoly</code> has been used (developed to score the output of SNP arrays). <code>polymapR</code> also includes functions to convert the output of other polyploid genotype callers developed for sequencing reads into a compatible format.</p>
-<p>For example, output of the <code>multiflex</code> function of <code>updog</code> can be re-formatted using the <code>convert_updog</code> function, while <code>convert_polyRAD</code> does the same with the <code>RADobject</code> output of function <code>PipelineMapping2Parents</code> in R package <code>polyRAD</code>.</p>
+<p>Probabilistic genotypes are a standard output from many polyploid genotype calling procedures. This vignette assumes the R package <code>fitPoly</code> has been used (developed to score the output of SNP arrays). <code>polymapR</code> also includes functions to convert the output of other polyploid genotype callers developed for sequencing reads into a compatible format. For example, output of the <code>multiflex</code> function of <code>updog</code> can be re-formatted using the <code>convert_updog</code> function, while <code>convert_polyRAD</code> does the same with the <code>RADobject</code> output of function <code>PipelineMapping2Parents</code> in R package <code>polyRAD</code>.</p>
 <p><a name="sect2"></a></p>
 </div>
 <div id="importing-sample-data" class="section level2">
@@ -695,7 +694,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="screen-for-duplicate-individuals" class="section level3">
 <h3>4.3. Screen for duplicate individuals</h3>
 <p>As in the original <code>polymapR</code> pipeline, it is also possible to check the marker data for duplicate individuals. This is accomplished using the <code>screen_for_duplicate_individuals.gp</code> function:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>geno2 &lt;-<span class="st"> </span><span class="kw">screen_for_duplicate_individuals.gp</span>(<span class="dt">probgeno_df =</span> geno2,</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>geno2 &lt;-<span class="st"> </span><span class="kw">screen_for_duplicate_individuals.gp</span>(<span class="dt">probgeno_df =</span> geno1,</span>
 <span id="cb15-2"><a href="#cb15-2"></a>                                             <span class="dt">ploidy =</span> <span class="dv">4</span>,</span>
 <span id="cb15-3"><a href="#cb15-3"></a>                                             <span class="dt">parent1 =</span> parent1.reps,</span>
 <span id="cb15-4"><a href="#cb15-4"></a>                                             <span class="dt">parent2 =</span> parent2.reps,</span>
@@ -900,7 +899,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb46-2"><a href="#cb46-2"></a>                                 <span class="dt">template_SxS =</span> P1_SxS_Assigned, </span>
 <span id="cb46-3"><a href="#cb46-3"></a>                                 <span class="dt">modify_SxS =</span> P2_SxS_Assigned)</span></code></pre></div>
 <pre><code>## 
-## ####Original LG names
+## #### Original LG names
 ## 
 ## |   |  1|  2|  3|  4|  5|
 ## |:--|--:|--:|--:|--:|--:|
@@ -910,7 +909,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 ## |4  |  0|  0|  0|  0| 15|
 ## |5  |  0|  0| 19|  0|  0|
 ## 
-## ####Modified LG names
+## #### Modified LG names
 ## 
 ## |   |  1|  2|  3|  4|  5|
 ## |:--|--:|--:|--:|--:|--:|
@@ -1012,7 +1011,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb58-4"><a href="#cb58-4"></a>                                        <span class="dt">ploidy =</span> <span class="dv">4</span>,</span>
 <span id="cb58-5"><a href="#cb58-5"></a>                                        <span class="dt">marker_assignment.1 =</span> marker_assignments<span class="op">$</span>P1, </span>
 <span id="cb58-6"><a href="#cb58-6"></a>                                        <span class="dt">marker_assignment.2 =</span> marker_assignments<span class="op">$</span>P2)</span></code></pre></div>
-<p>For extra details <em>e.g</em> on map visualisations, see the main <code>polymapR</code> vignette. <a name="sect8"></a></p>
+<p>For extra details <em>e.g</em> on map visualisations, see the <a href="https://CRAN.R-project.org/package=polymapR">main</a> <code>polymapR</code> vignette.</p>
+<p><a name="sect8"></a></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2>8. References</h2>

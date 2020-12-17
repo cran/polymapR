@@ -71,7 +71,7 @@ print(maxP.chk)
 knitr::include_graphics("figures/maxPdist.png")
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  geno2 <- screen_for_duplicate_individuals.gp(probgeno_df = geno2,
+#  geno2 <- screen_for_duplicate_individuals.gp(probgeno_df = geno1,
 #                                               ploidy = 4,
 #                                               parent1 = parent1.reps,
 #                                               parent2 = parent2.reps,

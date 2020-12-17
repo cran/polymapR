@@ -1529,14 +1529,37 @@ test_linkage_df <- function(linkage_df){
 
 
 #' Error and warning handling for probgeno_df data-frame of probabilistic genotypes (scores)
-#' @param probgeno_df A data.frame as output of \code{\link{linkage}} calculating linkage between 1.0 markers.
+#' @param probgeno_df A data frame as read from the scores file produced by function
+#' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
+#' \itemize{
+#' \item{SampleName}{
+#' Name of the sample (individual)
+#' }
+#' \item{MarkerName}{
+#' Name of the marker
+#' }
+#' \item{P0}{
+#' Probabilities of dosage score '0'
+#' }
+#' \item{P1...}{
+#' Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+#' }
+#' \item{maxP}{
+#' Maximum genotype probability identified for a particular individual and marker combination
+#' }
+#' \item{maxgeno}{
+#' Most probable dosage for a particular individual and marker combination
+#' }
+#' \item{geno}{
+#' Most probable dosage for a particular individual and marker combination, if \code{maxP} exceeds a user-defined threshold (e.g. 0.9), otherwise \code{NA}}
+#' }
 #' @noRd
 test_probgeno_df <- function(probgeno_df){
   if(!inherits(probgeno_df, "data.frame")) {
     warning("probgeno_df should be a data-frame. Attempting to coerce...")
     probgeno_df <- as.data.frame(probgeno_df)
   }
-  if(!all(c("MarkerName", "SampleName", "geno","ratio","maxgeno","maxP") %in% colnames(probgeno_df))) stop("colnames MarkerName, SampleName, maxgeno, geno, maxP and ratio are required!")
+  if(!all(c("MarkerName", "SampleName", "geno","maxgeno","maxP") %in% colnames(probgeno_df))) stop("colnames MarkerName, SampleName, maxgeno, geno, and maxP are required!")
   if(!is.factor(probgeno_df$SampleName)) probgeno_df$SampleName <- as.factor(probgeno_df$SampleName)
   
   return(probgeno_df)
@@ -1571,14 +1594,14 @@ write.logheader <- function(matc, log){
   if(file.exists(log)) mod <- "a"
   log.conn <- file(log, mod)
   if(mod=="w") write(c("<style type=\"text/css\">.table {width: 40%;}</style>",
-                       "##polymapR log file",
+                       "## polymapR log file",
                        "This file is written in [markdown](https://en.wikipedia.org/wiki/Markdown).",
                        "Use knitr or [Markable](https://markable.in) to export it as a nicely formatted html or word file."),
                      log.conn)
   close(log.conn)
   mod <- "a"
   log.conn <- file(log, mod)
-  write(c(paste0("\n###Log for function call of `", args[[1]], "`"), 
+  write(c(paste0("\n### Log for function call of `", args[[1]], "`"), 
           as.character(Sys.time())),file = log.conn)
   close(log.conn)
   log.conn <- file(log, "a")

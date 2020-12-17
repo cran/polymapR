@@ -54,9 +54,7 @@ Using discrete dosages (*e.g.* by selecting the maximum probability) would give 
 
 However, there are some advantages to probabilistic genotypes - in cases where uncertainty exists in the genotype assignment, it might not be obvious how to discretise the genotype scores. This may lead to observations being marked as missing data or even being entirely removed from the dataset, depending on what filtering thresholds are used. 
 
-Probabilistic genotypes are a standard output from many polyploid genotype calling procedures. This vignette assumes the R package `fitPoly` has been used (developed to score the output of SNP arrays). `polymapR` also includes functions to convert the output of other polyploid genotype callers developed for sequencing reads into a compatible format.
-
-For example, output of the `multiflex` function of `updog` can be re-formatted using the `convert_updog` function, while `convert_polyRAD` does the same with the `RADobject` output of function `PipelineMapping2Parents` in R package `polyRAD`.
+Probabilistic genotypes are a standard output from many polyploid genotype calling procedures. This vignette assumes the R package `fitPoly` has been used (developed to score the output of SNP arrays). `polymapR` also includes functions to convert the output of other polyploid genotype callers developed for sequencing reads into a compatible format. For example, output of the `multiflex` function of `updog` can be re-formatted using the `convert_updog` function, while `convert_polyRAD` does the same with the `RADobject` output of function `PipelineMapping2Parents` in R package `polyRAD`.
 
 <a name="sect2"></a>
 
@@ -194,7 +192,7 @@ This may give some indication of possible issues with the assigned genotypes. In
 As in the original `polymapR` pipeline, it is also possible to check the marker data for duplicate individuals. This is accomplished using the `screen_for_duplicate_individuals.gp` function: 
 
 ```{r, eval = FALSE}
-geno2 <- screen_for_duplicate_individuals.gp(probgeno_df = geno2,
+geno2 <- screen_for_duplicate_individuals.gp(probgeno_df = geno1,
                                              ploidy = 4,
                                              parent1 = parent1.reps,
                                              parent2 = parent2.reps,
@@ -577,7 +575,8 @@ phased.maplist <- create_phased_maplist(input_type = "probabilistic",
                                         marker_assignment.2 = marker_assignments$P2)
 ```
 
-For extra details *e.g* on map visualisations, see the main `polymapR` vignette.
+For extra details *e.g* on map visualisations, see the [main](https://CRAN.R-project.org/package=polymapR) `polymapR` vignette.
+
 <a name="sect8"></a>
 
 ## 8. References

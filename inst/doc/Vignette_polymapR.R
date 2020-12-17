@@ -491,7 +491,7 @@ plot_phased_maplist(phased.maplist = phased.maplist[1], #Can plot full list also
                     cols = c("black","grey50","grey50"))
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  check_map(linkage_list = list(LG1 = linkages$LG1), maplist = list(LG1 = integrated.maplist$LG1))
+#  check_map(linkage_list = linkages[1], maplist = integrated.maplist[1])
 
 ## ---- out.width = "500px", echo = FALSE, fig.align = "center"-----------------
 knitr::include_graphics("figures/LG1_check_map_plotA.png")

@@ -177,6 +177,11 @@ assign_linkage_group <- function(linkage_df,
   
   unlinked_markers <- rownames(counts_chm)[rowSums(counts_chm) == 0]
   
+  if(length(setdiff(unassigned_markers, unlinked_markers)) == 0){
+    message("There were no linkage groups the marker could be assigned to")
+    return(NULL)
+  }
+  
   counts_chm <-
     counts_chm[!rownames(counts_chm) %in% unlinked_markers, , drop = FALSE]
   count_tables <- "["(count_tables, rownames(counts_chm))
@@ -197,7 +202,7 @@ assign_linkage_group <- function(linkage_df,
   }
   
   if (sum(warn_lg) > 0) { #Possible bug fixed, strange it wasn't giving errors!
-    write("\n####Marker(s) showing ambiguous linkage to more than one LG:\n",
+    write("\n#### Marker(s) showing ambiguous linkage to more than one LG:\n",
           log.conn)
     amb.m <- vector.to.matrix(unassigned_markers[warn_lg], 4)
     write(knitr::kable(amb.m), log.conn)
@@ -254,7 +259,7 @@ assign_linkage_group <- function(linkage_df,
   
   # write unlinked markers to standard out
   if (length(unlinked_markers) > 0) {
-    write("\n####Marker(s) not assigned:\n", log.conn)
+    write("\n#### Marker(s) not assigned:\n", log.conn)
     unl.m <- vector.to.matrix(unlinked_markers, 4)
     write(knitr::kable(unl.m), log.conn)
   }
@@ -570,7 +575,7 @@ bridgeHomologues <- function(
     sub <- cluster_stack[cluster_stack$cluster %in% repr_cluster_stack,]
     t <- table(droplevels(sub$cluster))
     message("Not all homologue clusters are represented in the graph.")
-    write(paste0("\n####Unrepresented homologues\n"),
+    write(paste0("\n#### Unrepresented homologues\n"),
           file = log.conn)
     #sink(log.conn)
     write(knitr::kable(data.frame(cluster = names(t), size = as.vector(t))),
@@ -602,13 +607,17 @@ bridgeHomologues <- function(
       createChmHomList(SN_SN_cluster_list, LG_number = LG_number)
   }
   
+  SN_SN_chm_cl$homologue <- as.numeric(as.character(SN_SN_chm_cl$homologue))
+  
   for (chm in levels(SN_SN_chm_cl$LG)) {
-    clusters_chm <-
-      as.factor(as.numeric(SN_SN_chm_cl$homologue[SN_SN_chm_cl$LG == chm]))
-    levels(clusters_chm) <- 1:length(levels(clusters_chm))
+    clusters_chm <- as.factor(SN_SN_chm_cl$homologue[SN_SN_chm_cl$LG == chm])
+    
+    levels(clusters_chm) <- 1:length(unique(clusters_chm))
+    
     SN_SN_chm_cl$homologue[SN_SN_chm_cl$LG == chm] <-
-      as.numeric(clusters_chm)
+      clusters_chm
   }
+  
   SN_SN_chm_cl$homologue <-
     as.factor(as.character(SN_SN_chm_cl$homologue))
   
@@ -1639,6 +1648,11 @@ check_map <- function (linkage_list,
       !all(names(linkage_list) == names(maplist))) 
     stop("linkage_list and maplist do not correspond.")
   mapfn <- match.arg(mapfn, choices = c("haldane", "kosambi"))
+  
+  ## Re-set par settings on exit (thanks to Gregor, CRAN)
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(par(oldpar))  
+  
   rev.haldane <- function(d) (1 - exp(-d/50))/2
   rev.kosambi <- function(d) ((exp(d/25) - 1)/(exp(d/25) + 
                                                  1))/2
@@ -1647,13 +1661,23 @@ check_map <- function (linkage_list,
   
   lgfunc <- function(l) {
     lgname <- names(linkage_list)[l]
-    posmat <- matrix(c(maplist[[l]][match(linkage_list[[l]]$marker_a, 
+    
+    ## Make a subset of marker names that are common to both:
+    marksetA <- intersect(linkage_list[[l]]$marker_a,maplist[[l]]$marker)
+    marksetB <- intersect(linkage_list[[l]]$marker_b,maplist[[l]]$marker)
+    
+    ll <- linkage_list[[l]][linkage_list[[l]]$marker_a %in% marksetA & 
+                              linkage_list[[l]]$marker_b %in% marksetB,]
+    
+    posmat <- matrix(c(maplist[[l]][match(ll$marker_a, 
                                           maplist[[l]]$marker), ]$position, 
-                       maplist[[l]][match(linkage_list[[l]]$marker_b, 
+                       maplist[[l]][match(ll$marker_b, 
                                           maplist[[l]]$marker), ]$position, 
-                       linkage_list[[l]]$r, 
-                       linkage_list[[l]]$LOD), 
+                       ll$r, 
+                       ll$LOD), 
                      ncol = 4)
+    
+    
     # sort the rows to have the positions in ascending order
     # (so for plot B the LOD and r of all marker pairs at the same positions
     #  are averaged):
@@ -1664,8 +1688,9 @@ check_map <- function (linkage_list,
     } else if (mapfn == "kosambi") {
       expected.recom <- rev.kosambi(abs(posmat[, 1] - posmat[, 2]))
     } else stop("incorrect mapfn")
-    dev <- linkage_list[[l]]$r - expected.recom
-    wRMSE <- sqrt(mean((abs(dev) * linkage_list[[l]]$LOD)^2))
+    
+    dev <- ll$r - expected.recom
+    wRMSE <- sqrt(mean((abs(dev) * ll$LOD)^2))
     # Plot A: LOD vs delta_r
     if (plottype=="pdf") {
       pdf(paste0(prefix, lgname, "_check_map_plotA.pdf"), 
@@ -1676,7 +1701,7 @@ check_map <- function (linkage_list,
       
     }
     if (tidyplot) {
-      hbin <- hexbin::hexbin(dev, linkage_list[[l]]$LOD, 
+      hbin <- hexbin::hexbin(dev, ll$LOD, 
                              xbins = 150)
       suppressWarnings(hexbin::plot(hbin, ylab = "LOD", 
                                     xlab = expression(delta(r)), legend = FALSE, 
@@ -1684,7 +1709,7 @@ check_map <- function (linkage_list,
                                                     "- r"["map"])))
     }
     else {
-      plot(dev, linkage_list[[l]]$LOD, ylab = "LOD", 
+      plot(dev, ll$LOD, ylab = "LOD", 
            xlab = expression(delta(r)), cex.lab = 1.25, 
            main = expression("|r"["pairwise"] ~ 
                                "- r"["map"] ~ "|"))
@@ -1705,6 +1730,7 @@ check_map <- function (linkage_list,
     layout(matrix(1:4, ncol = 4, byrow = TRUE), widths = c(1, 
                                                            0.2, 1, 0.2))
     par(oma = c(0, 0, 3, 0))
+    
     #ds1 <- seq(min(posmat[, 1]), max(posmat[, 1]), detail) # position marker_a steps
     #ds2 <- seq(min(posmat[, 2]), max(posmat[, 2]), detail) # position marker_b steps
     ds <- seq(min(posmat[,1]), max(posmat[,2]), detail) # position steps; position1 always <= position2
@@ -1724,7 +1750,8 @@ check_map <- function (linkage_list,
       # if m has missing rows or columns, insert these and fill with default value
       if (nrow(m) < size | ncol(m) < size) {
         x <- matrix(0, nrow=size, ncol=ncol(m))
-        x[as.integer(rownames(m)),] <- m 
+        
+        x[as.integer(rownames(m)),] <- m
         cn <- as.integer(colnames(m))
         m <- matrix(0, nrow=nrow(x), ncol=size)
         m[, cn] <- x
@@ -1739,7 +1766,11 @@ check_map <- function (linkage_list,
     }
     
     L1 <- expandmatrix(L1, length(ds), 0, symmetric=sortmarkers)
-    r1 <- expandmatrix(r1, length(ds), 0, symmetric=sortmarkers)
+    r1 <- expandmatrix(m=r1, size=length(ds), default=0, symmetric=sortmarkers)
+    
+    #Patch 15-12-2020
+    r1[r1>=0.5] <- 1-r1[r1>=0.5]
+    
     colours <- colorRampPalette(c("green", "yellow", 
                                   "orange", "red"))(100)
     rcolmin <- min(r1)
@@ -1795,7 +1826,7 @@ check_map <- function (linkage_list,
   }
   
   sapply(seq(length(linkage_list)), lgfunc)
-  par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = orig.mar)
+  # par(mfrow = c(1, 1), oma = c(0, 0, 0, 0), mar = orig.mar) # deprecated 15-12-2020
 } #check_map
 
 
@@ -1991,6 +2022,10 @@ cluster_per_LG <- function(LG,
   
   write(paste("Total number of edges:", nrow(edges)), stdout())
   
+  ## Re-set par settings on exit (thanks to Gregor, CRAN)
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(par(oldpar))            
+  
   # make a network (graph)
   nw <- igraph::graph.data.frame(edges, directed = F)
   gcl <- igraph::groups(igraph::clusters(nw))
@@ -2182,6 +2217,10 @@ cluster_SN_markers <- function(linkage_df,
                                phase_considered = "All",
                                log = NULL) {
   linkage_df <- test_linkage_df(linkage_df)
+  
+  ## Re-set par settings on exit (thanks to Gregor, CRAN)
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(par(oldpar)) 
   
   total_marker <-
     unique(c(
@@ -2732,7 +2771,7 @@ consensus_LG_names <- function(modify_LG,
     log.conn <- file(log, "a")
   }
   
-  write("\n####Original LG names\n", log.conn)
+  write("\n#### Original LG names\n", log.conn)
   write(knitr::kable(cons_table,
                      row.names = TRUE), log.conn)
   
@@ -2795,7 +2834,7 @@ consensus_LG_names <- function(modify_LG,
   
   
   colnames(cons_table) <- changed_LGs
-  write("\n####Modified LG names\n", log.conn)
+  write("\n#### Modified LG names\n", log.conn)
   reorder_cons_table <-
     cons_table[, order(as.numeric(colnames(cons_table))), drop = FALSE]
   write(knitr::kable(reorder_cons_table,
@@ -2988,7 +3027,7 @@ convert_marker_dosages <- function(dosage_matrix,
     log.conn <- file(log, "a")
   }
   
-  write("\n####Marker dosage frequencies:\n",
+  write("\n#### Marker dosage frequencies:\n",
         file = log.conn)
 
   write(knitr::kable(parental_info),
@@ -3823,7 +3862,7 @@ define_LG_structure <- function(cluster_list,
   
   # write unlinked markers to standard out
   if (length(unlinked_markers) > 0) {
-    write(paste0("\n####SxN Marker(s) lost in clustering step at LOD ",LOD_hom,":\n"), log.conn)
+    write(paste0("\n#### SxN Marker(s) lost in clustering step at LOD ",LOD_hom,":\n"), log.conn)
     unl.m <- vector.to.matrix(unlinked_markers, 4)
     write(knitr::kable(unl.m), log.conn)
   }
@@ -3929,7 +3968,6 @@ finish_linkage_analysis <- function(input_type = "discrete",
   
   pairing <- match.arg(pairing)
   
-
   #initialise:
   ploidy.F1 <- ploidy
   sn.ignore <- "_0.1_"
@@ -3987,8 +4025,8 @@ finish_linkage_analysis <- function(input_type = "discrete",
   lgs <- unique(marker_assignment[, "Assigned_LG"])
   lgs <- lgs[order(lgs)]
   
-  if (is.null(log) & length(marker_combinations) > 0)
-    pb <- txtProgressBar(0, nrow(marker_combinations), style = 3)
+  # if (is.null(log) & length(marker_combinations) > 0)
+    # pb <- txtProgressBar(0, nrow(marker_combinations), style = 3)
   for (i in seq(nrow(marker_combinations))) {
     mtype1 <- marker_combinations[i, 1:2]
     if (marker_combinations[i, 1] == marker_combinations[i,3] & 
@@ -4058,8 +4096,8 @@ finish_linkage_analysis <- function(input_type = "discrete",
                                                    collapse = "."), "_", paste(mtype2_name, collapse = "."))
     assign(r_LOD_list_name, get("r_LOD_list"))
     r_LOD_lists <- c(r_LOD_lists, r_LOD_list_name)
-    if (!is.null(log))
-      setTxtProgressBar(pb, i)
+    # if (!is.null(log))
+      # setTxtProgressBar(pb, i)
   }
   
   for (i in lgs) { 
@@ -4180,6 +4218,10 @@ gp_overview <- function(probgeno_df,
                         alpha = 0.1){
   probgeno_df <- test_probgeno_df(probgeno_df)
   
+  ## Re-set par settings on exit (thanks to Gregor, CRAN)
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(par(oldpar)) 
+  
   individual_temp <- as.data.frame(
     do.call(rbind,lapply(levels(probgeno_df$SampleName) ,function(i){
       temp <- probgeno_df[probgeno_df$SampleName %in% i,]
@@ -4209,7 +4251,7 @@ gp_overview <- function(probgeno_df,
     probgeno_df <- droplevels(probgeno_df[!(probgeno_df$SampleName %in% remove_ind),])
   }
   
-  par(mfrow = c(1,1)) #return to original par
+  # par(mfrow = c(1,1)) #return to original par, now deprecated 15-12-2020
   
   return(list('probgeno_df' = probgeno_df,
               'population_overview' = individual_temp))
@@ -6068,7 +6110,7 @@ marker_data_summary <- function(dosage_matrix,
   
   for (i in c(1, 2)) {
     if(verbose) {
-      write(paste0("\n####", names(summary)[i], "\n"),
+      write(paste0("\n#### ", names(summary)[i], "\n"),
             file = log.conn)
       #sink(log.conn)
       write(knitr::kable(summary[[i]]),
@@ -6077,7 +6119,7 @@ marker_data_summary <- function(dosage_matrix,
     #suppressWarnings(sink())
   }
   
-  if(verbose) write("\n####Incompatible individuals:\n", log.conn)
+  if(verbose) write("\n#### Incompatible individuals:\n", log.conn)
   if (length(progeny_incompat) == 0 & verbose)
     write("None\n", log.conn)
   
@@ -6259,7 +6301,7 @@ merge_homologues <-
       log.conn <- file(log, "a")
     }
     
-    write("####Number of markers per homologue:\n", log.conn)
+    write("#### Number of markers per homologue:\n", log.conn)
     write(knitr::kable(
       table(
         LG_hom_stack$homologue,
@@ -6369,7 +6411,7 @@ merge_marker_assignments <- function(dosage_matrix,
     log.conn <- file(log, "a")
   }
   
-  write(paste0("\n####Marker numbers  parent ", target_parent, "\n"),
+  write(paste0("\n#### Marker numbers  parent ", target_parent, "\n"),
         log.conn)
   count_table <-
     table(
@@ -6424,7 +6466,11 @@ overviewSNlinks <- function(linkage_df,
   numCols <- ceiling(sqrt(nrow(homCombs) + 1))
   
   # save default par
-  default.mar <- par("mar")
+  # default.mar <- par("mar") #deprecated..
+  
+  ## Re-set par settings on exit (thanks to Gregor, CRAN)
+  oldpar <- par(no.readonly = TRUE)   
+  on.exit(par(oldpar))  
   
   # new par and layout
   layout(matrix(1:numCols ^ 2, ncol = numCols, byrow = TRUE))
@@ -6452,9 +6498,9 @@ overviewSNlinks <- function(linkage_df,
     ) #All repulsion. Don't join
   }
   
-  # set back layout and graphical parameters
-  layout(matrix(1))
-  par(mar = default.mar, mfrow=c(1,1))
+  # set back layout and graphical parameters - deprecated 15-12-2020
+  # layout(matrix(1))
+  # par(mar = default.mar, mfrow=c(1,1))
   
   if (!is.null(log)) {
     matc <- match.call()
@@ -6737,7 +6783,7 @@ phase_SN_diploid <- function(linkage_df,
   
   # write unlinked markers to standard out
   if (length(unlinked_markers) > 0) {
-    write(paste0("\n####SxN Marker(s) lost in clustering step at LOD ",LOD_chm,":\n"), log.conn)
+    write(paste0("\n#### SxN Marker(s) lost in clustering step at LOD ",LOD_chm,":\n"), log.conn)
     unl.m <- vector.to.matrix(unlinked_markers, 4)
     write(knitr::kable(unl.m), log.conn)
   }
@@ -7297,9 +7343,9 @@ screen_for_duplicate_individuals <-
         }
         
       }
-      write(paste("\n####",length(remove),"individuals removed:\n"), log.conn)
+      write(paste("\n#### ",length(remove),"individuals removed:\n"), log.conn)
       remove.m <- vector.to.matrix(remove, 4)
-      if(!is.null(log)) message(paste("\n####",length(remove),"individuals removed:\n"));print(remove.m)
+      if(!is.null(log)) message(paste("\n#### ",length(remove),"individuals removed:\n"));print(remove.m)
       write(knitr::kable(remove.m), log.conn)
       dosage_matrix <-
         dosage_matrix[,!colnames(dosage_matrix) %in% remove]
