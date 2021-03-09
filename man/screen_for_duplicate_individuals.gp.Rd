@@ -12,7 +12,6 @@ screen_for_duplicate_individuals.gp(
   F1,
   cutoff = 0.95,
   plot_cor = TRUE,
-  saveCOV = "PeasonCC",
   log = NULL
 )
 }
@@ -54,8 +53,6 @@ Most probable dosage for a particular individual and marker combination, if \cod
 \item{cutoff}{Correlation coefficient cut off to declare duplicates. At this correlation coefficient, individuals are merged. If \code{NULL} user input will be asked after plotting.}
 
 \item{plot_cor}{Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.}
-
-\item{saveCOV}{A file name where the Pearson's correlation coefficient's variation, number, and mean can be saved}
 
 \item{log}{Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.}
 }

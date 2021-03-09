@@ -18,6 +18,8 @@ linkage.gp(
   iter_RAM = 500,
   ncores = 2,
   verbose = TRUE,
+  check_qall_mult = FALSE,
+  method = "approx",
   log = NULL
 )
 }
@@ -75,24 +77,31 @@ See the function \code{\link{test_prefpairing}} and the vignette for more detail
 
 \item{verbose}{Should messages be sent to stdout?}
 
+\item{check_qall_mult}{Check the \code{qall_mult} column of \code{chk}, and filter out markers with \code{qall_mult = 0}. By default \code{FALSE}.}
+
+\item{method}{Either \code{"approx"} or \code{"mappoly"}. If \code{"approx"} (the default method), then an approximated estimator is used which introduces
+a small amount of bias in the estimator of recombination frequency. If method \code{"mappoly"} is specified, the full likelihood is used in the
+estimation, leading to an unbiased estimator (this has been implemented in the mappoly package of Marcelo Mollinari). The \code{mappoly} method has
+higher computational demands which may introduce problems for larger datasets, but will lead to higher accuracy overall.}
+
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.}
 }
 \value{
 Returns a data.frame with columns:
 \itemize{
-\item{marker_a}{
+\item{marker_a:}{
   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 }
-\item{marker_b}{
+\item{marker_b:}{
   second marker of comparison. It has the type of markertype2 if specified.
 }
-\item{r}{
-  (estimated) recombinations frequency
+\item{r:}{
+  recombination frequency
 }
-\item{LOD}{
-  (estimated) LOD score
+\item{LOD:}{
+  LOD score associated with r
 }
-\item{phase}{
+\item{phase:}{
   phase between markers
 }
 }

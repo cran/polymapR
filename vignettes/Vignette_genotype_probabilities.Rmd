@@ -1,7 +1,7 @@
 ---
 title: "Using genotype probabilities in polymapR"
 author: "Peter M. Bourke, Yanlin Liao"
-date: "`r Sys.Date()`"
+date: "8-3-2021"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using genotype probabilities in polymapR}
@@ -15,7 +15,7 @@ This vignette is additional to the basic `polymapR` vignette "How to use polymap
 
 Here, we will go through the main steps of polyploid linkage analysis using `polymapR` [@bourke2018polymapr] when discrete dosages are not available or not desired, but where genotype probabilities are instead available. Genotype probabilties are a direct output of many polyploid genotype callers such as `fitPoly` [@Voorrips2011], `updog` [@gerard2018] or `polyRAD` [@clark2019], although dosage probabilities from any other genotyping software can be used. 
 
-For more background information on the functions described here, please refer to the manuscript of Liao et al. (*submitted* 2020). 
+For more background information on the functions described here, please refer to the preprint manuscript of Liao et al. (*submitted* 2020). 
 
 ## Table of Contents
 1. [Introduction](#sect1)
@@ -220,7 +220,9 @@ In the original `polymapR` pipeline, marker conversion is an important step that
 <a name="sect6"></a>
 
 ## 6. Linkage analysis
-The rest of the mapping pipeline is very similar to that of the original `polymapR` pipeline. We will run quickly through the steps here, starting with estimation of pairwise recombination frequencies using the `linkage.gp` function. This function, like a number of others in `polymapR` allows for parallel processing using the argument `ncores`. To detect how many available cores your computer has, as well as determining a reasonable number of them to use (max - 2 for example) we first run the following:
+The rest of the mapping pipeline is very similar to that of the original `polymapR` pipeline. We will run quickly through the steps here, starting with estimation of pairwise recombination frequencies using the `linkage.gp` function. Note that there are two possible methods / approaches here. The default method (`method = "approx"`) uses an approximation, by summing the probabilities of each genotype class across the population, and using these as estimates for different marker classes in the two-point estimation of recombination frequency. This has been shown to lead to biased estimates of recombination frequency (thanks to Marcelo Mollinari, NCSU for highlighting this), but has the advantage that (a) the calculation is much faster and (b) the bias is in general rather small and can probably be ignored. The full likelihood, in which all dosage probabilities are carried through in the calculation, has been implemented in the `mappoly` function `est_pairwise_rf`, the results of which can also be used in `polymapR`. Therefore, although there can be quite a computational penalty involved here, the results using `method = "mappoly"` are of higher accuracy.
+
+The function, like a number of others in `polymapR` allows for parallel processing using the argument `ncores`. To detect how many available cores your computer has, as well as determining a reasonable number of them to use (max - 2 for example) we first run the following:
 
 ```{r}
 nc <- parallel::detectCores() - 2
@@ -239,6 +241,9 @@ chk1 <- checkF1(input_type = "probabilistic",
                 mixed = FALSE,
                 ploidy = 4)
 ```
+
+In what follows, we are using the approximate method for recombination frequency estimation. If the full likelihood approach is required, make sure to specify `method = "mappoly` in the calls to the `linkage.gp` function.
+
 
 ### 6.1 Simplex markers - clustering homologues
 We begin with the simplex markers in parent 1 in order to begin with marker clustering:

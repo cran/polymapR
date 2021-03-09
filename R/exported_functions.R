@@ -534,12 +534,20 @@ bridgeHomologues <- function(
         colnames(out) <- c("h1", "h2", "weights")
         return(out)
       })
-    # rbind edgelist
+    
     edges <- do.call(rbind, edges)
     
+    # for(i in seq(nrow(edges))){
+    #   edges[i, 1:2] <- edges[i,1:2][order(edges[i,1:2])]
+    # }
+    
+    ## Update 24-2-2021: r-devel issue regarding order on a data.frame (although it should be on a vector here)
+    ## Ugly patch using the following:
     for(i in seq(nrow(edges))){
-      edges[i, 1:2] <- edges[i,1:2][order(edges[i,1:2])]
+      if(edges[i, 2] < edges[i, 1])
+        edges[i, 1:2] <- c(edges[i, 2], edges[i, 1])
     }
+    
     edges <- aggregate(edges$weights, by = list(edges[,1], edges[,2]), FUN = sum)
     colnames(edges) <- c("h1", "h2", "weights")
     
@@ -597,14 +605,14 @@ bridgeHomologues <- function(
     if (length(gcl) != LG_number) {
       warning(
         "Number of clusters do not represent number of expected chromosomes.
-        If you're not okay with that, try again with different LOD_cutoff, min_links, min_bridges or automatic_clustering = FALSE"
+        If you're not okay with that, try again with different LOD_threshold, min_links, min_bridges or automatic_clustering = FALSE"
       )
     }
   } else {
     # user input which homologs per chromosome
     SN_SN_cluster_list <- unstack(cluster_stack)
     SN_SN_chm_cl <-
-      createChmHomList(SN_SN_cluster_list, LG_number = LG_number)
+      createChmHomList(LG_hom_stack = SN_SN_cluster_list, LG_number = LG_number)
   }
   
   SN_SN_chm_cl$homologue <- as.numeric(as.character(SN_SN_chm_cl$homologue))
@@ -1625,8 +1633,6 @@ checkF1 <- function(input_type = "discrete",
 #' @param tidyplot If \code{TRUE}, an attempt is made to reduce the plot density, using the \code{hexbin} package. 
 #' This can have a considerable performance impact for high-density maps
 #' @param detail Level of detail for heatmaps, by default 1 cM. Values less than 0.5 cM can have serious performance implications.
-#' @param sortmarkers If \code{TRUE} (by default) the markers in the linkage_list are sorted: first the lower position, then the higher. 
-#' Results in an averaging (in plot B) over all markers at a gives pair of positions 
 #' @param plottype Option to specify graphical device for plotting, (either png or pdf), or by default "", in which case plots are directly plotted within R
 #' @param prefix Optional prefix appended to plot names if outputting plots.
 #' @examples
@@ -1641,7 +1647,6 @@ check_map <- function (linkage_list,
                        lod.thresh = 5, 
                        tidyplot = TRUE, 
                        detail = 1, 
-                       sortmarkers=TRUE, 
                        plottype=c("", "pdf", "png")[1],
                        prefix="") { 
   if (length(linkage_list) != length(maplist) ||
@@ -1681,8 +1686,8 @@ check_map <- function (linkage_list,
     # sort the rows to have the positions in ascending order
     # (so for plot B the LOD and r of all marker pairs at the same positions
     #  are averaged):
-    if (sortmarkers)
-      posmat[,1:2] <- t(apply(posmat[,1:2], 1, function(x) x[order(x)]))
+    posmat[,1:2] <- t(apply(posmat[,1:2], 1, function(x) x[order(x)]))
+    
     if (mapfn == "haldane") {
       expected.recom <- rev.haldane(abs(posmat[, 1] - posmat[, 2]))
     } else if (mapfn == "kosambi") {
@@ -1707,13 +1712,13 @@ check_map <- function (linkage_list,
                                     xlab = expression(delta(r)), legend = FALSE, 
                                     main = bquote(.(lgname) ~ ": r"["pairwise"] ~ 
                                                     "- r"["map"])))
-    }
-    else {
+    } else {
       plot(dev, ll$LOD, ylab = "LOD", 
            xlab = expression(delta(r)), cex.lab = 1.25, 
            main = expression("|r"["pairwise"] ~ 
                                "- r"["map"] ~ "|"))
     }
+    
     message(paste0(lgname, " weighted RMSE = ", round(wRMSE, 3)))
     if (plottype %in% c("pdf", "png")) {
       dev.off()
@@ -1727,8 +1732,8 @@ check_map <- function (linkage_list,
           height = 500, width = 1000)
       
     }
-    layout(matrix(1:4, ncol = 4, byrow = TRUE), widths = c(1, 
-                                                           0.2, 1, 0.2))
+    
+    layout(matrix(1:4, ncol = 4, byrow = TRUE), widths = c(1,0.2, 1, 0.2))
     par(oma = c(0, 0, 3, 0))
     
     #ds1 <- seq(min(posmat[, 1]), max(posmat[, 1]), detail) # position marker_a steps
@@ -1744,37 +1749,59 @@ check_map <- function (linkage_list,
     # "tapply calls FUN for each cell that has any data in it"; therefore:
     L1[which(is.na(L1))] <- 0
     r1 <- tapply(posmat[, 3], INDEX = list(fi1, fi2), mean) # mean r
-    r1[which(is.na(r1))] <- 0
+    r1[which(is.na(r1))] <- 0.5 #fix 22-12-2020, 0.5 will be screened out at end
     
-    expandmatrix <- function(m, size, default, symmetric) {
-      # if m has missing rows or columns, insert these and fill with default value
-      if (nrow(m) < size | ncol(m) < size) {
-        x <- matrix(0, nrow=size, ncol=ncol(m))
+    #This is causing bad behaviour, replace:
+    # expandmatrix <- function(m, size, default, symmetric) {
+    #   # if m has missing rows or columns, insert these and fill with default value
+    #   if (nrow(m) < size | ncol(m) < size) {
+    #     x <- matrix(0, nrow=size, ncol=ncol(m))
+    # 
+    #     x[as.integer(rownames(m)),] <- m
+    #     cn <- as.integer(colnames(m))
+    #     m <- matrix(0, nrow=nrow(x), ncol=size)
+    #     m[, cn] <- x
+    #   }
+    #   if (symmetric) {
+    #     # convert the triangular data to symmetric data
+    #     m <- m + t(m)
+    #     # works because the empty cells, including one triangle and the diagonal,
+    #     # are zeroes
+    #   }
+    #   m
+    # }
+    
+    # Simplify this function, 22-12-2020:
+    expandmatrix <- function(m, size, names, default){
+      
+      if (nrow(m) < size | ncol(m) < size){
         
-        x[as.integer(rownames(m)),] <- m
-        cn <- as.integer(colnames(m))
-        m <- matrix(0, nrow=nrow(x), ncol=size)
-        m[, cn] <- x
-      } 
-      if (symmetric) {
-        # convert the triangular data to symmetric data
-        m <- m + t(m)
-        # works because the empty cells, including one triangle and the diagonal, 
-        # are zeroes
+        x <- matrix(default, nrow = size, ncol = size)
+        rownames(x) <- colnames(x) <- names
+        x[rownames(m),colnames(m)] <- m
+      } else{ # m is already symmetric
+        x <- m
       }
-      m
+      
+      diagonal <- diag(x)
+      x[lower.tri(x)] <- 0
+      x1 <- x + t(x)
+      diag(x1) <- diagonal
+      
+      return(x1)
     }
     
-    L1 <- expandmatrix(L1, length(ds), 0, symmetric=sortmarkers)
-    r1 <- expandmatrix(m=r1, size=length(ds), default=0, symmetric=sortmarkers)
     
-    #Patch 15-12-2020
-    r1[r1>=0.5] <- 1-r1[r1>=0.5]
+    L1 <- expandmatrix(m = L1, size = length(ds), names = 1 + ds, default = 0)
+    r1 <- expandmatrix(m = r1, size = length(ds), names = 1 + ds, default = 0.5)
+    
+    #Patch 15-12-2020, probably deprecated now (22-12-2020)
+    # r1[r1>0.5] <- 1-r1[r1>0.5]
     
     colours <- colorRampPalette(c("green", "yellow", 
                                   "orange", "red"))(100)
     rcolmin <- min(r1)
-    rcolmax <- max(r1)
+    rcolmax <- max(r1) 
     LODcolmin <- lod.thresh
     LODcolmax <- max(L1)
     LODcolbreaks <- seq(LODcolmin, LODcolmax, (LODcolmax - LODcolmin)/100)
@@ -1787,7 +1814,8 @@ check_map <- function (linkage_list,
     rhits <- findInterval(x = r1, vec = rcolbreaks)
     rcols <- rep("white", length(rhits))
     rcols[rhits != 0] <- colours[rhits[rhits != 0]]
-    rcols[is.na(rcols)] <- colours[100]
+    # rcols[is.na(rcols)] <- colours[100]
+    rcols[is.na(rcols)] <- "white" #these are 0.5 values
     rcols <- matrix(rcols, ncol = length(ds))
     plot(NULL, xlim = range(ds), ylim = range(ds), main = "r", 
          cex = 3, xlab = "cM", ylab = "cM")
@@ -3029,10 +3057,10 @@ convert_marker_dosages <- function(dosage_matrix,
   
   write("\n#### Marker dosage frequencies:\n",
         file = log.conn)
-
+  
   write(knitr::kable(parental_info),
         log.conn)
-
+  
   write(paste0("\nmarkers not converted: ", sum(par_swapped_num == 0)),
         file = log.conn)
   write(paste0("\nmarkers 1 parent converted: ", sum(par_swapped_num == 1)),
@@ -3486,7 +3514,7 @@ create_phased_maplist <- function(input_type = "discrete",
   } else{
     if(!all(mapped_markers %in% chk$checked_F1$MarkerName)) stop("Not all markers on map were processed by checkF1! If duplicated markers were added back to maps, make sure to use appropriate input chk!")
     # ploidy <- chk1$meta$ploidy
-    }
+  }
   
   if (is.null(log)) {
     log.conn <- stdout()
@@ -3526,7 +3554,7 @@ create_phased_maplist <- function(input_type = "discrete",
           ploidy - ALL_MT[palindromes[ALL_MT[palindromes,parent1] > ALL_MT[palindromes,parent2]],]
       
     }
-      }
+  }
   
   # Begin by separating the SxN and NxS linkages:
   SxN_assigned <- marker_assignment.1[marker_assignment.1[,parent1]==1 &
@@ -3660,7 +3688,6 @@ create_phased_maplist <- function(input_type = "discrete",
   
   # Make up the output
   maplist.out <- lapply(seq(length(maplist)),function(mapn) {
-    
     map <- maplist[[mapn]]
     map <- map[map$marker%in%ALL_assigned,]
     
@@ -3698,6 +3725,7 @@ create_phased_maplist <- function(input_type = "discrete",
       }
       
       orig_mat <- hom_mat
+      
       ci <- marker_conversion_info[as.character(outmap$marker),]
       
       for(r in 1:nrow(orig_mat)){
@@ -3741,14 +3769,14 @@ create_phased_maplist <- function(input_type = "discrete",
   }
   
   if(verbose){
-
+    
     mds <- marker_data_summary(dosage_matrix = mapped.dosages,
-                                  ploidy = (ploidy+ploidy2)/2,
-                                  parent1 = parent1,
-                                  parent2 = parent2,
-                                  pairing = "random",
-                                  shortform = TRUE,
-                                  verbose = FALSE)
+                               ploidy = (ploidy+ploidy2)/2,
+                               parent1 = parent1,
+                               parent2 = parent2,
+                               pairing = "random",
+                               shortform = TRUE,
+                               verbose = FALSE)
     
     # mds.aft <- marker_data_summary(dosage_matrix = dosage_matrix.conv[phased_markers,],
     #                                ploidy = (ploidy+ploidy2)/2,
@@ -3757,7 +3785,7 @@ create_phased_maplist <- function(input_type = "discrete",
     #                                pairing = "random", 
     #                                shortform = TRUE,
     #                                verbose = FALSE)
-
+    
     
     # write(paste("\nMapped marker breakdown before phasing:\n_______________________________________\n"),log.conn)
     # write(knitr::kable(mds.b4$parental_info,format="markdown"), log.conn)
@@ -4026,7 +4054,7 @@ finish_linkage_analysis <- function(input_type = "discrete",
   lgs <- lgs[order(lgs)]
   
   # if (is.null(log) & length(marker_combinations) > 0)
-    # pb <- txtProgressBar(0, nrow(marker_combinations), style = 3)
+  # pb <- txtProgressBar(0, nrow(marker_combinations), style = 3)
   for (i in seq(nrow(marker_combinations))) {
     mtype1 <- marker_combinations[i, 1:2]
     if (marker_combinations[i, 1] == marker_combinations[i,3] & 
@@ -4070,22 +4098,22 @@ finish_linkage_analysis <- function(input_type = "discrete",
       } else{
         probgeno.lg <- probgeno_df[probgeno_df$MarkerName %in% markers,]
         chk.lg <- list(checked_F1 = chk$checked_F1[as.character(chk$checked_F1$MarkerName) %in% markers,],
-                        meta = chk$meta)
+                       meta = chk$meta)
         pardose.lg <- pardose[pardose$MarkerName %in% markers,]
         
         if(nrow(chk.lg$checked_F1) > 1){
-        
-        r_LOD_list[[paste0("LG", lg)]] <- linkage.gp(probgeno_df = probgeno.lg,
-                                                     chk = chk.lg,
-                                                     pardose = pardose.lg,
-                                                     markertype1 = mtype1,
-                                                     markertype2 = mtype2,
-                                                     target_parent = target_parent,
-                                                     # ploidy = ploidy,
-                                                     # ploidy2 = ploidy2,
-                                                     prefPars = prefPars,
-                                                     verbose = F,
-                                                     ...)
+          
+          r_LOD_list[[paste0("LG", lg)]] <- linkage.gp(probgeno_df = probgeno.lg,
+                                                       chk = chk.lg,
+                                                       pardose = pardose.lg,
+                                                       markertype1 = mtype1,
+                                                       markertype2 = mtype2,
+                                                       target_parent = target_parent,
+                                                       # ploidy = ploidy,
+                                                       # ploidy2 = ploidy2,
+                                                       prefPars = prefPars,
+                                                       verbose = F,
+                                                       ...)
         } else{
           r_LOD_list[[paste0("LG", lg)]] <- NULL
         }
@@ -4097,7 +4125,7 @@ finish_linkage_analysis <- function(input_type = "discrete",
     assign(r_LOD_list_name, get("r_LOD_list"))
     r_LOD_lists <- c(r_LOD_lists, r_LOD_list_name)
     # if (!is.null(log))
-      # setTxtProgressBar(pb, i)
+    # setTxtProgressBar(pb, i)
   }
   
   for (i in lgs) { 
@@ -4471,13 +4499,13 @@ homologue_lg_assignment <- function(input_type = "discrete",
         ...
       )
     }
-
+    
     if (write_intermediate_files) {
       mname1 <- paste(marker_combinations[i, 1:2], collapse = "x")
       mname2 <- paste(marker_combinations[i, 3:4], collapse = "x")
       saveRDS(linkage_df,paste0(target_parent, "_", mname1, "_", mname2, ".RDS"))
     }
-  
+    
     assignedData <- assign_linkage_group(
       linkage_df = linkage_df,
       LG_hom_stack = LG_hom_stack,
@@ -5113,23 +5141,28 @@ linkage <- function(dosage_matrix,
 #' @param iter_RAM A (very) conservative estimate of working memory in megabytes used per core. It only takes the size frequency matrices into account. Actual usage is more, especially with large number of linkages that are reported. Reduce memory usage by using a higher LOD_threshold.
 #' @param ncores Number of cores to use. Works both for Windows and UNIX (using \code{doParallel}). Use \code{parallel::detectCores()} to find out how many cores you have available.
 #' @param verbose Should messages be sent to stdout?
+#' @param check_qall_mult Check the \code{qall_mult} column of \code{chk}, and filter out markers with \code{qall_mult = 0}. By default \code{FALSE}.
+#' @param method Either \code{"approx"} or \code{"mappoly"}. If \code{"approx"} (the default method), then an approximated estimator is used which introduces
+#' a small amount of bias in the estimator of recombination frequency. If method \code{"mappoly"} is specified, the full likelihood is used in the
+#' estimation, leading to an unbiased estimator (this has been implemented in the mappoly package of Marcelo Mollinari). The \code{mappoly} method has
+#' higher computational demands which may introduce problems for larger datasets, but will lead to higher accuracy overall.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #' @return
 #' Returns a data.frame with columns:
 #' \itemize{
-#' \item{marker_a}{
+#' \item{marker_a:}{
 #'   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 #' }
-#' \item{marker_b}{
+#' \item{marker_b:}{
 #'   second marker of comparison. It has the type of markertype2 if specified.
 #' }
-#' \item{r}{
-#'   (estimated) recombinations frequency
+#' \item{r:}{
+#'   recombination frequency
 #' }
-#' \item{LOD}{
-#'   (estimated) LOD score
+#' \item{LOD:}{
+#'   LOD score associated with r
 #' }
-#' \item{phase}{
+#' \item{phase:}{
 #'   phase between markers
 #' }
 #' }
@@ -5153,18 +5186,14 @@ linkage.gp <- function(probgeno_df,
                        iter_RAM = 500,
                        ncores = 2,
                        verbose = TRUE,
+                       check_qall_mult = FALSE,
+                       method = "approx",
                        log = NULL){
   time_start <- Sys.time()
   
   probgeno_df <- test_probgeno_df(probgeno_df)
   
-  if(is.null(pardose)) {
-    pardose <- assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
-  } else{
-    ## Subset pardose:
-    pardose <- pardose[pardose$MarkerName %in% unique(probgeno_df$MarkerName),]
-  }
-  
+  method <- match.arg(method,choices = c("approx","mappoly"))
   
   #Extract meta data
   F1 <- chk$meta$F1
@@ -5173,6 +5202,26 @@ linkage.gp <- function(probgeno_df,
   ploidy <- chk$meta$ploidy
   ploidy2 <- ifelse(is.null(chk$meta$ploidy2),chk$meta$ploidy,chk$meta$ploidy2)
   
+  
+  ## Check whether there are markers that should have been removed:
+  if(check_qall_mult){
+    remove.mark <- chk$checked_F1[chk$checked_F1$qall_mult==0,"MarkerName"]
+    probgeno_df <- probgeno_df[!probgeno_df$MarkerName %in% as.character(remove.mark),]
+    
+    ## Need to update chk:
+    chk$checked_F1 <- chk$checked_F1[chk$checked_F1$qall_mult != 0,]
+    
+  }
+  
+  if(is.null(pardose)) {
+    # pardose <- polymapR:::assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
+    pardose <- assign_parental_dosage(chk = chk,probgeno_df = probgeno_df)
+  } else{
+    ## Subset pardose:
+    pardose <- pardose[pardose$MarkerName %in% unique(probgeno_df$MarkerName),]
+  }
+  
+
   if (is.null(log)) {
     log.conn <- stdout()
   }else {
@@ -5180,15 +5229,7 @@ linkage.gp <- function(probgeno_df,
     write.logheader(matc, log)
     log.conn <- file(log, "a")
   }
-  win <- Sys.info()["sysname"] == "Windows"
   
-  if (win) {
-    cl <- parallel::makeCluster(ncores)
-    doParallel::registerDoParallel(cl)
-  } else {
-    doParallel::registerDoParallel(cores = ncores)
-  }
-
   if(length(unique(probgeno_df$MarkerName)) < 3){
     stop("Please check probgeno_df: not enough markers for linkage analysis.")
   }
@@ -5198,10 +5239,6 @@ linkage.gp <- function(probgeno_df,
   if(length(which(unique(probgeno_df$SampleName) %in% F1)) < 11){
     stop("Please check the probgeno_df. There is no enough individuals for linkage anlaysis.")
   }
-  if (identical(markertype1, markertype2)) {
-    markertype2 <- NULL
-  }
-  # if(is.null(ploidy2)) ploidy2 <- ploidy
   
   prog_ploidy <- (ploidy + ploidy2)/2
   
@@ -5209,541 +5246,57 @@ linkage.gp <- function(probgeno_df,
     stop(paste("F1 populations of ploidy", prog_ploidy, "are not currently catered for."))
   }
   
-  ## Here we still use dosage_matrix instead of dosage_data because we do not filter for the marker type
-  ## Find all marker's P1 and P2
-  score_P <- probgeno_df[probgeno_df$SampleName %in% parent1_replicates | probgeno_df$SampleName %in% parent2_replicates,]
-  markers <- as.character(unique(score_P$MarkerName))
+  win <- Sys.info()["sysname"] == "Windows"
   
-  #make sure markers appear in the PossibleMarkerType
-  markers <- markers[markers %in% pardose$MarkerName]
+  if (identical(markertype1, markertype2)) {
+    markertype2 <- NULL
+  }
   
-  convert_probability_score <- function(MT_mat = RealMT,
-                                        expected_MT = markertype1,
-                                        target_parent = "P1",
-                                        scores_mat = probgeno_df,
-                                        ploidy = ploidy){
-    if(target_parent == "P1"){
-      expected_MT <- paste0(expected_MT,collapse = ".")
-      Tpart <- 1
-      NTpart <- 2
-    }else{
-      expected_MT <- paste0(c(expected_MT[2],expected_MT[1]),collapse = ".")
-      Tpart <- 2
-      NTpart <- 1
-    }
+  if(method == "mappoly"){
     
-    MT_mat$MT <- paste0(MT_mat$parent1, ".",MT_mat$parent2)
+    if(!all(prefPars == c(0,0))) warning("Inclusion of preferential pairing parameters not possible if method = mappoly!")
+    if(G2_test) warning("Inclusion of LOD of independence (G2_test) not possible if method = mappoly!")
     
-    if(any(MT_mat$MT != expected_MT)){
-      change_markers <- MT_mat[which(MT_mat$MT != expected_MT),]
-      sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers$MarkerName),]
-      #Step 1: reverse all: 0 to 4, 1 to 3, 2 keep as 2
-      dosc <- list()
-      for(c in 0:ploidy){
-        dosc[[as.character(c)]] <- sub_scores_mat[[paste0("P",c)]]
-      }
-      for(c in 0:ploidy){
-        sub_scores_mat[paste0("P",c)] <- dosc[[as.character(ploidy-c)]]
-      }
-      change_markers_new <- ploidy - change_markers[,c(2,3)]
-      change_markers_new$MT <-  paste0(change_markers_new$parent1, ".",change_markers_new$parent2)
-      change_markers_new <- cbind("MarkerName" = change_markers$MarkerName,change_markers_new)
-      scores_mat[scores_mat$MarkerName %in% as.character(change_markers$MarkerName),] <- sub_scores_mat
-      
-      #Step 2: make the 2 - 0
-      if(any(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)])){
-        change_markers_new1 <- change_markers_new[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),]
-        sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new1$MarkerName),]
-        for(t in 0:(ploidy/2-1)){
-          sub_scores_mat[paste0("P",t)] <-   sub_scores_mat[paste0("P",(ploidy/2 + t))]+  sub_scores_mat[paste0("P",t)]
-        }
-        change_markers_new1[paste0("parent",Tpart)]<- change_markers[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),
-                                                                     paste0("parent",Tpart)]
-        change_markers_new1[paste0("parent",NTpart)] <- replicate(nrow(change_markers_new1),0)
-        
-        change_markers_new[which(change_markers[paste0("parent",Tpart)] < change_markers_new[paste0("parent",Tpart)]),]<- change_markers_new1
-        change_markers_new$MT <- paste0(change_markers_new$parent1,".",change_markers_new$parent2)
-        scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new1$MarkerName),] <- sub_scores_mat
-        
-      }
-      
-      #Step 3: substract by ploidy/2
-      if(any(change_markers_new$MT != expected_MT)){
-        change_markers_new2 <- change_markers_new[which(change_markers_new$MT != expected_MT),]
-        sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new2$MarkerName),]
-        
-        dosc <- list()
-        for(c in 0:ploidy){
-          dosc[[as.character(c)]] <- sub_scores_mat[[paste0("P",c)]]
-        }
-        for(c in 0:ploidy){
-          sub_scores_mat[paste0("P",c)] <- dosc[[as.character(ploidy-c)]]
-        }
-        
-        change_markers_new3 <- ploidy - change_markers_new2[,c(2,3)]
-        change_markers_new3$MT <-  paste0(change_markers_new3$parent1, ".",change_markers_new3$parent2)
-        change_markers_new3 <- cbind("MarkerName" = change_markers_new2$MarkerName,change_markers_new3)
-        change_markers_new[which(change_markers_new$MT != expected_MT),] <- change_markers_new3
-        scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new3$MarkerName),] <- sub_scores_mat
-        
-        if(any(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)])){
-          change_markers_new4 <- change_markers_new3[which(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)]),]
-          sub_scores_mat <- scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new4$MarkerName),]
-          
-          for(t in 0:(ploidy/2-1)){
-            sub_scores_mat[paste0("P",t)] <-   sub_scores_mat[paste0("P",(ploidy/2 + t))]+  sub_scores_mat[paste0("P",t)]
-          }
-          change_markers_new4[paste0("parent",Tpart)]<- change_markers_new2[which(change_markers_new2[paste0("parent",Tpart)] < change_markers_new3[paste0("parent",Tpart)]),
-                                                                            paste0("parent",Tpart)]
-          change_markers_new4[paste0("parent",NTpart)] <- replicate(nrow(change_markers_new4),0)
-          change_markers_new[change_markers_new$MarkerName %in% as.character(change_markers_new4$MarkerName),] <- change_markers_new4
-          
-          change_markers_new$MT <- paste0(change_markers_new$parent1,".",change_markers_new$parent2)
-          scores_mat[scores_mat$MarkerName %in% as.character(change_markers_new4$MarkerName),] <- sub_scores_mat
-        }
-      }
-      
-      if(any(change_markers_new$MT != expected_MT)){
-        writeLines("There is some errors")
-      }
-      
-    }
-    return(scores_mat)
-  } #convert_probability_score
-  
-  pardose$markertype <- paste0(pardose$parent1, ".",pardose$parent2)
-  
-  #filter the possiblemarkertype
-  if(nrow(pardose) != 0){
-    #if these is no markertype2, only pick out the markers of markertype1
-    if(is.null(markertype2)){
-      #check whether there is a need to convert dosages
-      if(target_parent == "P1"){
-        MT <- markertype1
-      }else{
-        MT <- c(markertype1[2],markertype1[1])
-      }
-      #find all possible marker type
-      
-      if(any(MT %in% c(0,ploidy))){
-        zero_loc <- which(MT %in% c(0,ploidy))
-        non_zero_loc <- which(!MT %in% c(0,ploidy))
-        
-        zero <- c(0,4)
-        non_zero <- unique(c(MT[non_zero_loc],ploidy-MT[non_zero_loc]))
-        
-        if(length(non_zero) == 0){
-          MT_matrix <- data.frame("Var1" = zero,
-                                  "Var2" = zero)
-          MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2)  #all possible MT - character
-        }else{
-          if(zero_loc < non_zero_loc){
-            MT_matrix <- expand.grid(zero,non_zero)
-            MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2) #all possible MT - character
-          }else{
-            MT_matrix <- expand.grid(non_zero,zero)
-            MT_sum <- paste0(MT_matrix$Var1,".", MT_matrix$Var2)
-          }
-        }
-        
-        
-      }else{
-        MT_c <- ploidy - MT
-        MT_sum <- unique(c(paste0(MT, collapse = "."), paste0(MT_c, collapse = ".")))
-      }
-      
-      PossibleMarker <- as.character(pardose[pardose$markertype %in% MT_sum,]$MarkerName)
-      
-      if(length(PossibleMarker) != 0){
-        if(length(PossibleMarker) == 1){
-          combinations <- data.frame(PossibleMarker,PossibleMarker)
-        }else{
-          combinations <- t(combn(PossibleMarker,2))
-        }
-        colnames(combinations) <- c("markera","markerb")
-        rownames(combinations) <- seq(1, nrow(combinations),1)
-        
-        #Do the marker type conversion
-        RealMT <- pardose[pardose$MarkerName %in% PossibleMarker,c("MarkerName","parent1","parent2")]
-        
-        probgeno_df1 <- convert_probability_score(MT_mat = RealMT,
-                                                  expected_MT = markertype1,
-                                                  target_parent = target_parent,
-                                                  scores_mat = probgeno_df,
-                                                  ploidy = ploidy)
-        probgeno_df <- probgeno_df1
-      }else{
-        message("There is not enough markers")
-        return(NULL)
-      }
-    }else{ #there is markertype1 and markertype2
-      if(target_parent == "P1"){
-        MT1 <- markertype1
-        MT2 <- markertype2
-      }else{
-        MT1 <- c(markertype1[2], markertype1[1])
-        MT2 <-  c(markertype2[2], markertype2[1])
-      }
-      #find all possibilities of MT
-      if(any(MT1  %in% c(0,ploidy))){
-        zero_loc <- which(MT1  %in% c(0,ploidy))
-        non_zero_loc <- which(!MT1  %in% c(0,ploidy))
-        
-        zero <- c(0,ploidy) #BUG? replaced 4 with ploidy..
-        non_zero <- unique(c(MT1[non_zero_loc],ploidy-MT1[non_zero_loc]))
-        
-        if(length(non_zero) == 0){
-          MT1_matrix <- data.frame("Var1" = zero,
-                                   "Var2" = zero)
-          MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2)  #all possible MT - character
-        }else{
-          if(zero_loc < non_zero_loc){
-            MT1_matrix <- expand.grid(zero,non_zero)
-            MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2) #all possible MT - character
-          }else{
-            MT1_matrix <- expand.grid(non_zero,zero)
-            MT1_sum <- paste0(MT1_matrix$Var1,".", MT1_matrix$Var2) #all possible MT - character
-          }
-        }
-        
-        
-      }else{
-        MT1_c <- ploidy - MT1
-        MT1_sum <- unique(c(paste0(MT1, collapse = "."), paste0(MT1_c, collapse = ".")))
-      }
-      
-      if(any(MT2  %in% c(0,ploidy))){
-        zero_loc <- which(MT2  %in% c(0,ploidy))
-        non_zero_loc <- which(!MT2  %in% c(0,ploidy))
-        
-        zero <- c(0,ploidy)
-        non_zero <- unique(c(MT2[non_zero_loc],ploidy-MT2[non_zero_loc]))
-        
-        if(length(non_zero) == 0){
-          MT2_matrix <- data.frame("Var1" = zero,
-                                   "Var2" = zero)
-          MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2)  #all possible MT - character
-        }else{
-          if(zero_loc < non_zero_loc){
-            MT2_matrix <- expand.grid(zero,non_zero)
-            MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2) #all possible MT - character
-          }else{
-            MT2_matrix <- expand.grid(non_zero,zero)
-            MT2_sum <- paste0(MT2_matrix$Var1,".", MT2_matrix$Var2) #all possible MT - character
-          }
-        }
-        
-        
-      }else{
-        MT2_c <- ploidy - MT2
-        MT2_sum <- unique(c(paste0(MT2, collapse = "."), paste0(MT2_c, collapse = ".")))
-      }
-      
-      Possiblemarker1 <-  as.character(pardose[pardose$markertype %in% MT1_sum,]$MarkerName)
-      Possiblemarker2 <-  as.character(pardose[pardose$markertype %in% MT2_sum,]$MarkerName)
-      
-      if(length(Possiblemarker1) != 0 & length(Possiblemarker2 != 0)){
-        combinations <- expand.grid(Possiblemarker1,Possiblemarker2)
-        colnames(combinations) <- c("markera","markerb")
-        rownames(combinations) <- seq(1, nrow(combinations),1)
-        
-        RealMT1 <- pardose[pardose$MarkerName %in% Possiblemarker1,c("MarkerName","parent1","parent2")]
-        RealMT2 <- pardose[pardose$MarkerName %in% Possiblemarker2,c("MarkerName","parent1","parent2")]
-        
-        probgeno_df1 <- convert_probability_score(MT_mat = RealMT1,
-                                                  expected_MT = markertype1,
-                                                  target_parent = target_parent,
-                                                  scores_mat = probgeno_df,
-                                                  ploidy = ploidy)
-        
-        probgeno_df2 <- convert_probability_score(MT_mat = RealMT2,
-                                                  expected_MT = markertype2,
-                                                  target_parent = target_parent,
-                                                  scores_mat = probgeno_df1,
-                                                  ploidy = ploidy)
-        probgeno_df <- probgeno_df2
-      }else{
-        combinations <- data.frame()
-        message("There is not enough markers")
-        
-        return(NULL)
-      }
-      
-    }
-  } #the return is after filtering, the already made marker combinations
-  
-  seginfo <- calcSegtypeInfo(ploidy, ploidy2) #obtain the seginfo for further use
-  polysomic <- chk$meta$polysomic
-  disomic <- chk$meta$disomic 
-  mixed <- chk$meta$mixed
-  
-  seginfo <- selSegtypeInfo(seginfo, polysomic, disomic, mixed)
-  seginfoSummary <- segtypeInfoSummary(seginfo)
-  
-  if(polysomic){
-    pairing <- "random"
-    pairing_abbr <- "r"
-  }
-  if(disomic){
-    if(polysomic) stop("Cannot run linkage.gp function if both polysomic and disomic are TRUE. Please re-run checkF1 with one of these options FALSE")
-    pairing <- "preferential"
-    pairing_abbr <- "p"
-  }
-  
-  ##Here we need to call the segregation table according to the ploidy
-  if(is.null(markertype2)){
-    fname <- paste0(pairing_abbr, prog_ploidy, "_", paste0(markertype1, collapse = "."), "_", paste0(markertype1, collapse = "."))
+    r_LOD_tot <- linkage.gp.mappoly(probgeno_df = probgeno_df,
+                                    chk = chk,
+                                    pardose = pardose,
+                                    markertype1 = markertype1,
+                                    markertype2 = markertype2,
+                                    target_parent = target_parent,
+                                    F1 = F1,
+                                    parent1_replicates = parent1_replicates,
+                                    parent2_replicates = parent2_replicates,
+                                    ploidy = ploidy,
+                                    ploidy2 = ploidy2,
+                                    LOD_threshold = LOD_threshold,
+                                    ncores = ncores)
+  } else{
     
-  }else{
-    fname <- paste0(pairing_abbr, prog_ploidy, "_", paste0(markertype1, collapse = "."), "_", paste0(markertype2, collapse = "."))
-    
+    r_LOD_tot <- linkage.gp.approx(probgeno_df = probgeno_df,
+                                   chk = chk,
+                                   pardose = pardose,
+                                   markertype1 = markertype1,
+                                   markertype2 = markertype2,
+                                   target_parent = target_parent,
+                                   F1 = F1,
+                                   parent1_replicates = parent1_replicates,
+                                   parent2_replicates = parent2_replicates,
+                                   ploidy = ploidy,
+                                   ploidy2 = ploidy2,
+                                   LOD_threshold = LOD_threshold,
+                                   G2_test = G2_test,
+                                   prefPars = prefPars,
+                                   combinations_per_iter = combinations_per_iter,
+                                   iter_RAM = iter_RAM,
+                                   verbose = verbose,
+                                   ncores = ncores)
   }
-  seg.fname <- paste0("seg_p", ploidy, "_", pairing)
-  seg <- get(seg.fname)
-  segpos <- c(0:prog_ploidy)
-  segoff <- seg[, 3:ncol(seg)]
-  segpar <- seg[, c("dosage1", "dosage2")]
-  
-  if (is.null(combinations_per_iter)) {
-    expected_nr_comparisons <- nrow(combinations)
-    bites_needed <- 14 * expected_nr_comparisons
-    reserve_RAM <- iter_RAM * 1e+06
-    number_of_iterations <- ceiling(bites_needed/reserve_RAM)
-    combinations_per_iter <- ceiling(nrow(combinations)/number_of_iterations)
-    if (number_of_iterations == 1)
-      reserve_RAM <- bites_needed
-    if (verbose) {
-      message(paste0("Number of combinations per iteration: ",
-                     combinations_per_iter, "\nReserving approximately ",
-                     round((reserve_RAM + (110 * combinations_per_iter))/1e+06),
-                     "MB RAM per iteration"))
-    }
-  }
-  
-  split_factor <- ceiling((1:nrow(combinations))/combinations_per_iter)
-  combinations_list <- split(as.data.frame(combinations), split_factor,drop = TRUE)
-  if (verbose) {
-    message(paste("In total", nrow(combinations), "combinations, which will run in",
-                  length(unique(split_factor)), "iteration(s)...",
-                  sep = " "))
-  }
-  
-  
-  if(is.null(markertype2)){
-    offspring_dosage1 <- offspring_dosage2 <- segpos[segoff[segpar$dosage1 == markertype1[1] &
-                                                              segpar$dosage2 == markertype1[2], ] > 0]
-  }else{
-    offspring_dosage1 <- segpos[segoff[segpar$dosage1 == markertype1[1] &
-                                         segpar$dosage2 == markertype1[2], ] > 0]
-    
-    offspring_dosage2 <- segpos[segoff[segpar$dosage1 == markertype2[1] &
-                                         segpar$dosage2 == markertype2[2], ] > 0]
-  }
-  
-  dosage_combinations <- expand.grid(offspring_dosage1, offspring_dosage2)
-  dosage_levels <- paste0("n_", dosage_combinations[, 1], dosage_combinations[, 2])  #make the name looks like: n_00, n_10, n_01, n_11
-  rownames(dosage_combinations) <- dosage_levels
-  
-  convert_scores <- function(scores,
-                             markername,
-                             samplename){
-    TempArray <- array(0, dim = c(length(samplename),ploidy+1,length(markername)),
-                       dimnames = list(c(samplename),
-                                       paste0("P",seq(0,ploidy)),
-                                       c(markername)))
-    for(m in markername){
-      O_temp <- scores[scores$MarkerName == m,]
-      rownames(O_temp) <- O_temp$SampleName
-      TempArray[,,m] <- as.matrix(O_temp[samplename,paste0("P",seq(0,ploidy))])
-    }
-    return(TempArray)
-  }
-  
-  array <- convert_scores(scores = probgeno_df,
-                          markername = unique(c(as.character(combinations[,1]),as.character(combinations[,2]))),
-                          samplename = as.character(unique(probgeno_df$SampleName))[as.character(unique(probgeno_df$SampleName)) %in% F1])
-  
-  rfun <- get(fname)
-  
-  r_LOD_tot <- foreach::foreach(i = 1:length(combinations_list),
-                                .combine = rbind, .inorder = F) %dopar% {
-                                  
-                                  combs <- as.matrix(combinations_list[[i]])
-                                  
-                                  if(nrow(combs) > 1){
-                                    a <- array[,,combs[,1]]
-                                    b <- array[,,combs[,2]]
-                                    compare_vec <- matrix(nrow = nrow(combs),ncol = length(dosage_levels))
-                                    for (l in 1:length(dosage_levels)){
-                                      proba <- a[,paste0("P",as.character(dosage_combinations[l, 1])),]
-                                      probb <- b[,paste0("P",as.character(dosage_combinations[l, 2])),]
-                                      colnames(proba) <- colnames(probb)  <- NULL
-                                      sum <- colSums(proba * probb, na.rm = TRUE)
-                                      compare_vec[,l] <- sum
-                                    }
-                                  }else if(nrow(combs) == 1){
-                                    a <- array[,,combs[,1]]
-                                    b <- array[,,combs[,2]]
-                                    compare_vec <- matrix(nrow = nrow(combs),ncol = length(dosage_levels))
-                                    for (l in 1:length(dosage_levels)){
-                                      proba <- a[,paste0("P",as.character(dosage_combinations[l, 1]))]
-                                      probb <- b[,paste0("P",as.character(dosage_combinations[l, 2]))]
-                                      colnames(proba) <- colnames(probb)  <- NULL
-                                      sum <- sum(proba * probb, na.rm = TRUE)
-                                      compare_vec[,l] <- sum
-                                    }
-                                  }else{
-                                    compare_vec <- NULL
-                                  }
-                                  
-                                  count_matrix <- compare_vec
-                                  
-                                  if (G2_test) {
-                                    off1coords <- sapply(offspring_dosage1, function(n) which(n == dosage_combinations[, 1]))
-                                    off2coords <- sapply(offspring_dosage2, function(n) which(n == dosage_combinations[, 2]))
-                                    offspring1sums <- matrix(sapply(1:ncol(off1coords),
-                                                                    function(c) rowSums(count_matrix[, off1coords[,c], drop = F])), ncol = ncol(off1coords))
-                                    offspring2sums <- matrix(sapply(1:ncol(off2coords),
-                                                                    function(c) rowSums(count_matrix[, off2coords[,c], drop = F])), ncol = ncol(off2coords))
-                                    Totals <- rowSums(count_matrix)
-                                    Sumcounts <- cbind(offspring1sums, offspring2sums)
-                                    combos <- expand.grid(1:length(offspring_dosage1),
-                                                          (length(offspring_dosage1) + 1):(length(offspring_dosage1) + length(offspring_dosage2)))
-                                    expected_counts <- matrix(sapply(1:nrow(combos),
-                                                                     function(r) Sumcounts[, combos[r, 1]] * Sumcounts[,combos[r, 2]]/Totals), ncol = nrow(combos))
-                                    G <- 2 * rowSums(matrix(sapply(1:ncol(count_matrix),
-                                                                   function(c) count_matrix[, c, drop = F] * (log(pmax(count_matrix[,c, drop = F], 1)) - log(pmax(expected_counts[,
-                                                                                                                                                                                  c, drop = F], 1)))), ncol = ncol(count_matrix)))
-                                    df <- (length(offspring_dosage1) - 1) * (length(offspring_dosage2) - 1)
-                                    if (df > 1) {
-                                      e <- exp(-G/(2 * (df - 1)))
-                                      G1 <- ((4 - e) * e - 3) * (df - 1) + G
-                                      LOD_independence <- G1/(2 * log(10))
-                                    }else {
-                                      LOD_independence <- G/(2 * log(10))
-                                    }
-                                  }
-                                  
-                                  summary_linkage <- data.frame()
-                                  
-                                  if(!is.null(compare_vec)){
-                                    colnames(count_matrix) <- dosage_levels
-                                    count <- count_matrix
-                                    if(pairing == "random"){
-                                      r_list <- rfun(count)
-                                      r_list1 <- rfun(round(count))
-                                      if(any(r_list$r_mat < 0) & all(r_list1$r_mat > 0)) {
-                                        r_list$r_mat[r_list$r_mat < 0] <- r_list1$r_mat[r_list$r_mat < 0]
-                                      }
-                                    }
-                                    if(pairing == "preferential"){
-                                      r_list <- rfun(count, p1 = prefPars[1], p2 = prefPars[2])
-                                      r_list1 <- rfun(round(count), p1 = prefPars[1], p2 = prefPars[2])
-                                      if(any(r_list$r_mat < 0) & all(r_list1$r_mat > 0)) {
-                                        r_list$r_mat[which(r_list$r_mat < 0),] <- r_list1$r_mat[which(r_list$r_mat < 0),]
-                                      }
-                                    }
-                                    
-                                    
-                                    r_over_0.5 <- r_list$r_mat >= 0.5
-                                    r_list$r_mat[r_over_0.5] <- 1
-                                    
-                                    # based on phasing strategy chose phasing
-                                    if (r_list$phasing_strategy == "MLL") {
-                                      if (!any(is.na(r_list$logL_mat))) {
-                                        # normal case
-                                        r_list$logL_mat[r_over_0.5] <- -1e4
-                                        phase_num <- apply(r_list$logL_mat, 1, which.max)
-                                        
-                                      } else {
-                                        # exceptional case (happens only for few linkage functions)
-                                        # works with missing values
-                                        r_list$logL_mat[r_over_0.5] <- NA
-                                        phase_num <- vector(length = nrow(r_list$logL_mat))
-                                        for (i in seq(nrow(r_list$logL_mat))) {
-                                          max_logL <- which.max(r_list$logL_mat[i,])
-                                          if (length(max_logL) == 0) {
-                                            phase_num[i] <- which.min(r_list$r_mat[i,])
-                                          } else if (is.na(r_list$r_mat[i, max_logL])) {
-                                            phase_num[i] <- which.min(r_list$r_mat[i,])
-                                          } else {
-                                            phase_num[i] <- max_logL
-                                          }
-                                        }
-                                      }
-                                      
-                                    } else if (r_list$phasing_strategy == "MINR") {
-                                      phase_num <- apply(r_list$r_mat, 1, function(x) {
-                                        which.min(x)[1]
-                                      }
-                                      )
-                                    } else {
-                                      stop("Unknown phasing strategy. Check rf functions.")
-                                    }
-                                    
-                                    # fix for NA values of r
-                                    if(any(is.na(phase_num))){
-                                      if(!"unknown" %in% r_list$possible_phases)
-                                        r_list$possible_phases <- c(r_list$possible_phases,"unknown")
-                                      phase_num[is.na(phase_num)] <- length(r_list$possible_phases)
-                                    }
-                                    
-                                    phase <- r_list$possible_phases[phase_num]
-                                    
-                                    # r based on choice of phase
-                                    r_mat_phase <- cbind(r_list$r_mat, phase_num)
-                                    r <- apply(r_mat_phase, 1, function(x) {
-                                      x[x["phase_num"]]
-                                    })
-                                    
-                                    # LOD based on choice of phase
-                                    LOD_mat_phase <- cbind(r_list$LOD_mat, phase_num)
-                                    LOD <- apply(LOD_mat_phase, 1, function(x) {
-                                      x[x["phase_num"]]
-                                    })
-                                    
-                                    rm(r_list)
-                                    
-                                    r_LOD <- data.frame(combs, r, LOD, phase)
-                                    
-                                    negative_r <- which(r_LOD$r < 0 | r_LOD$r == 1)
-                                    r_LOD$r[negative_r] <- 0.499
-                                    r_LOD$LOD[negative_r] <- 0
-                                    levels(r_LOD$phase) <- c(levels(r_LOD$phase), "unknown")
-                                    r_LOD$phase[negative_r] <- "unknown"
-                                    
-                                    r_LOD$LOD[r_LOD$LOD < 0] <- 0
-                                    
-                                    r_LOD <- r_LOD[r_LOD$LOD >= LOD_threshold,]
-                                    
-                                    colnames(r_LOD)[1:2] <- c("marker_a", "marker_b")
-                                    if(G2_test){
-                                      r_LOD <-
-                                        cbind(r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")], LOD_independence)
-                                    } else {
-                                      r_LOD <-
-                                        r_LOD[, c("marker_a", "marker_b", "r", "LOD", "phase")]
-                                    }
-                                    
-                                    summary_linkage <- rbind(summary_linkage, r_LOD)
-                                    
-                                  }
-                                  return(summary_linkage)
-                                }
-  
-  #print the information out
-  if (win)
-    parallel::stopCluster(cl)
   
   if (verbose) {
     message(paste0("\nTotal marker combinations: ", nrow(r_LOD_tot),
                    " at LOD cutoff of ", LOD_threshold))
     
     time_end <- Sys.time()
-  
-    # matc <- match.call()
-    # write.logheader(matc, log)
-    # log.conn <- file(log, "a")
     
     timediff <- as.numeric(time_end - time_start, units = "mins")
     
@@ -6046,85 +5599,85 @@ marker_data_summary <- function(dosage_matrix,
   parental_info <- add_P_to_table(parental_info)
   
   if(!shortform){
-  
-  #Checking offspring compatability
-  
-  if(verbose) write("Checking compatability between parental and offspring scores...",
-                    stdout())
-  
-  parpos <- which(colnames(dosage_matrix) %in% c(parent1, parent2))
-  
-  progeny <- dosage_matrix[,-parpos]
-  
-  nr_offspring <- ncol(progeny)
-  
-  seg.fname <- paste0("seg_p", ploidy, "_", pairing)
-  seg <- get(seg.fname)#,envir=getNamespace("polymapR"))
-  segpar <- seg[, c("dosage1", "dosage2")]
-  colnames(segpar) <- c("pmax", "pmin")
-  segoff <- seg[, 3:ncol(seg)]
-  segoff <- segoff > 0
-  segpos <- c(0:ploidy)
-  
-  lu_min_max <- apply(segoff, 1, function(x) {
-    a <- segpos[x]
-    min <- min(a)
-    max <- max(a)
-    return(c(min, max))
-  })
-  
-  rownames(lu_min_max) <- c("min", "max")
-  lu <- cbind(segpar, t(lu_min_max))
-  
-  expected_dosage <-
-    apply(dosage_matrix, 1, test_row, lu = lu, parpos = parpos)
-  
-  #NA should be "TRUE", now "FALSE"
-  expected_dosage <- t(expected_dosage)
-  if(length(which(is.na(progeny))) > 0) expected_dosage[is.na(progeny)] <- TRUE
-  
-  #two factorial table of parental dosages with percentage of "FALSE" per factor combination
-  progeny_incompat <- colSums(!expected_dosage)
-  na_progeny <- colSums(is.na(progeny))
-  perc_incompat <-
-    progeny_incompat / (nrow(expected_dosage) - na_progeny)
-  progeny_incompat <-
-    colnames(progeny)[perc_incompat > progeny_incompat_cutoff]
-  
-  nr_incompat <- rowSums(!expected_dosage)
-  offspring_incompat <- tapply(
-    nr_incompat,
-    list(dosage_matrix[, parent1], dosage_matrix[, parent2]),
-    FUN = function(x)
-      sum(x) / (length(x) * nr_offspring) * 100
-  )
-  offspring_incompat <- round(offspring_incompat, 2)
-  offspring_incompat <- add_P_to_table(offspring_incompat)
-  
-  summary <-
-    list(parental_info, offspring_incompat, progeny_incompat)
-  names(summary) <-
-    c("parental_info",
-      "offspring_incompatible",
-      "progeny_incompatible")
-  
-  for (i in c(1, 2)) {
-    if(verbose) {
-      write(paste0("\n#### ", names(summary)[i], "\n"),
-            file = log.conn)
-      #sink(log.conn)
-      write(knitr::kable(summary[[i]]),
-            log.conn)
+    
+    #Checking offspring compatability
+    
+    if(verbose) write("Checking compatability between parental and offspring scores...",
+                      stdout())
+    
+    parpos <- which(colnames(dosage_matrix) %in% c(parent1, parent2))
+    
+    progeny <- dosage_matrix[,-parpos]
+    
+    nr_offspring <- ncol(progeny)
+    
+    seg.fname <- paste0("seg_p", ploidy, "_", pairing)
+    seg <- get(seg.fname)#,envir=getNamespace("polymapR"))
+    segpar <- seg[, c("dosage1", "dosage2")]
+    colnames(segpar) <- c("pmax", "pmin")
+    segoff <- seg[, 3:ncol(seg)]
+    segoff <- segoff > 0
+    segpos <- c(0:ploidy)
+    
+    lu_min_max <- apply(segoff, 1, function(x) {
+      a <- segpos[x]
+      min <- min(a)
+      max <- max(a)
+      return(c(min, max))
+    })
+    
+    rownames(lu_min_max) <- c("min", "max")
+    lu <- cbind(segpar, t(lu_min_max))
+    
+    expected_dosage <-
+      apply(dosage_matrix, 1, test_row, lu = lu, parpos = parpos)
+    
+    #NA should be "TRUE", now "FALSE"
+    expected_dosage <- t(expected_dosage)
+    if(length(which(is.na(progeny))) > 0) expected_dosage[is.na(progeny)] <- TRUE
+    
+    #two factorial table of parental dosages with percentage of "FALSE" per factor combination
+    progeny_incompat <- colSums(!expected_dosage)
+    na_progeny <- colSums(is.na(progeny))
+    perc_incompat <-
+      progeny_incompat / (nrow(expected_dosage) - na_progeny)
+    progeny_incompat <-
+      colnames(progeny)[perc_incompat > progeny_incompat_cutoff]
+    
+    nr_incompat <- rowSums(!expected_dosage)
+    offspring_incompat <- tapply(
+      nr_incompat,
+      list(dosage_matrix[, parent1], dosage_matrix[, parent2]),
+      FUN = function(x)
+        sum(x) / (length(x) * nr_offspring) * 100
+    )
+    offspring_incompat <- round(offspring_incompat, 2)
+    offspring_incompat <- add_P_to_table(offspring_incompat)
+    
+    summary <-
+      list(parental_info, offspring_incompat, progeny_incompat)
+    names(summary) <-
+      c("parental_info",
+        "offspring_incompatible",
+        "progeny_incompatible")
+    
+    for (i in c(1, 2)) {
+      if(verbose) {
+        write(paste0("\n#### ", names(summary)[i], "\n"),
+              file = log.conn)
+        #sink(log.conn)
+        write(knitr::kable(summary[[i]]),
+              log.conn)
+      }
+      #suppressWarnings(sink())
     }
-    #suppressWarnings(sink())
-  }
-  
-  if(verbose) write("\n#### Incompatible individuals:\n", log.conn)
-  if (length(progeny_incompat) == 0 & verbose)
-    write("None\n", log.conn)
-  
-  if(verbose) write(summary$progeny_incompatible, log.conn)
-  
+    
+    if(verbose) write("\n#### Incompatible individuals:\n", log.conn)
+    if (length(progeny_incompat) == 0 & verbose)
+      write("None\n", log.conn)
+    
+    if(verbose) write(summary$progeny_incompatible, log.conn)
+    
   } else{
     summary <- list()
     summary$parental_info <- parental_info
@@ -7214,7 +6767,6 @@ r_LOD_plot <- function(linkage_df,
 #' @param cutoff Correlation coefficient cut off. At this correlation coefficient, individuals are merged. If NULL user input will be asked after plotting.
 #' @param plot_cor Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
-#' @param saveCOV = "PearsonCC"
 #' @return A matrix similar to dosage_matrix, with merged duplicate individuals.
 #' @examples
 #' \dontrun{
@@ -7227,8 +6779,7 @@ screen_for_duplicate_individuals <-
   function(dosage_matrix,
            cutoff = NULL,
            plot_cor = T,
-           log = NULL,
-           saveCOV = "PearsonCC") {
+           log = NULL) {
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     cor.dosage_matrix <-
       cor(dosage_matrix, use = "pairwise.complete.obs")
@@ -7356,15 +6907,15 @@ screen_for_duplicate_individuals <-
     if (!is.null(log))
       close(log.conn)
     
-    if (!is.null(saveCOV)){
-      number <- length(corvec)
-      variation <- var(corvec)
-      rangec <- paste0(round(range(corvec),digits = 2), collapse = "_")
-      CovFile <- data.frame("Number" = number,
-                            "Variation" = variation,
-                            "Range" = rangec)
-      write.csv(CovFile, paste0(saveCOV,".csv"))
-    }
+    # if (!is.null(saveCOV)){
+    #   number <- length(corvec)
+    #   variation <- var(corvec)
+    #   rangec <- paste0(round(range(corvec),digits = 2), collapse = "_")
+    #   CovFile <- data.frame("Number" = number,
+    #                         "Variation" = variation,
+    #                         "Range" = rangec)
+    #   write.csv(CovFile, paste0(saveCOV,".csv"))
+    # }
     
     return(dosage_matrix)
   } #screen_for_duplicate_individuals
@@ -7405,7 +6956,6 @@ screen_for_duplicate_individuals <-
 #' @param cutoff Correlation coefficient cut off to declare duplicates. At this correlation coefficient, individuals are merged. If \code{NULL} user input will be asked after plotting.
 #' @param plot_cor Logical. Should correlation coefficients be plotted? Can be memory/CPU intensive with high number of individuals.
 #' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
-#' @param saveCOV A file name where the Pearson's correlation coefficient's variation, number, and mean can be saved
 #' @return A data frame similar to input \code{probgeno_df}, but with duplicate individuals merged. 
 #' @export
 screen_for_duplicate_individuals.gp <- function(probgeno_df,
@@ -7415,7 +6965,6 @@ screen_for_duplicate_individuals.gp <- function(probgeno_df,
                                                 F1,
                                                 cutoff = 0.95,
                                                 plot_cor = TRUE,
-                                                saveCOV = "PeasonCC",
                                                 log = NULL){
   probgeno_df <- test_probgeno_df(probgeno_df)
   
@@ -7438,19 +6987,19 @@ screen_for_duplicate_individuals.gp <- function(probgeno_df,
   
   dosages <- do.call(rbind, lapply(as.character(unique(probgeno_df$MarkerName)),
                                    function(m) c(
-                                       mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent1,"probascores"]),
-                                       mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent2,"probascores"]),
-                                       probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% F1,"probascores"]
-                                     )))
- 
+                                     mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent1,"probascores"]),
+                                     mean(probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% parent2,"probascores"]),
+                                     probgeno_df[probgeno_df$MarkerName == m & probgeno_df$SampleName %in% F1,"probascores"]
+                                   )))
+  
   colnames(dosages) <- c("P1", "P2", F1)
   rownames(dosages) <- as.character(unique(probgeno_df$MarkerName))
   
   check2 <- screen_for_duplicate_individuals(dosage_matrix = as.matrix(dosages),
-                                                  cutoff = cutoff, 
-                                                  plot_cor = plot_cor, 
-                                                  saveCOV = saveCOV,
-                                                  log = log)
+                                             cutoff = cutoff, 
+                                             plot_cor = plot_cor, 
+                                             # saveCOV = saveCOV,
+                                             log = log)
   ind <- colnames(check2)
   
   if(all(c("P1", "P2") %in% ind)){
@@ -7572,12 +7121,12 @@ screen_for_duplicate_markers <- function(dosage_matrix,
     write(paste0("\nMarked and merged ", nrow(dosage_matrix)-nrow(outmat), " duplicated markers"),
           file = log.conn)
     
-
+    
     #Estimate the expected distribution of bin sizes
     if(estimate_bin_size){
       
       if(is.null(ploidy2)) ploidy2 <- ploidy
-          
+      
       pop.size <- ncol(dosage_matrix) - 2
       nmark <- nrow(dosage_matrix)
       

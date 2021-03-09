@@ -11,7 +11,6 @@ check_map(
   lod.thresh = 5,
   tidyplot = TRUE,
   detail = 1,
-  sortmarkers = TRUE,
   plottype = c("", "pdf", "png")[1],
   prefix = ""
 )
@@ -29,9 +28,6 @@ check_map(
 This can have a considerable performance impact for high-density maps}
 
 \item{detail}{Level of detail for heatmaps, by default 1 cM. Values less than 0.5 cM can have serious performance implications.}
-
-\item{sortmarkers}{If \code{TRUE} (by default) the markers in the linkage_list are sorted: first the lower position, then the higher. 
-Results in an averaging (in plot B) over all markers at a gives pair of positions}
 
 \item{plottype}{Option to specify graphical device for plotting, (either png or pdf), or by default "", in which case plots are directly plotted within R}
 
