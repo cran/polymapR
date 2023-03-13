@@ -34,9 +34,10 @@ linkage(
 linkage within the markertype as specified by \code{markertype1}.
 The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
 
-\item{target_parent}{Character string specifying the target parent as provided in the columnnames of dosage_matrix}
+\item{target_parent}{Character string specifying the target parent as provided in the column-names of dosage_matrix. Target in this context means that you wish
+to estimate linkage between markers with an allele that is polymorphic and segregating in this parent.}
 
-\item{other_parent}{Character string specifying the other parent as provided in the columnnames of dosage_matrix}
+\item{other_parent}{Character string specifying the other parent as provided in the column-names of dosage_matrix}
 
 \item{G2_test}{Apply a G2 test (LOD of independence) in addition to the LOD of linkage.}
 
@@ -44,13 +45,13 @@ The first element specifies the dosage in \code{target_parent}, the second in \c
 
 \item{LOD_threshold}{Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.}
 
-\item{ploidy}{Integer. The ploidy of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
+\item{ploidy}{Integer. The ploidy of the target parent (parent 1). If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
 
 \item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
 
 \item{pairing}{Type of pairing. \code{"random"} or \code{"preferential"}.}
 
-\item{prefPars}{The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
+\item{prefPars}{The estimates for preferential pairing parameters for the target and other parent, respectively, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 See the function \code{\link{test_prefpairing}} and the vignette for more details.}
 
 \item{combinations_per_iter}{Optional integer. Number of marker combinations per iteration.}

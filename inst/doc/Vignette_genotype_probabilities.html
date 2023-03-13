@@ -32,8 +32,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 code.sourceCode > span { display: inline-block; line-height: 1.25; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -121,6 +137,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -318,13 +335,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Using genotype probabilities in polymapR</h1>
 <h4 class="author">Peter M. Bourke, Yanlin Liao</h4>
-<h4 class="date">8-3-2021</h4>
+<h4 class="date">10-11-2021</h4>
 
 
 
 <p>This vignette is additional to the basic <code>polymapR</code> vignette “How to use polymapR”, to which we would direct readers’ attention to <a href="https://CRAN.R-project.org/package=polymapR">first</a>.</p>
 <p>Here, we will go through the main steps of polyploid linkage analysis using <code>polymapR</code> <span class="citation">[1]</span> when discrete dosages are not available or not desired, but where genotype probabilities are instead available. Genotype probabilties are a direct output of many polyploid genotype callers such as <code>fitPoly</code> <span class="citation">[2]</span>, <code>updog</code> <span class="citation">[3]</span> or <code>polyRAD</code> <span class="citation">[4]</span>, although dosage probabilities from any other genotyping software can be used.</p>
-<p>For more background information on the functions described here, please refer to the preprint manuscript of Liao et al. (<em>submitted</em> 2020).</p>
+<p>For more background information on the functions described here, please refer to the <a href="https://link.springer.com/article/10.1007/s00122-021-03834-x">2021 article</a> of Liao <em>et al.</em> <span class="citation">[5]</span>.</p>
 <div id="table-of-contents" class="section level2">
 <h2>Table of Contents</h2>
 <ol style="list-style-type: decimal">
@@ -433,7 +450,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="importing-sample-data" class="section level2">
 <h2>2. Importing sample data</h2>
-<p>In this vignette we will use a simulated SNP dataset from an autotetraploid F1 population with 200 individuals. This fictive organism has 5 chromosomes (2n = 4x = 10) and exhibits polysomic inheritance (although the pairing behaviour was that of random bivalents). The dataset was generated using <code>PedigreeSim</code> <span class="citation">[5]</span> and the <code>GenoSim</code> package (Liao, Tumino <em>et al., in preparation</em>) which simulates SNP array intensity values (and also sequencing reads) given an underlying population. The genotypes were called using <code>fitPoly</code> <span class="citation">[2]</span> using the function <code>saveMarkerModels</code>.</p>
+<p>In this vignette we will use a simulated SNP dataset from an autotetraploid F1 population with 200 individuals. This fictive organism has 5 chromosomes (2n = 4x = 10) and exhibits polysomic inheritance (although the pairing behaviour was that of random bivalents). The dataset was generated using <code>PedigreeSim</code> <span class="citation">[6]</span> and the <code>GenoSim</code> package (Liao, Tumino <em>et al., in preparation</em>) which simulates SNP array intensity values (and also sequencing reads) given an underlying population. The genotypes were called using <code>fitPoly</code> <span class="citation">[2]</span> using the function <code>saveMarkerModels</code>.</p>
 <p>The data should be downloaded from the following FigShare repository and saved to your working directory:<br />
 <br /></p>
 <p><a href="https://figshare.com/articles/dataset/fitPoly_4x_output_2343_SNPs/12589271" class="uri">https://figshare.com/articles/dataset/fitPoly_4x_output_2343_SNPs/12589271</a></p>
@@ -1003,7 +1020,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="ordering-the-map" class="section level2">
 <h2>7. Ordering the map</h2>
-<p>For map ordering we use the ordering algorithm implemented in the <code>MDSMap</code> package <span class="citation">[6]</span>. This is achieved using the function <code>MDSMap_from_list</code>:</p>
+<p>For map ordering we use the ordering algorithm implemented in the <code>MDSMap</code> package <span class="citation">[7]</span>. This is achieved using the function <code>MDSMap_from_list</code>:</p>
 <div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1"></a>integrated.maplist &lt;-<span class="st"> </span><span class="kw">MDSMap_from_list</span>(linkages)</span></code></pre></div>
 <p>Once the map has been generated, we can use the marker assignment information to generate a phased linkage map (necessary for other subsequent steps <em>e.g.</em> IBD-based QTL mapping, available in the <code>polyqtlR</code> package):</p>
 <div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1"></a>phased.maplist &lt;-<span class="st"> </span><span class="kw">create_phased_maplist</span>(<span class="dt">input_type =</span> <span class="st">&quot;probabilistic&quot;</span>,</span>
@@ -1030,11 +1047,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="ref-clark2019">
 <p>4. Clark LV, Lipka AE, Sacks EJ: <strong>PolyRAD: Genotype calling with uncertainty from sequencing data in polyploids and diploids</strong>. <em>G3: Genes, Genomes, Genetics</em> 2019, <strong>9</strong>:663–673.</p>
 </div>
+<div id="ref-liao2021">
+<p>5. Liao Y, Voorrips RE, Bourke PM, Tumino G, Arens P, Visser RG, Smulders MJ, Maliepaard C: <strong>Using probabilistic genotypes in linkage analysis of polyploids</strong>. <em>Theoretical and Applied Genetics</em> 2021, <strong>134</strong>:2443–2457.</p>
+</div>
 <div id="ref-Voorrips2012">
-<p>5. Voorrips RE, Maliepaard CA: <strong>The simulation of meiosis in diploid and tetraploid organisms using various genetic models</strong>. <em>BMC bioinformatics</em> 2012, <strong>13</strong>:248.</p>
+<p>6. Voorrips RE, Maliepaard CA: <strong>The simulation of meiosis in diploid and tetraploid organisms using various genetic models</strong>. <em>BMC bioinformatics</em> 2012, <strong>13</strong>:248.</p>
 </div>
 <div id="ref-Hackett2016">
-<p>6. Preedy KF, Hackett CA: <strong>A rapid marker ordering approach for high-density genetic linkage maps in experimental autotetraploid populations using multidimensional scaling</strong>. <em>Theoretical and Applied Genetics</em> 2016, <strong>129</strong>:2117–2132.</p>
+<p>7. Preedy KF, Hackett CA: <strong>A rapid marker ordering approach for high-density genetic linkage maps in experimental autotetraploid populations using multidimensional scaling</strong>. <em>Theoretical and Applied Genetics</em> 2016, <strong>129</strong>:2117–2132.</p>
 </div>
 </div>
 </div>

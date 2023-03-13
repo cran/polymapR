@@ -527,6 +527,17 @@ knitr::include_graphics("figures/LG1_check_map_plotB.png")
 #                                                      LG_number = 1 #interested in just 1 chm.
 #  )
 #  
+#  all_linkages_list_P2_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2[lg1_markers,],
+#                                                      dosage_matrix = filtered_data[lg1_markers,],
+#                                                      target_parent = "P2",
+#                                                      other_parent = "P1",
+#                                                      convert_palindrome_markers = FALSE,
+#                                                      ploidy = 4,
+#                                                      pairing = "preferential",
+#                                                      prefPars = c(0,0.25), #Note that this is in reverse order now.
+#                                                      LG_number = 1
+#  )
+#  
 
 ## ----eval = FALSE-------------------------------------------------------------
 #  write.TSNPM(phased.maplist = phased.maplist,ploidy=4)

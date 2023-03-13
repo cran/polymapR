@@ -36,7 +36,7 @@ Name of the marker
 Probabilities of dosage score '0'
 }
 \item{P1...}{
-Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+Probabilities of dosage score '1' etc. (up to max dosage, e.g. P4 for tetraploid population)
 }
 \item{maxP}{
 Maximum genotype probability identified for a particular individual and marker combination

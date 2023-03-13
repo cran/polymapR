@@ -1,7 +1,7 @@
 ---
 title: "Using genotype probabilities in polymapR"
 author: "Peter M. Bourke, Yanlin Liao"
-date: "8-3-2021"
+date: "10-11-2021"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using genotype probabilities in polymapR}
@@ -15,7 +15,7 @@ This vignette is additional to the basic `polymapR` vignette "How to use polymap
 
 Here, we will go through the main steps of polyploid linkage analysis using `polymapR` [@bourke2018polymapr] when discrete dosages are not available or not desired, but where genotype probabilities are instead available. Genotype probabilties are a direct output of many polyploid genotype callers such as `fitPoly` [@Voorrips2011], `updog` [@gerard2018] or `polyRAD` [@clark2019], although dosage probabilities from any other genotyping software can be used. 
 
-For more background information on the functions described here, please refer to the preprint manuscript of Liao et al. (*submitted* 2020). 
+For more background information on the functions described here, please refer to the [2021 article](https://link.springer.com/article/10.1007/s00122-021-03834-x) of Liao *et al.* [@liao2021]. 
 
 ## Table of Contents
 1. [Introduction](#sect1)

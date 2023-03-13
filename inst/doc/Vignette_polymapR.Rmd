@@ -1,7 +1,7 @@
 ---
 title: "polymapR: linkage mapping in outcrossing polyploids"
 author: "Peter M. Bourke, Geert van Geest"
-date: "8-3-2021"
+date: "10-3-2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{How to use polymapR}
@@ -387,7 +387,7 @@ P1_homologues_1 <- cluster_SN_markers(linkage_df = SN_SN_P1_coupl,
 In the dot plot above, we see that all chromosomal associations have now been removed with the repulsion information.
 
 > ###### A note on nested lists
-> In the `polymapR` package, output is often given as a nested list. Some basic information on lists is available on *e.g.* [r-tutor](http://www.r-tutor.com/r-introduction/list). We use nested lists because we are often dealing with hierarchical data: marker data > homologue > linkage group > organism. Some basic R knowledge is needed to retrieve, visualize or filter data from such a nested list. However, if you would like to visualize it without R (*e.g.* in your favourite spreadsheet program), you can choose to export a nested list using `write_nested_list`. It will keep its hierarchical structure by writing it to directories that have the same structure as the the nested list. Here's an example: `write_nested_list(list = P1_homologues, directory = "P1_homologues")`
+> In the `polymapR` package, output is often given as a nested list. Some basic information on lists is available on *e.g.* [r-tutor](https://www.r-tutor.com/r-introduction/list). We use nested lists because we are often dealing with hierarchical data: marker data > homologue > linkage group > organism. Some basic R knowledge is needed to retrieve, visualize or filter data from such a nested list. However, if you would like to visualize it without R (*e.g.* in your favourite spreadsheet program), you can choose to export a nested list using `write_nested_list`. It will keep its hierarchical structure by writing it to directories that have the same structure as the the nested list. Here's an example: `write_nested_list(list = P1_homologues, directory = "P1_homologues")`
 
 Next, we use linkage to the DxN markers to provide bridging linkages between homologue clusters, using the `bridgeHomologues` function. The first time we run this function, we use a LOD threshold of 4 for evidence of linkage between a SxN and a DxN marker. However, there may also be some false positive linkages at this level. It might therefore be necessary to run the function again at a higher LOD (say LOD 8) to avoid such false positives. In doing so, we might lose true linkage information. Therefore, it’s a good idea to run the function at LOD 4 first, then increase to a higher LOD if necessary, and build up a picture of which clusters form part of the same chromosome.
 First calculate linkage between SxN and DxN markers:
@@ -835,9 +835,9 @@ The third plot is similar to the previous except that LOD values are shown in pl
 <a name="sect15"></a>
 
 ## 15. Preferential pairing
-Up to now, we have been working under the assumption of random bivalent pairing in the parents. However, it has been shown that in certain species the pairing behaviour is neither completely random nor completely preferential (as we have in allopolyploids) but something in-between, a condition termed segmental allopolyploidy [@Stebbins1947]. A comprehensive study on this topic was recently performed in rose [@Bourke2017], which found evidence of disomic behaviour in certain regions of the genome, with tetrasomic behaviour everywhere else. This sort of mixed inheritance can complicate the analysis and in cases where this effect is particularly pronounced, it is probably unwise to ignore [@Bourke2016].
+Up to now, we have been working under the assumption of random bivalent pairing in the parents. However, it has been shown that in certain species the pairing behaviour is neither completely random nor completely preferential (as we have in allopolyploids) but something in-between, a condition termed segmental allopolyploidy [@Stebbins1947]. A study on this topic in rose [@Bourke2017] found evidence of disomic behaviour in certain regions of the genome, with tetrasomic behaviour everywhere else. This sort of mixed inheritance can complicate the analysis and in cases where this effect is particularly pronounced, it is probably unwise to ignore [@Bourke2016].
 
-The `polymapR` package can currently accomodate preferential pairing in tetraploid species only, by correcting the recombination frequency estimates once the level of preferential pairing in a parental chromosome is known. In order to determine whether this is necessary, we can run some diagnostic tests using the marker data after an initial map has been produced which can inform our choice regarding whether to include a preferential pairing parameter or not (in a subsequent re-analysis).
+The `polymapR` package can currently accommodate preferential pairing in tetraploid species only, by correcting the recombination frequency estimates once the level of preferential pairing in a parental chromosome is known. In order to determine whether this is necessary, we can run some diagnostic tests using the marker data after an initial map has been produced which can inform our choice regarding whether to include a preferential pairing parameter or not (in a subsequent re-analysis).
 
 First, a word of warning. There is a function to test for preferential pairing among pairs of closely-linked simplex x nulliplex markers in repulsion phase within `polymapR`. However, it is certainly also advised to use multi-point methods to test for preferential pairing (if possible). The only possible drawback is that multi-point methods (using all markers across a chromosome) generally assume uniform pairing behaviour across the length of a chromosome, which may not always occur [@Bourke2017]). A robust multi-point approach as described in [@Bourke2017] used identity-by-descent probabilities for the population, estimated using TetraOrigin [@Zheng2016], which estimates the most likely pairing behaviour per individual and can therefore reveal whether there are deviations from the assumption of random chromosomal pairing and recombination across the population.
 
@@ -883,12 +883,25 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
                                                     LG_number = 1 #interested in just 1 chm.
 )
 
+all_linkages_list_P2_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2[lg1_markers,],
+                                                    dosage_matrix = filtered_data[lg1_markers,],
+                                                    target_parent = "P2",
+                                                    other_parent = "P1",
+                                                    convert_palindrome_markers = FALSE,
+                                                    ploidy = 4,
+                                                    pairing = "preferential",
+                                                    prefPars = c(0,0.25), #Note that this is in reverse order now.
+                                                    LG_number = 1 
+)
+
 ```
 
 <a name="sect16"></a>
 
 ## 16. QTL analysis
-Currently it is not possible to conduct QTL analysis within `polymapR`, although the package `polyqtlR` will soon be available through CRAN - contact the author for a beta release if desired. However, for tetraploid populations the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 12.3](#sect12.3)).
+The package `polyqtlR`, available through CRAN, has been developed for QTL analysis using IBD probabilities derived using the phased linkage maps developed in `polymapR`.
+
+Alternatively, the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 12.3](#sect12.3)).
 
 To generate these files, use the `write.TSNPM` function as follows:
 
@@ -896,6 +909,7 @@ To generate these files, use the `write.TSNPM` function as follows:
 write.TSNPM(phased.maplist = phased.maplist,ploidy=4)
 ```
 
+Other software for linkage mapping and QTL analysis in polyploid populations includes `MAPpoly` and `QTLpoly`, as well as `diaQTL` and `polyOrigin`.
 
 <a name="sect17"></a>
 

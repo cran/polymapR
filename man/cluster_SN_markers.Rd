@@ -48,7 +48,7 @@ cluster_SN_markers(
 \item{log}{Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout (console).}
 }
 \value{
-A list with cluster data.frames.
+A (named) list of cluster stacks, each of which is a data.frame with columns "marker" and "cluster"
 }
 \description{
 \code{cluster_SN_markers} clusters simplex nulliplex at different LOD scores.

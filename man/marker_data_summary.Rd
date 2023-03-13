@@ -7,6 +7,7 @@
 marker_data_summary(
   dosage_matrix,
   ploidy,
+  ploidy2 = NULL,
   pairing = c("random", "preferential"),
   parent1 = "P1",
   parent2 = "P2",
@@ -19,13 +20,15 @@ marker_data_summary(
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
 
-\item{ploidy}{Integer. Ploidy of plant species.}
+\item{ploidy}{Integer. Ploidy of parent 1, and .}
+
+\item{ploidy2}{Ploidy of parent 2, by default \code{NULL}, as it is assumed ploidy2 equals ploidy.}
 
 \item{pairing}{Type of pairing. "random" or "preferential".}
 
-\item{parent1}{Name of first parent. Usually maternal parent.}
+\item{parent1}{Column name of first parent. Usually maternal parent.}
 
-\item{parent2}{Name of second parent. Usually paternal parent.}
+\item{parent2}{Column name of second parent. Usually paternal parent.}
 
 \item{progeny_incompat_cutoff}{The relative number of incompatible dosages per genotype that results in reporting
 this genotype as incompatible. Incompatible dosages are greater than maximum number of alleles than can be inherited or

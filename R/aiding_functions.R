@@ -406,9 +406,11 @@ compareProbes.gp <- function (chk,
   if (length(segtypecol) != 1)
     stop(paste(funcname, ": chk should have one column segtype or bestParentfit",
                sep = ""))
-  if (class(chk[, segtypecol]) != "character")
+  # if (class(chk[, segtypecol]) != "character") #failed CRAN check 1.1.3
+  if (!inherits(chk[, segtypecol], "character"))
     chk[, segtypecol] <- as.character(chk[, segtypecol])
-  if (class(chk$MarkerName) != "character")
+  # if (class(chk$MarkerName) != "character") #failed CRAN check 1.1.3
+  if (!inherits(chk$MarkerName, "character"))
     chk$MarkerName <- as.character(chk$MarkerName)
   chk <- chk[!is.na(chk[, segtypecol]) & chk[, segtypecol] !=
                "", ]
@@ -2052,6 +2054,122 @@ makeProgeny <- function(gametes1, gametes2) {
   d <- gcd_all(D[D>0])
   round(D/d) #the integer ratios of the F1 generation simplified
 } #makeProgeny
+
+
+
+
+#' Merge marker assignments
+#' @description \code{merge_marker_assignments} Merges 1.0 backbone object with marker assignment objects
+#' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
+#' @param target_parent Character string specifying target parent.
+#' @param other_parent Character string specifying other parent.
+#' @param LG_hom_stack data.frame specifying 1.0 marker assignments to linkage groups and homologues.
+#' @param SN_linked_markers a list of marker assignment objects
+#' @param ploidy Ploidy level of plant species.
+#' @param LG_number Number of linkage groups (chromosomes).
+#' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
+#' @return Returns a matrix with marker assignments. Number of linkages of 1.0 markers are artificial.
+#' @examples
+#' data("screened_data3", "LGHomDf_P1_1", "P1_SxS_Assigned", "P1_DxN_Assigned")
+#' merged_assignment<-merge_marker_assignments(screened_data3, target_parent="P1",
+#'                          other_parent="P2",
+#'                          LG_hom_stack=LGHomDf_P1_1,
+#'                          SN_linked_markers=list(P1_SxS_Assigned, P1_DxN_Assigned),
+#'                          ploidy=4,
+#'                          LG_number=5)
+#' @noRd
+merge_marker_assignments <- function(dosage_matrix,
+                                     target_parent = "P1",
+                                     other_parent = "P2",
+                                     LG_hom_stack,
+                                     SN_linked_markers,
+                                     ploidy,
+                                     LG_number,
+                                     log = NULL) {
+  LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
+  dosage_matrix <- test_dosage_matrix(dosage_matrix)
+  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
+  markers_LG_hom_stack <- as.character(LG_hom_stack[, "SxN_Marker"])
+  LG_hom_stack <- LG_hom_stack[, c("LG", "homologue")]
+  rownames(LG_hom_stack) <- markers_LG_hom_stack
+  colnames(LG_hom_stack) <- c("Assigned_LG", "Assigned_Homolog")
+  comb <- as.matrix(do.call(rbind, SN_linked_markers))
+  
+  #Add SxN markers
+  SN_LG_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_LG"], function(x) {
+    a <- rep(0, LG_number)
+    a[x] <- 1
+    return(a)
+  }),nrow = LG_number, dimnames = list(paste0("LG", levels(LG_hom_stack$Assigned_LG)),markers_LG_hom_stack)
+  ))
+  
+  LG_mat <- rbind(SN_LG_mat, comb[, paste0("LG", levels(LG_hom_stack$Assigned_LG)), drop = FALSE])
+  LG_mat <-
+    cbind(c(as.numeric(as.character(LG_hom_stack[, "Assigned_LG"])), comb[, "Assigned_LG"]), LG_mat)
+  rownames(LG_mat) <- c(markers_LG_hom_stack, rownames(comb))
+  colnames(LG_mat)[1] <- "Assigned_LG"
+  
+  
+  SN_hom_mat <- t(matrix(sapply(LG_hom_stack[, "Assigned_Homolog"], function(x) {
+    a <- rep(0, ploidy)
+    a[x] <- 1
+    return(a)
+  }),nrow = ploidy, dimnames = list(paste0("Hom", 1:ploidy),markers_LG_hom_stack)
+  ))
+  
+  counts_hom_mat <- rbind(SN_hom_mat, comb[, paste0("Hom", 1:ploidy)])
+  
+  assigned_hom_mat <- matrix(c(LG_hom_stack[, "Assigned_Homolog"],
+                               rep(NA, (ploidy - 1) * nrow(LG_hom_stack))),
+                             ncol = ploidy)
+  
+  ##incorporate number of linkages per homologue
+  assigned_hom_mat <-
+    rbind(assigned_hom_mat, comb[, paste0("Assigned_hom", 1:ploidy)])
+  
+  Assigned_LG_hom <- cbind(LG_mat, counts_hom_mat, assigned_hom_mat)
+  
+  matched_rows <- match(rownames(Assigned_LG_hom),rownames(dosage_matrix))
+  
+  if(any(is.na(matched_rows))){
+    stop("Could not find all assigned markers in dosage_matrix. Please check supplied dosage_matrix is correct.")
+  }
+  
+  parental_dosages <-
+    dosage_matrix[matched_rows, c(target_parent, other_parent)]
+  
+  Assigned_LG_hom <-
+    as.matrix(cbind(parental_dosages, Assigned_LG_hom))
+  class(Assigned_LG_hom) <- "integer"
+  
+  if (is.null(log)) {
+    log.conn <- stdout()
+  } else {
+    matc <- match.call()
+    write.logheader(matc, log)
+    log.conn <- file(log, "a")
+  }
+  
+  write(paste0("\n#### Marker numbers  parent ", target_parent, "\n"),
+        log.conn)
+  count_table <-
+    table(
+      paste0(Assigned_LG_hom[, target_parent], "x", Assigned_LG_hom[, other_parent]),
+      Assigned_LG_hom[, "Assigned_LG"],
+      dnn = list("markertype", "linkage group")
+    )
+  
+  write(knitr::kable(count_table),
+        log.conn)
+  
+  if (!is.null(log))
+    close(log.conn)
+  
+  return(Assigned_LG_hom)
+}
+
 
 
 merge_marker_assignments.gp <- function(MarkerType,

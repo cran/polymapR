@@ -2,7 +2,7 @@
 % Please edit documentation in R/exported_functions.R
 \name{finish_linkage_analysis}
 \alias{finish_linkage_analysis}
-\title{Linkage analysis between all markertypes within LG.}
+\title{Linkage analysis between all markertypes within a linkage group.}
 \usage{
 finish_linkage_analysis(
   input_type = "discrete",
@@ -30,7 +30,7 @@ while for the latter \code{probgeno_df} and \code{chk} must be supplied.}
 
 \item{marker_assignment}{A marker assignment matrix with markernames as rownames and at least containing the column \code{"Assigned_LG"}.}
 
-\item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
+\item{dosage_matrix}{A named integer matrix with markers in rows and individuals in columns.}
 
 \item{probgeno_df}{A data frame as read from the scores file produced by function
 \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
@@ -45,7 +45,7 @@ Name of the marker
 Probabilities of dosage score '0'
 }
 \item{P1...}{
-Probabilities of dosage score '1' etc. (up to max offspring dosage, e.g. P4 for tetraploid population)
+Probabilities of dosage score '1' etc. (up to max dosage, e.g. P4 for tetraploid population)
 }
 \item{maxP}{
 Maximum genotype probability identified for a particular individual and marker combination
@@ -60,19 +60,19 @@ Most probable dosage for a particular individual and marker combination, if \cod
 \item{chk}{Output list as returned by function \code{\link{checkF1}}. This argument is only needed if probabilistic genotypes are used.}
 
 \item{marker_combinations}{A matrix with four columns specifying marker combinations to calculate linkage.
-If NULL all combinations are used for which there are rf functions.
+If \code{NULL} all combinations are used for which there are rf functions.
 Dosages of markers should be in the same order as specified in the names of rf functions.
 E.g. if using 1.0_2.0 and 1.0_3.0 types use: \code{matrix(c(1,0,2,0,1,0,3,0), byrow = TRUE, ncol = 4)}}
 
-\item{target_parent}{Character string specifying target parent.}
+\item{target_parent}{Character string specifying the target parent (in out-crossing species, linkage analysis is performed per parent).}
 
-\item{other_parent}{Character string specifying other parent.}
+\item{other_parent}{Character string specifying the other parent.}
 
 \item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?}
 
-\item{ploidy}{Ploidy level of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
+\item{ploidy}{Integer ploidy level of target parent, and also by default other parent. Argument \code{ploidy2} can be used if parental ploidies differ.}
 
-\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of the other (non-target) parent.}
 
 \item{pairing}{Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}.}
 

@@ -4,13 +4,21 @@
 \alias{convert_updog}
 \title{Convert (probabilistic) genotype calling results from updog to input compatible with polymapR.}
 \usage{
-convert_updog(mout)
+convert_updog(mout, output_type = "discrete", min_prob = 0.7)
 }
 \arguments{
 \item{mout}{An object of class multidog; output of the function \link[updog]{multidog}.}
+
+\item{output_type}{Output genotypes can be either "discrete" or "probabilistic", defaults to discrete.}
+
+\item{min_prob}{If genotypes are being discretised, sets the minimum posterior probability in order to 
+call a genotype with confidence. If maxpostprob < min_prob, that genotype is made missing. A default of 0.7 is 
+suggested with no particular motivation.}
 }
 \value{
-A data frame which include columns: 
+If output_type is discrete, the function returns a dosage matrix with rownames given by marker names.
+Columns are organised as parent 1 genotype, parent 2 genotype and then F1 individuals.
+If output_type is probabilistic, then the output is a data frame which include columns: 
 MarkerName, SampleName,P0 ~ Pploidy (e.g. P0 ~ P4 for tetraploid, which represents
 the probability assigning to this dosage), maxgeno (the most likely dosage),
 and maxP (the maximum probability)
