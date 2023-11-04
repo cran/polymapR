@@ -68,7 +68,7 @@ See the function \code{\link{test_prefpairing}} and the vignette for more detail
 }
 \value{
 Returns a data.frame with columns:
-\itemize{
+\describe{
 \item{marker_a}{
   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 }

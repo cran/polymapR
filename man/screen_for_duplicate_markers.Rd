@@ -37,10 +37,10 @@ the average size of a marker bin, assuming a uniform distribution of cross-over 
 }
 \value{
 A list containing:
-\itemize{
-\item{bin_list} {list of binned markers. The list names are the representing markers.
+\describe{
+\item{bin_list}{list of binned markers. The list names are the representing markers.
 This information can later be used to enrich the map with binned markers.}
-\item{filtered_dosage_matrix} {dosage_matrix with merged duplicated markers.
+\item{filtered_dosage_matrix}{dosage_matrix with merged duplicated markers.
 The markers will be given the name of the marker with least missing values.}
 }
 }

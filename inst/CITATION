@@ -1,0 +1,21 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "polymapR—linkage analysis and genetic map construction from F1 populations of outcrossing polyploids",
+  author   = c(person(c("Peter","M."), "Bourke"),
+               person("Geert",c("van","Geest")),
+               person(c("Roeland","E."), "Voorrips"),
+               person("Johannes","Jansen"),
+               person("Twan","Kranenburg"),
+               person("Arwa","Shahin"),
+               person(c("Richard","G.F."),"Visser"),
+               person("Arens","Paul"),
+               person(c("Marinus","J.M."),"Smulders"),
+               person("Chris","Maliepaard")
+               ),
+  journal  = "Bioinformatics",
+  year     = "2018",
+  volume   = "34",
+  number   = "20",
+  pages    = "3496-3502",
+  doi      = "10.1093/bioinformatics/bty371"
+)

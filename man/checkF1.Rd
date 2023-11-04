@@ -37,7 +37,7 @@ while for the latter a \code{probgeno_df} must be supplied.}
 
 \item{probgeno_df}{A data frame as read from the scores file produced by function
 \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-\itemize{
+\describe{
 \item{SampleName}{
 Name of the sample (individual)
 }
@@ -151,27 +151,27 @@ a list that stores the parameter settings used in running \code{checkF1} which c
 be useful for later reference. The first element (\code{checked_F1}) contains the actual results: a data
 frame with one row per marker, with the following columns:
 \itemize{
-\item{m: the sequential number of the marker (as assigned by \code{fitPoly})}
-\item{MarkerName: the name of the marker, with _shf appended if the marker
-is shifted and append_shf is \code{TRUE}}
-\item{parent1: consensus dosage score of the samples of parent 1}
-\item{parent2: consensus dosage score of the samples of parent 2}
-\item{F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
-0 ... <ploidy>}
-\item{F1_NA: the number of F1 samples with a missing dosage score}
-\item{sample names of parents and ancestors: the dosage scores for those
-samples}
-\item{bestfit: the best fitting segtype, considering only the F1 samples}
-\item{frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
+\item m: the sequential number of the marker (as assigned by \code{fitPoly})
+\item MarkerName: the name of the marker, with _shf appended if the marker
+is shifted and append_shf is \code{TRUE}
+\item parent1: consensus dosage score of the samples of parent 1
+\item parent2: consensus dosage score of the samples of parent 2
+\item F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
+0 ... <ploidy>
+\item F1_NA: the number of F1 samples with a missing dosage score
+\item sample names of parents and ancestors: the dosage scores for those
+samples
+\item bestfit: the best fitting segtype, considering only the F1 samples
+\item frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
 with a dosage score that is invalid (that should not occur). The frequency is
 calculated as the number of invalid samples divided by the number of non-NA
-samples}
-\item{Pvalue_bestfit: the chisquare test P-value for the observed
+samples
+\item Pvalue_bestfit: the chisquare test P-value for the observed
 distribution of dosage scores vs the expected fractions. For segtypes
 where only one dosage is expected (1_0, 1_1 etc) the binomial probability of
 the number of invalid scores is given, assuming an error
-rate of seg_invalidrate (hard-coded as 0.03)}
-\item{matchParent_bestfit: indication how the bestfit segtype matches the
+rate of seg_invalidrate (hard-coded as 0.03)
+\item matchParent_bestfit: indication how the bestfit segtype matches the
 consensus dosages of parent 1 and 2: "Unknown"=both parental
 dosages unknown; "No"=one or both parental dosages known
 and conflicting with the segtype; "OneOK"= only one parental
@@ -181,33 +181,33 @@ the segtype. This score is initially assigned based on
 only high-confidence parental consensus scores; if
 low-confidence dosages are confirmed by the F1, the
 matchParent for (only) the selected segtype is
-updated, as are the parental consensus scores.}
-\item{bestParentfit: the best fitting segtype that does not conflict with
-the parental consensus scores}
-\item{frqInvalid_bestParentfit, Pvalue_bestParentfit,
+updated, as are the parental consensus scores.
+\item bestParentfit: the best fitting segtype that does not conflict with
+the parental consensus scores
+\item frqInvalid_bestParentfit, Pvalue_bestParentfit,
 matchParent_bestParentfit: same as the corresponding columns for bestfit.
-Note that matchParent_bestParentfit cannot be "No".}
-\item{q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
+Note that matchParent_bestParentfit cannot be "No".
+\item q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
 the bestParentfit segtype based on Pvalue, invalidP and whether bestfit is
-equal to bestParentfit}
-\item{q2_parents: a value from 0 (bad) to 1 (good), based either on the
+equal to bestParentfit
+\item q2_parents: a value from 0 (bad) to 1 (good), based either on the
 quality of the parental scores (the number of missing scores and of
 conflicting scores, if parentsScoredWithF1 is TRUE) or on matchParents
-(No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)}
-\item{q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
-of F1 samples that have a non-missing dosage score}
-\item{qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
+(No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)
+\item q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
+of F1 samples that have a non-missing dosage score
+\item qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
 equal to the product q1*q2*q3. Equal to 0 if any of these is 0, hence
 sensitive to thresholds; a natural selection criterion would be to accept
-all markers with qall_mult > 0}
-\item{qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
+all markers with qall_mult > 0
+\item qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
 q1, q2 and q3, with weights as specified in parameter critweight. This column is
 present only if critweight is specified. In this case there is no "natural"
 threshold; a threshold for selection of markers must be obtained by inspecting
-XY-plots of markers over a range of qall_weights values}
-\item{shift: if shiftmarkers is specified a column shift is added with
+XY-plots of markers over a range of qall_weights values
+\item shift: if shiftmarkers is specified a column shift is added with
 for all markers the applied shift (for the unshifted markers the shift value
-is 0)}
+is 0)
 }
 qall_mult and/or qall_weights can be used to compare the quality
 of the SNPs within one analysis and one F1 population but not between analyses

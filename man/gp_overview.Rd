@@ -9,7 +9,7 @@ gp_overview(probgeno_df, cutoff = 0.7, alpha = 0.1)
 \arguments{
 \item{probgeno_df}{A data frame as read from the scores file produced by function
 \code{saveMarkerModels} of R package \code{fitPoly}, or equivalently, a data frame containing the following columns:
-\itemize{
+\describe{
 \item{SampleName}{
 Name of the sample (individual)
 }
@@ -43,11 +43,13 @@ diffuse genotype calls. Lowering the threshold allows more diffuse calls to be a
 }
 \value{
 a list with the following elements:
+\describe{
 \item{probgeno_df}{
 Input data, filtered based on chosen \code{cutoff}
 }
 \item{population_overview}{
 data.frame containing summary statistics of each individual's genotyping scores
+}
 }
 }
 \description{

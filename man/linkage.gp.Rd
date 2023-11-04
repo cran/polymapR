@@ -25,7 +25,7 @@ linkage.gp(
 }
 \arguments{
 \item{probgeno_df}{A data frame as read from the scores file produced by function \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-\itemize{
+\describe{
 \item{SampleName}{
 Name of the sample (individual)
 }
@@ -88,7 +88,7 @@ higher computational demands which may introduce problems for larger datasets, b
 }
 \value{
 Returns a data.frame with columns:
-\itemize{
+\describe{
 \item{marker_a:}{
   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 }

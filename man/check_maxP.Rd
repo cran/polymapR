@@ -9,7 +9,7 @@ check_maxP(probgeno_df)
 \arguments{
 \item{probgeno_df}{A data frame as read from the scores file produced by function
 \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-\itemize{
+\describe{
 \item{SampleName}{
 Name of the sample (individual)
 }

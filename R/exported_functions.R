@@ -1,8 +1,3 @@
-#' Linkage analysis in polyploids
-#'
-#' This package uses dosage-scored (or probabilistic) bi-allelic markers from an F1 cross to perform linkage analysis in polyploids
-#' @docType package
-#' @name polymapR
 #' @import utils stats foreach grDevices graphics
 NULL
 
@@ -13,9 +8,9 @@ NULL
 #' @param marker_assignments Optional argument to include the marker_assignments (output of \code{\link{check_marker_assignment}}). If included, marker assignment information will also be copied.
 #' @return
 #' A list with the following items:
-#' \itemize{
-#' \item{maplist}{List of maps, now with duplicate markers added}
-#' \item{marker_assignments}{If required, marker assignment list with duplicate markers added}
+#' \describe{
+#'  \item{maplist}{List of maps, now with duplicate markers added}
+#'  \item{marker_assignments}{If required, marker assignment list with duplicate markers added}
 #' }
 #' @export
 add_dup_markers <- function(maplist, 
@@ -677,20 +672,20 @@ bridgeHomologues <- function(
 #'Each item is itself a list with components:
 # (alternatives for itemize: enumerate and describe,
 # see https://cran.r-project.org/web/packages/roxygen2/vignettes/formatting.html)
-#'\itemize{
-#'\item{freq}{a vector of the ploidy+1 fractions of the dosages in the F1}
-#'\item{intratios}{an integer vector with the ratios as the simplest integers}
-#'\item{expgeno}{a vector with the dosages present in this segtype}
-#'\item{allfrq}{the allele frequency of the dosage allele in the F1}
-#'\item{polysomic}{boolean: does this segtype occur with polysomic inheritance?}
-#'\item{disomic}{boolean: does this segtype occur with disomic inheritance?}
-#'\item{mixed}{boolean: does this segtype occur with mixed inheritance (i.e. with
+#'\describe{
+#'\item{freq}{A vector of the ploidy+1 fractions of the dosages in the F1}
+#'\item{intratios}{An integer vector with the ratios as the simplest integers}
+#'\item{expgeno}{A vector with the dosages present in this segtype}
+#'\item{allfrq}{The allele frequency of the dosage allele in the F1}
+#'\item{polysomic}{Boolean: does this segtype occur with polysomic inheritance?}
+#'\item{disomic}{Boolean: does this segtype occur with disomic inheritance?}
+#'\item{mixed}{Boolean: does this segtype occur with mixed inheritance (i.e. with
 #'polysomic inheritance in one parent and disomic inheritance in the other)?}
-#'\item{pardosage}{integer matrix with 2 columns and as many rows as there
+#'\item{pardosage}{Integer matrix with 2 columns and as many rows as there
 #'are parental dosage combinations for this segtype;
 #'each row has one possible combination of dosages for
 #'parent 1 (1st column) and parent 2 (2nd column)}
-#'\item{parmode}{logical matrix with 3 columns and the same number of rows as
+#'\item{parmode}{Logical matrix with 3 columns and the same number of rows as
 #'pardosage. The 3 columns are named polysomic, disomic and mixed and
 #'tell if this parental dosage combination will generate this
 #'segtype under polysomic, disomic and mixed inheritance}
@@ -871,7 +866,7 @@ calcSegtypeInfo <- function(ploidy, ploidy2=NULL) {
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -984,27 +979,27 @@ calcSegtypeInfo <- function(ploidy, ploidy2=NULL) {
 #' be useful for later reference. The first element (\code{checked_F1}) contains the actual results: a data
 #' frame with one row per marker, with the following columns:
 #' \itemize{
-#' \item{m: the sequential number of the marker (as assigned by \code{fitPoly})}
-#' \item{MarkerName: the name of the marker, with _shf appended if the marker
-#' is shifted and append_shf is \code{TRUE}}
-#' \item{parent1: consensus dosage score of the samples of parent 1}
-#' \item{parent2: consensus dosage score of the samples of parent 2}
-#' \item{F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
-#' 0 ... <ploidy>}
-#' \item{F1_NA: the number of F1 samples with a missing dosage score}
-#' \item{sample names of parents and ancestors: the dosage scores for those
-#' samples}
-#' \item{bestfit: the best fitting segtype, considering only the F1 samples}
-#' \item{frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
+#' \item m: the sequential number of the marker (as assigned by \code{fitPoly})
+#' \item MarkerName: the name of the marker, with _shf appended if the marker
+#' is shifted and append_shf is \code{TRUE}
+#' \item parent1: consensus dosage score of the samples of parent 1
+#' \item parent2: consensus dosage score of the samples of parent 2
+#' \item F1_0 ...	F1_<ploidy>: the number of F1 samples with dosage scores
+#' 0 ... <ploidy>
+#' \item F1_NA: the number of F1 samples with a missing dosage score
+#' \item sample names of parents and ancestors: the dosage scores for those
+#' samples
+#' \item bestfit: the best fitting segtype, considering only the F1 samples
+#' \item frqInvalid_bestfit: for the bestfit segtype, the frequency of F1 samples
 #' with a dosage score that is invalid (that should not occur). The frequency is
 #' calculated as the number of invalid samples divided by the number of non-NA
-#' samples}
-#' \item{Pvalue_bestfit: the chisquare test P-value for the observed
+#' samples
+#' \item Pvalue_bestfit: the chisquare test P-value for the observed
 #' distribution of dosage scores vs the expected fractions. For segtypes
 #' where only one dosage is expected (1_0, 1_1 etc) the binomial probability of
 #' the number of invalid scores is given, assuming an error
-#' rate of seg_invalidrate (hard-coded as 0.03)}
-#' \item{matchParent_bestfit: indication how the bestfit segtype matches the
+#' rate of seg_invalidrate (hard-coded as 0.03)
+#' \item matchParent_bestfit: indication how the bestfit segtype matches the
 #' consensus dosages of parent 1 and 2: "Unknown"=both parental
 #' dosages unknown; "No"=one or both parental dosages known
 #' and conflicting with the segtype; "OneOK"= only one parental
@@ -1014,33 +1009,33 @@ calcSegtypeInfo <- function(ploidy, ploidy2=NULL) {
 #' only high-confidence parental consensus scores; if
 #' low-confidence dosages are confirmed by the F1, the
 #' matchParent for (only) the selected segtype is
-#' updated, as are the parental consensus scores.}
-#' \item{bestParentfit: the best fitting segtype that does not conflict with
-#' the parental consensus scores}
-#' \item{frqInvalid_bestParentfit, Pvalue_bestParentfit,
+#' updated, as are the parental consensus scores.
+#' \item bestParentfit: the best fitting segtype that does not conflict with
+#' the parental consensus scores
+#' \item frqInvalid_bestParentfit, Pvalue_bestParentfit,
 #' matchParent_bestParentfit: same as the corresponding columns for bestfit.
-#' Note that matchParent_bestParentfit cannot be "No".}
-#' \item{q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
+#' Note that matchParent_bestParentfit cannot be "No".
+#' \item q1_segtypefit: a value from 0 (bad) to 1 (good), a measure of the fit of
 #' the bestParentfit segtype based on Pvalue, invalidP and whether bestfit is
-#' equal to bestParentfit}
-#' \item{q2_parents: a value from 0 (bad) to 1 (good), based either on the
+#' equal to bestParentfit
+#' \item q2_parents: a value from 0 (bad) to 1 (good), based either on the
 #' quality of the parental scores (the number of missing scores and of
 #' conflicting scores, if parentsScoredWithF1 is TRUE) or on matchParents
-#' (No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)}
-#' \item{q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
-#' of F1 samples that have a non-missing dosage score}
-#' \item{qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
+#' (No=0, Unknown=0.65, OneOK=0.9, Yes=1, if parentsScoredWithF1 is FALSE)
+#' \item q3_fracscored: a value from 0 (bad) to 1 (good), based on the fraction
+#' of F1 samples that have a non-missing dosage score
+#' \item qall_mult: a value from 0 (bad) to 1 (good), a summary quality score
 #' equal to the product q1*q2*q3. Equal to 0 if any of these is 0, hence
 #' sensitive to thresholds; a natural selection criterion would be to accept
-#' all markers with qall_mult > 0}
-#' \item{qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
+#' all markers with qall_mult > 0
+#' \item qall_weights: a value from 0 (bad) to 1 (good), a weighted average of
 #' q1, q2 and q3, with weights as specified in parameter critweight. This column is
 #' present only if critweight is specified. In this case there is no "natural"
 #' threshold; a threshold for selection of markers must be obtained by inspecting
-#' XY-plots of markers over a range of qall_weights values}
-#' \item{shift: if shiftmarkers is specified a column shift is added with
+#' XY-plots of markers over a range of qall_weights values
+#' \item shift: if shiftmarkers is specified a column shift is added with
 #' for all markers the applied shift (for the unshifted markers the shift value
-#' is 0)}
+#' is 0)
 #' }
 #' qall_mult and/or qall_weights can be used to compare the quality
 #' of the SNPs within one analysis and one F1 population but not between analyses
@@ -1712,10 +1707,24 @@ check_map <- function (linkage_list,
     if (tidyplot) {
       hbin <- hexbin::hexbin(dev, ll$LOD, 
                              xbins = 150)
+      
+      ############################################################################################
+      # The following code caused a Fatal Error when R was updated to version > 4.1.0 
+      # Error message:
+      # Error in if (nchar(main) > 0) grid.text(main, y = unit(1, "npc") + unit(1.5,  : 
+      # the condition has length > 1
+      # suppressWarnings(hexbin::plot(hbin, ylab = "LOD", 
+      #                               xlab = expression(delta(r)), legend = FALSE, 
+      #                               main = bquote(.(lgname) ~ ": r"["pairwise"] ~ 
+      #                                               "- r"["map"])))
+      # Replaced with a simpler version of main using expression() instead of bquote(), 
+      # seems to work fine now... (03/10/2023)
+      ############################################################################################
+      
       suppressWarnings(hexbin::plot(hbin, ylab = "LOD", 
                                     xlab = expression(delta(r)), legend = FALSE, 
-                                    main = bquote(.(lgname) ~ ": r"["pairwise"] ~ 
-                                                    "- r"["map"])))
+                                    main = expression("|r"["pairwise"] ~ 
+                                                        "- r"["map"] ~ "|")))
     } else {
       plot(dev, ll$LOD, ylab = "LOD", 
            xlab = expression(delta(r)), cex.lab = 1.25, 
@@ -1929,7 +1938,7 @@ check_marker_assignment <- function(marker_assignment.P1,
 #' plots a violin graph showing the distribution of the samples' \code{maxP}.
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -3971,7 +3980,7 @@ define_LG_structure <- function(cluster_list,
 #' @param dosage_matrix A named integer matrix with markers in rows and individuals in columns.
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -4264,7 +4273,7 @@ get_markertype_combinations <- function(ploidy,
 #' @description Function to generate an overview of genotype probabilities across a population
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or equivalently, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -4294,11 +4303,13 @@ get_markertype_combinations <- function(ploidy,
 #' diffuse genotype calls. Lowering the threshold allows more diffuse calls to be accepted.
 #' @param alpha Option to specify the quantile of an individuals' scores that will be used to test against \code{cutoff}, by default 0.1.
 #' @return a list with the following elements:
+#' \describe{
 #' \item{probgeno_df}{
 #' Input data, filtered based on chosen \code{cutoff}
 #' }
 #' \item{population_overview}{
 #' data.frame containing summary statistics of each individual's genotyping scores
+#' }
 #' }
 #' @examples
 #' \dontrun{
@@ -4358,7 +4369,7 @@ gp_overview <- function(probgeno_df,
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -4664,7 +4675,7 @@ homologue_lg_assignment <- function(input_type = "discrete",
 #'
 #' @return
 #' Returns a data.frame with columns:
-#' \itemize{
+#' \describe{
 #' \item{marker_a}{
 #'   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 #' }
@@ -5178,7 +5189,7 @@ linkage <- function(dosage_matrix,
 #' Calculate recombination frequency, LOD and phase using genotype probabilities
 #' @description \code{linkage.gp} is used to calculate recombination frequency, LOD and phase within one type of marker or between two types of markers.
 #' @param probgeno_df A data frame as read from the scores file produced by function \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -5225,7 +5236,7 @@ linkage <- function(dosage_matrix,
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #' @return
 #' Returns a data.frame with columns:
-#' \itemize{
+#' \describe{
 #' \item{marker_a:}{
 #'   first marker of comparison. If markertype2 is specified, it has the type of markertype1.
 #' }
@@ -6247,22 +6258,34 @@ phase_SN_diploid <- function(linkage_df,
   if(length(setdiff(repul.linked,groups$marker)) > 0){ #Some repulsion info to use
     unlinked.c <- setdiff(repul.linked,groups$marker)
     
-    assigned.clusters <- sapply(unlinked.c, function(merker) {
+    ## Update May 2023: handle issue of single phase in repulsion. Update groups as we progress:
+    for(merker in unlinked.c){
+      
       replinks.temp <- unique(c(edges.r[edges.r$marker_a == merker,"marker_b"],edges.r[edges.r$marker_b == merker,"marker_a"]))
+      
+      ## Find where the repulsion-linked markers of merker go (ie. which chromosome cluster):
       chm.temp <- Mode(chm.clusters[chm.clusters$marker %in% replinks.temp,"cluster"]) #polymapR:::Mode
       chm.clust <- groups[groups$marker %in% chm.clusters[chm.clusters$cluster == chm.temp,"marker"],]
       rep.clust <- Mode(chm.clust[chm.clust$marker %in% replinks.temp,"cluster"]) #polymapR:::Mode
+      
       out <- setdiff(unique(chm.clust$cluster),rep.clust)
-      if(length(out) > 1){ #not possible to simply assign the marker to a single cluster
-        out <- NA
+        
+      if(length(out) == 0){ #we have only 1 other phase, so merker is in repulsion to all markers on that chromosome
+        ## This poses a bit of a difficulty, as we need to create a new cluster number (which means a new factor level in groups$cluster also!). 
+        ## Use a random number generator as a work-around to make a unique new cluster number:
+        out <- sample((max(as.numeric(levels(groups$cluster))) + 1):2000,1) #sample from max + 1 to 2000, should be a sufficiently robust work-around
+        ## Update groups$cluster factor levels with this new level:
+        groups$cluster <- factor(groups$cluster, levels = c(levels(groups$cluster), out)) 
+        ## Update groups with this merker and its new phase cluster (out):
+        groups <- rbind(groups,data.frame("marker" = merker,"cluster" = out))
+      } else if(length(out) == 1){ #this is the ideal situation:
+        ## Update groups with this merker and its new phase cluster (out):
+        groups <- rbind(groups,data.frame("marker" = merker,"cluster" = out))
       }
-      return(out)
+      # else if(length(out) > 1){ #not possible to simply assign the marker to a single cluster, so: out <- NA}
+
     }
-    )
-    
-    
-    groups <- rbind(groups,data.frame("marker" = unlinked.c[!is.na(assigned.clusters)],
-                                      "cluster" = assigned.clusters[!is.na(assigned.clusters)]))
+  
   } else{
     write(paste("Complete phase assignment possible using only coupling information at LOD", LOD_chm),log.conn)
   }
@@ -6288,6 +6311,7 @@ phase_SN_diploid <- function(linkage_df,
   LGhom.df <- LGhom.df[order(LGhom.df$LG, LGhom.df$homologue),]
   LGhom.df$homologue <-  as.factor(LGhom.df$homologue)
   LGhom.df$LG <-  as.factor(LGhom.df$LG)
+  
   
   if(ncol(table(LGhom.df$LG,LGhom.df$homologue)) > 2){
     warning("More than 2 couplings-groupings detected in some linkage groups. Deleting these...\nPerhaps try cluster_SN_markers at a higher LOD score?")
@@ -6910,7 +6934,7 @@ screen_for_duplicate_individuals <-
 #' See \code{\link{screen_for_duplicate_individuals}} for the original function.
 #' @param probgeno_df A data frame as read from the scores file produced by function
 #' \code{saveMarkerModels} of R package \code{fitPoly}, or alternatively, a data frame containing the following columns:
-#' \itemize{
+#' \describe{
 #' \item{SampleName}{
 #' Name of the sample (individual)
 #' }
@@ -7012,10 +7036,10 @@ screen_for_duplicate_individuals.gp <- function(probgeno_df,
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
 #' @return
 #' A list containing:
-#' \itemize{
-#' \item{bin_list} {list of binned markers. The list names are the representing markers.
+#' \describe{
+#' \item{bin_list}{list of binned markers. The list names are the representing markers.
 #' This information can later be used to enrich the map with binned markers.}
-#' \item{filtered_dosage_matrix} {dosage_matrix with merged duplicated markers.
+#' \item{filtered_dosage_matrix}{dosage_matrix with merged duplicated markers.
 #' The markers will be given the name of the marker with least missing values.}
 #' }
 #' @examples
