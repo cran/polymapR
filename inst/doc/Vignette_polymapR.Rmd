@@ -1,7 +1,7 @@
 ---
 title: "polymapR: linkage mapping in outcrossing polyploids"
 author: "Peter M. Bourke, Geert van Geest"
-date: "04-11-2023"
+date: "27-12-2023"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{How to use polymapR}
@@ -241,7 +241,7 @@ To screen the data for duplicate individuals, enter:
 ```{r, fig.width = 6, fig.height = 6}
 screened_data3 <- screen_for_duplicate_individuals(dosage_matrix = screened_data2, 
                                                    cutoff = 0.95, 
-                                                   plot_cor = T)
+                                                   plot_cor = TRUE)
 
 ```
 
@@ -291,8 +291,9 @@ To estimate the recombination frequencies, LOD and phasing between all marker pa
 ```{r, eval = FALSE}
 SN_SN_P1 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
-                    target_parent = "P1",
-                    other_parent = "P2",
+                    parent1 = "P1",
+                    parent2 = "P2",
+                    which_parent = 1,
                     ploidy = 4,
                     pairing = "random"
 )
@@ -301,10 +302,12 @@ SN_SN_P1 <- linkage(dosage_matrix = filtered_data,
 > ###### A note on arguments and multi-core processing
 There is much more to the `linkage` function. Checkout `?linkage` to see the arguments that can be passed to it. One important feature is that it can run in parallel on multiple cores. This can be very time-efficient if you are working with a large number of markers. The number of cores to use can be specified using the `ncores` argument. Before doing so, first check the number of cores on your system using `parallel::detectCores()`. Use at least one core less than you have available to prevent overcommitment. 
 
-It is a good idea to first visualise the relationship between the recombination frequency and LOD score, which gives us some insight into the differences between the information content of the different phases, as well as highlighting possible problems in the data. This can be done by using the `plot_linkage_df` function:
+Note that since polymapR version 1.1.5, some of the arguments of the `linkage` function have been updated. The arguments `target_parent` and `other_parent` have been removed, and replaced with `parent1` and `parent2`, referring to the column names of the two parents. A new argument `which_parent` has been introduced, to allow you to specify which parent is being "targeted" for linkage analysis (either 1 or 2). This was needed to accommodate an update for mapping in triploid populations, but also makes it easier if you rename your parental columns "P1" and "P2" at the start, as these are the default values provided for the arguments `parent1` and `parent2`. This is the case here, so for subsequent calls to `linkage` we will omit specifying the parental names each time. 
+
+It is a good idea to first visualise the relationship between the recombination frequency and LOD score, which gives us some insight into the differences between the information content of the different phases, as well as highlighting possible problems in the data. This can be done by using the `r_LOD_plot` function:
 
 ```{r, fig.width = 6, fig.height = 6}
-plot_linkage_df(SN_SN_P1, r_max = 0.5)
+r_LOD_plot(linkage_df = SN_SN_P1, r_max = 0.5)
 ```
 
 In some situations, it is possible to identify outlying datapoints on this plot, which do not fit the expected relationship. We have implemented a function to check this for the case of pairs of simplex x nulliplex markers, as these are the markers that we use in the subsequent steps of clustering and identifying chromosome and homologue linkage groups. If you are unsure, you can run the `SNSN_LOD_deviation` function anyway to see whether your data fits the expected pattern:
@@ -395,12 +398,10 @@ First calculate linkage between SxN and DxN markers:
 SN_DN_P1 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
                     markertype2 = c(2,0),
-                    target_parent = "P1",
-                    other_parent = "P2",
+                    which_parent = 1,
                     ploidy = 4,
                     pairing = "random")
 ```
-
 
 Then, use `bridgeHomologues` to use these SxN - DxN linkages to find associations ("bridges") between homologue clusters. Note that we must provide a particular division of the Simplex x Nulliplex data - in this example, we use the division at LOD 6 which gave us 20 clusters (our 20 putative homologues): 
 ```{r, fig.width = 6, fig.height = 6}
@@ -417,12 +418,13 @@ This results in an ideal situation of 5 linkage groups each with exactly 4 homol
 table(LGHomDf_P1_1$LG, LGHomDf_P1_1$homologue)
 ```
 
-However, clustering of P2 is a bit more difficult. The following re-does everything for P2:
+However, clustering of P2 is a bit more difficult. The following re-does everything for P2. Note that for clarity, we include the arguments `parent1` and `parent2` here, but we could have just as well left them out (as they are the default column names, see `?linkage`):
 ```{r, eval=FALSE}
 SN_SN_P2 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
-                    target_parent = "P2",
-                    other_parent = "P1",
+                    parent1 = "P1",
+                    parent2 = "P2",
+                    which_parent = 2,
                     ploidy = 4,
                     pairing = "random"
 )
@@ -442,8 +444,7 @@ P2_homologues <- cluster_SN_markers(linkage_df = SN_SN_P2_coupl,
 SN_DN_P2 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
                     markertype2 = c(2,0),
-                    target_parent = "P2",
-                    other_parent = "P1",
+                    which_parent = 2,
                     ploidy = 4,
                     pairing = "random")
 ```
@@ -508,25 +509,27 @@ table(LGHomDf_P2_1$homologue, LGHomDf_P2_1$LG)
 ```
 
 ### 8.3 Cross-ploidy populations (*e.g.* tetraploid x diploid to give triploid F1)
-`polymapR` is also able to map triploid populations, and may be extended to other cross-ploidy populations if there is demand for that in future. However, because of differences in parental ploidy levels, we have implemented a mapping approach that assumes that the parent of higher ploidy level is parent 1. Usually in `polymapR` a cross is understood to be between "maternal parent" x "paternal parent". However this is just a convenient convention, and parent numbering can be reversed if so desired. In the case of triploid populations, there is no flexibility anymore, parent 1 _must_ be tetraploid and parent 2 _must_ be diploid. 
+`polymapR` is also able to map triploid populations, and may be extended to other cross-ploidy populations if there is demand for that in future. Tetraploid x diploid crosses are however the most common (often done to induce seedlessness in the F1). Previously we had implemented a mapping approach that assumes that the parent of higher ploidy level is parent 1. However, since polymapR v.1.1.5 this is no longer the case, so a 4x2 and 2x4 cross are both acceptable. 
 
 The next point to be aware of is that the segregation of markers in the diploid parent is assumed to follow disomic inheritance (there is no other option in a diploid), whereas the segregation of the tetraploid parent is assumed to follow tetrasomic inheritance. Mixtures with preferential pairing in the tetraploid parent are currently not implemented for triploid populations.
 
-Because of this disomic behaviour in the diploid parent, we are unable to use the normal clustering function (`cluster_SN_markers`) for identifying the homologues. Proceed as normal with the steps described above for parent 1. However in order to proceed correctly for parent 2 (diploid), you will need to provide the markertype as `c(0,1)` and not `c(1,0)`. This is easy to understand since a 1x0 marker in a triploid population is __Aaaa x aa__ while a 0x1 marker is __aaaa x Aa__. These are clearly different marker types and we cannot reverse them. To access the correct linkage functions for the diploid parent, therefore, you will need to think in terms of 1x0 markers segregating from parent 1, and 0x1 markers segregating from parent 2.
+Because of this disomic behaviour in the diploid parent, we are unable to use the normal clustering function (`cluster_SN_markers`) for identifying the homologues. Proceed as normal with the steps described above for the tetraploid parent. However in order to proceed correctly for the diploid parent 2, the clustering proceeds a bit differently. 
 
 If you are confused about what marker types are possible in a triploid population, run the following, which gives all possible marker combinations (and the segregation ratios in the F1):
 ```{r}
 get("seg_p3_random",envir=getNamespace("polymapR"))
 ```
 
-To run the preliminary linkage analysis of 0x1 markers in parent 2, we also need to specify the ploidy of parent 2, in this case `ploidy2 = 2`. Note that the target parent is P2 as this is the parent we are now interested in, but `markertype1 = c(0,1)`. For this we need a special dataset with triploid data, a sample of which is available from the `polymapR` package also:
+To run the preliminary linkage analysis of 1x0 markers in the diploid parent, we need to specify the ploidy of both parents, e.g. `ploidy = 4` and `ploidy2 = 2` (or vice versa). To demonstrate this, we need to load a special dataset with triploid data, a sample of which is available from the `polymapR` package also:
 ```{r, eval=FALSE}
 data("TRI_dosages")
 
+# Estimate the linkage in the diploid parent (assuming this has been done for the 4x parent already):
 SN_SN_P2.tri <- linkage(dosage_matrix = TRI_dosages, 
-                    markertype1 = c(0,1),
-                    target_parent = "P2", #Note the target parent is P2
-                    other_parent = "P1",
+                    markertype1 = c(1,0),
+                    parent1 = "P1",
+                    parent2 = "P2",
+                    which_parent = 2, 
                     ploidy = 4,
                     ploidy2 = 2,
                     pairing = "random"
@@ -535,7 +538,7 @@ SN_SN_P2.tri <- linkage(dosage_matrix = TRI_dosages,
 
 Have a look at the plot of r versus LOD score - here you should notice that both the coupling and repulsion phases are equally informative now and cannot therefore be separated by LOD score as before:
 ```{r, fig.width = 6, fig.height = 6}
-plot_linkage_df(SN_SN_P2.tri)
+r_LOD_plot(SN_SN_P2.tri)
 ```
 
 If we try to cluster using the old function, we get the following result - no separation of the homologues, but the chromosomal linkage groups are identified:
@@ -568,8 +571,7 @@ Assigning simplex x simplex markers to a homologue and linkage group is done by 
 SN_SS_P1 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
                     markertype2 = c(1,1),
-                    target_parent = "P1",
-                    other_parent = "P2",
+                    which_parent = 1,
                     ploidy = 4,
                     pairing = "random")
 ```
@@ -589,8 +591,7 @@ head(P1_SxS_Assigned)
 SN_SS_P2 <- linkage(dosage_matrix = filtered_data, 
                     markertype1 = c(1,0),
                     markertype2 = c(1,1),
-                    target_parent = "P2",
-                    other_parent = "P1",
+                    which_parent = 2,
                     ploidy = 4,
                     pairing = "random")
 ```
@@ -649,15 +650,14 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 <a name="sect10"></a>
 
 ## 10. Assign all other markertypes
-Now that we have a backbone of SxN markers with consistent linkage group names, it is time to assign all other marker types to a linkage group and homologue using their linkage to SxN markers. Since we already did this for DxN and SxS markers, there is no need to re-do this work for these marker types. The function `homologue_lg_assignment` finds all markertypes that have not been assigned yet, does the linkage analysis and assigns them to a linkage group and homologue. As linkage is calculated for a lot of marker combinations, this might take a while.
+Now that we have a backbone of SxN markers with consistent linkage group names, it is time to assign all other marker types to a linkage group and homologue using their linkage to SxN markers. Since we already did this for DxN and SxS markers, there is no need to re-do this work for these marker types. The function `homologue_lg_assignment` finds all markertypes that have not been assigned yet, does the linkage analysis and assigns them to a linkage group and homologue. As linkage is calculated for a lot of marker combinations, this might take a while. Again, note that since v.1.1.5, we need to specify `which_parent` we are interested in, similar to the `linkage` function that is ultimately being called multiple times in the background here.
 ```{r, eval = FALSE}
 marker_assignments_P1 <- homologue_lg_assignment(dosage_matrix = filtered_data,
                                                  assigned_list = list(P1_SxS_Assigned, 
                                                                       P1_DxN_Assigned),
                                                  assigned_markertypes = list(c(1,1), c(2,0)),
                                                  LG_hom_stack = LGHomDf_P1,
-                                                 target_parent = "P1",
-                                                 other_parent = "P2",
+                                                 which_parent = 1,
                                                  ploidy = 4,
                                                  pairing = "random",
                                                  convert_palindrome_markers = FALSE,
@@ -674,8 +674,7 @@ marker_assignments_P2 <- homologue_lg_assignment(dosage_matrix = filtered_data,
                                                                       P2_DxN_Assigned),
                                                  assigned_markertypes = list(c(1,1), c(2,0)),
                                                  LG_hom_stack = LGHomDf_P2_2,
-                                                 target_parent = "P2",
-                                                 other_parent = "P1",
+                                                 which_parent = 2,
                                                  ploidy = 4,
                                                  pairing = "random",
                                                  convert_palindrome_markers = TRUE,
@@ -699,8 +698,7 @@ Since all markers have been assigned to a linkage group, we now do the linkage c
 ```{r, eval = FALSE}
 all_linkages_list_P1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1,
                                                 dosage_matrix = filtered_data,
-                                                target_parent = "P1",
-                                                other_parent = "P2",
+                                                which_parent = 1,
                                                 convert_palindrome_markers = FALSE,
                                                 ploidy = 4,
                                                 pairing = "random",
@@ -708,8 +706,7 @@ all_linkages_list_P1 <- finish_linkage_analysis(marker_assignment = marker_assig
 
 all_linkages_list_P2 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2,
                                                 dosage_matrix = filtered_data,
-                                                target_parent = "P2",
-                                                other_parent = "P1",
+                                                which_parent = 2,
                                                 convert_palindrome_markers = TRUE, # convert 3.1 markers
                                                 ploidy = 4,
                                                 pairing = "random",
@@ -874,8 +871,7 @@ lg1_markers <- unique(c(rownames(marker_assignments_P1[marker_assignments_P1[,"A
 
 all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[lg1_markers,],
                                                     dosage_matrix = filtered_data[lg1_markers,],
-                                                    target_parent = "P1",
-                                                    other_parent = "P2",
+                                                    which_parent = 1,
                                                     convert_palindrome_markers = FALSE,
                                                     ploidy = 4,
                                                     pairing = "preferential",
@@ -885,8 +881,7 @@ all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
 
 all_linkages_list_P2_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2[lg1_markers,],
                                                     dosage_matrix = filtered_data[lg1_markers,],
-                                                    target_parent = "P2",
-                                                    other_parent = "P1",
+                                                    which_parent = 2,
                                                     convert_palindrome_markers = FALSE,
                                                     ploidy = 4,
                                                     pairing = "preferential",
@@ -899,7 +894,7 @@ all_linkages_list_P2_lg1 <- finish_linkage_analysis(marker_assignment = marker_a
 <a name="sect16"></a>
 
 ## 16. QTL analysis
-The package `polyqtlR`, available through CRAN, has been developed for QTL analysis using IBD probabilities derived using the phased linkage maps developed in `polymapR`.
+The package `polyqtlR`, available through CRAN, has been developed for QTL analysis in outcrossing polyploid populations, using IBD probabilities derived using the phased linkage maps developed in `polymapR`.
 
 Alternatively, the TetraploidSNPMap [@hackett2017] software provides the possibility of not just generating linkage maps but performing IBD-based interval QTL mapping as well. The creation of input files for TetraploidSNPMap is simple once phased mapfiles have been created with the `create_phased_maplist` function (see [section 12.3](#sect12.3)).
 

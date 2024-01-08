@@ -11,12 +11,13 @@ finish_linkage_analysis(
   probgeno_df,
   chk,
   marker_combinations = NULL,
-  target_parent = "P1",
-  other_parent = "P2",
-  convert_palindrome_markers = TRUE,
+  parent1 = "P1",
+  parent2 = "P2",
+  which_parent = 1,
   ploidy,
   ploidy2 = NULL,
-  pairing = c("random", "preferential"),
+  convert_palindrome_markers = TRUE,
+  pairing = "random",
   prefPars = c(0, 0),
   LG_number,
   verbose = TRUE,
@@ -64,17 +65,19 @@ If \code{NULL} all combinations are used for which there are rf functions.
 Dosages of markers should be in the same order as specified in the names of rf functions.
 E.g. if using 1.0_2.0 and 1.0_3.0 types use: \code{matrix(c(1,0,2,0,1,0,3,0), byrow = TRUE, ncol = 4)}}
 
-\item{target_parent}{Character string specifying the target parent (in out-crossing species, linkage analysis is performed per parent).}
+\item{parent1}{Character string specifying the identifier of parent 1, by default "P1"}
 
-\item{other_parent}{Character string specifying the other parent.}
+\item{parent2}{Character string specifying the identifier of parent 2, by default "P2"}
+
+\item{which_parent}{Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively.}
+
+\item{ploidy}{Integer ploidy level of parent1, and also by default parent2. Argument \code{ploidy2} can be used if parental ploidies differ.}
+
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent2.}
 
 \item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?}
 
-\item{ploidy}{Integer ploidy level of target parent, and also by default other parent. Argument \code{ploidy2} can be used if parental ploidies differ.}
-
-\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of the other (non-target) parent.}
-
-\item{pairing}{Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}.}
+\item{pairing}{Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}. By default, random pairing is assumned.}
 
 \item{prefPars}{The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 See the function \code{\link{test_prefpairing}} and the vignette for more details.}
@@ -99,8 +102,9 @@ The function performs linkage calculations between all markertypes within a link
 data("screened_data3", "marker_assignments_P1")
 linkages_list_P1<-finish_linkage_analysis(marker_assignment=marker_assignments_P1,
                                           dosage_matrix=screened_data3,
-                                          target_parent="P1",
-                                          other_parent="P2",
+                                          parent1="P1",
+                                          parent2="P2",
+                                          which_parent=1,
                                           convert_palindrome_markers=FALSE,
                                           ploidy=4,
                                           pairing="random",

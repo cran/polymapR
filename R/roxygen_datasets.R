@@ -109,6 +109,9 @@
 #' A (nested) list of linkage data frames classified per linkage group and homologue
 "all_linkages_list_P1"
 
+#' A list of objects needed to build the probabilistic genotype vignette
+"gp_vignette_data"
+
 #' @rdname all_linkages_list_P1
 "all_linkages_list_P1_split"
 

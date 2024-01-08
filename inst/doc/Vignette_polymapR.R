@@ -98,7 +98,7 @@ screened_data2 <- screen_for_NA_values(dosage_matrix = screened_data,
 ## ---- fig.width = 6, fig.height = 6-------------------------------------------
 screened_data3 <- screen_for_duplicate_individuals(dosage_matrix = screened_data2, 
                                                    cutoff = 0.95, 
-                                                   plot_cor = T)
+                                                   plot_cor = TRUE)
 
 
 ## -----------------------------------------------------------------------------
@@ -121,14 +121,15 @@ pq_screened_data <- parental_quantities(dosage_matrix = filtered_data)
 ## ---- eval = FALSE------------------------------------------------------------
 #  SN_SN_P1 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
-#                      target_parent = "P1",
-#                      other_parent = "P2",
+#                      parent1 = "P1",
+#                      parent2 = "P2",
+#                      which_parent = 1,
 #                      ploidy = 4,
 #                      pairing = "random"
 #  )
 
 ## ---- fig.width = 6, fig.height = 6-------------------------------------------
-plot_linkage_df(SN_SN_P1, r_max = 0.5)
+r_LOD_plot(linkage_df = SN_SN_P1, r_max = 0.5)
 
 ## ---- fig.width = 6, fig.height = 6-------------------------------------------
 P1deviations <- SNSN_LOD_deviations(linkage_df = SN_SN_P1,
@@ -187,8 +188,7 @@ P1_homologues_1 <- cluster_SN_markers(linkage_df = SN_SN_P1_coupl,
 #  SN_DN_P1 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
 #                      markertype2 = c(2,0),
-#                      target_parent = "P1",
-#                      other_parent = "P2",
+#                      which_parent = 1,
 #                      ploidy = 4,
 #                      pairing = "random")
 
@@ -206,8 +206,9 @@ table(LGHomDf_P1_1$LG, LGHomDf_P1_1$homologue)
 ## ---- eval=FALSE--------------------------------------------------------------
 #  SN_SN_P2 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
-#                      target_parent = "P2",
-#                      other_parent = "P1",
+#                      parent1 = "P1",
+#                      parent2 = "P2",
+#                      which_parent = 2,
 #                      ploidy = 4,
 #                      pairing = "random"
 #  )
@@ -227,8 +228,7 @@ P2_homologues <- cluster_SN_markers(linkage_df = SN_SN_P2_coupl,
 #  SN_DN_P2 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
 #                      markertype2 = c(2,0),
-#                      target_parent = "P2",
-#                      other_parent = "P1",
+#                      which_parent = 2,
 #                      ploidy = 4,
 #                      pairing = "random")
 
@@ -284,17 +284,19 @@ get("seg_p3_random",envir=getNamespace("polymapR"))
 ## ---- eval=FALSE--------------------------------------------------------------
 #  data("TRI_dosages")
 #  
+#  # Estimate the linkage in the diploid parent (assuming this has been done for the 4x parent already):
 #  SN_SN_P2.tri <- linkage(dosage_matrix = TRI_dosages,
-#                      markertype1 = c(0,1),
-#                      target_parent = "P2", #Note the target parent is P2
-#                      other_parent = "P1",
+#                      markertype1 = c(1,0),
+#                      parent1 = "P1",
+#                      parent2 = "P2",
+#                      which_parent = 2,
 #                      ploidy = 4,
 #                      ploidy2 = 2,
 #                      pairing = "random"
 #  )
 
 ## ---- fig.width = 6, fig.height = 6-------------------------------------------
-plot_linkage_df(SN_SN_P2.tri)
+r_LOD_plot(SN_SN_P2.tri)
 
 ## ---- fig.width = 6, fig.height = 6-------------------------------------------
 P2_homologues.tri <- cluster_SN_markers(linkage_df = SN_SN_P2.tri, 
@@ -316,8 +318,7 @@ LGHomDf_P2.tri <- phase_SN_diploid(linkage_df = SN_SN_P2.tri,
 #  SN_SS_P1 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
 #                      markertype2 = c(1,1),
-#                      target_parent = "P1",
-#                      other_parent = "P2",
+#                      which_parent = 1,
 #                      ploidy = 4,
 #                      pairing = "random")
 
@@ -337,8 +338,7 @@ head(P1_SxS_Assigned)
 #  SN_SS_P2 <- linkage(dosage_matrix = filtered_data,
 #                      markertype1 = c(1,0),
 #                      markertype2 = c(1,1),
-#                      target_parent = "P2",
-#                      other_parent = "P1",
+#                      which_parent = 2,
 #                      ploidy = 4,
 #                      pairing = "random")
 
@@ -394,8 +394,7 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 #                                                                        P1_DxN_Assigned),
 #                                                   assigned_markertypes = list(c(1,1), c(2,0)),
 #                                                   LG_hom_stack = LGHomDf_P1,
-#                                                   target_parent = "P1",
-#                                                   other_parent = "P2",
+#                                                   which_parent = 1,
 #                                                   ploidy = 4,
 #                                                   pairing = "random",
 #                                                   convert_palindrome_markers = FALSE,
@@ -410,8 +409,7 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 #                                                                        P2_DxN_Assigned),
 #                                                   assigned_markertypes = list(c(1,1), c(2,0)),
 #                                                   LG_hom_stack = LGHomDf_P2_2,
-#                                                   target_parent = "P2",
-#                                                   other_parent = "P1",
+#                                                   which_parent = 2,
 #                                                   ploidy = 4,
 #                                                   pairing = "random",
 #                                                   convert_palindrome_markers = TRUE,
@@ -427,8 +425,7 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 ## ---- eval = FALSE------------------------------------------------------------
 #  all_linkages_list_P1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1,
 #                                                  dosage_matrix = filtered_data,
-#                                                  target_parent = "P1",
-#                                                  other_parent = "P2",
+#                                                  which_parent = 1,
 #                                                  convert_palindrome_markers = FALSE,
 #                                                  ploidy = 4,
 #                                                  pairing = "random",
@@ -436,8 +433,7 @@ P2_DxN_Assigned <- assign_linkage_group(linkage_df = SN_DN_P2,
 #  
 #  all_linkages_list_P2 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2,
 #                                                  dosage_matrix = filtered_data,
-#                                                  target_parent = "P2",
-#                                                  other_parent = "P1",
+#                                                  which_parent = 2,
 #                                                  convert_palindrome_markers = TRUE, # convert 3.1 markers
 #                                                  ploidy = 4,
 #                                                  pairing = "random",
@@ -518,8 +514,7 @@ knitr::include_graphics("figures/LG1_check_map_plotB.png")
 #  
 #  all_linkages_list_P1_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P1[lg1_markers,],
 #                                                      dosage_matrix = filtered_data[lg1_markers,],
-#                                                      target_parent = "P1",
-#                                                      other_parent = "P2",
+#                                                      which_parent = 1,
 #                                                      convert_palindrome_markers = FALSE,
 #                                                      ploidy = 4,
 #                                                      pairing = "preferential",
@@ -529,8 +524,7 @@ knitr::include_graphics("figures/LG1_check_map_plotB.png")
 #  
 #  all_linkages_list_P2_lg1 <- finish_linkage_analysis(marker_assignment = marker_assignments$P2[lg1_markers,],
 #                                                      dosage_matrix = filtered_data[lg1_markers,],
-#                                                      target_parent = "P2",
-#                                                      other_parent = "P1",
+#                                                      which_parent = 2,
 #                                                      convert_palindrome_markers = FALSE,
 #                                                      ploidy = 4,
 #                                                      pairing = "preferential",

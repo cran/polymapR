@@ -13,11 +13,12 @@ homologue_lg_assignment(
   assigned_markertypes,
   SN_functions = NULL,
   LG_hom_stack,
-  target_parent = "P1",
-  other_parent = "P2",
-  convert_palindrome_markers = TRUE,
+  parent1 = "P1",
+  parent2 = "P2",
+  which_parent = 1,
   ploidy,
   ploidy2 = NULL,
+  convert_palindrome_markers = TRUE,
   pairing = "random",
   LG_number,
   LOD_threshold = 3,
@@ -67,17 +68,19 @@ Most probable dosage for a particular individual and marker combination, if \cod
 
 \item{LG_hom_stack}{A \code{data.frame} with markernames (\code{"SxN_Marker"}), linkage group (\code{"LG"}) and homologue (\code{"homologue"})}
 
-\item{target_parent}{A character string specifying the target parent.}
+\item{parent1}{A character string specifying name of parent1.}
 
-\item{other_parent}{A character string specifying the other parent.}
+\item{parent2}{A character string specifying the name of parent2.}
 
-\item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?}
+\item{which_parent}{Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively.}
 
 \item{ploidy}{Ploidy level of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
 
 \item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
 
-\item{pairing}{Type of pairing. Either \code{"random"} or \code{"preferential"}.}
+\item{convert_palindrome_markers}{Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?}
+
+\item{pairing}{Type of pairing. Either \code{"random"} or \code{"preferential"}. By default random pairing is assumed.}
 
 \item{LG_number}{Expected number of chromosomes (linkage groups).}
 

@@ -8,14 +8,15 @@ linkage(
   dosage_matrix,
   markertype1 = c(1, 0),
   markertype2 = NULL,
-  target_parent = "P1",
-  other_parent = "P2",
+  parent1 = "P1",
+  parent2 = "P2",
+  which_parent = 1,
+  ploidy,
+  ploidy2 = NULL,
   G2_test = FALSE,
   convert_palindrome_markers = TRUE,
   LOD_threshold = 0,
-  ploidy,
-  ploidy2 = NULL,
-  pairing = c("random", "preferential"),
+  pairing = "random",
   prefPars = c(0, 0),
   combinations_per_iter = NULL,
   iter_RAM = 500,
@@ -28,16 +29,24 @@ linkage(
 \arguments{
 \item{dosage_matrix}{An integer matrix with markers in rows and individuals in columns.}
 
-\item{markertype1}{A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
+\item{markertype1}{A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{which_parent} (see below), the second in the other parent.}
 
 \item{markertype2}{A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the function will calculate
 linkage within the markertype as specified by \code{markertype1}.
-The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.}
+The first element specifies the dosage in \code{which_parent} (see below), the second in the other parent.}
 
-\item{target_parent}{Character string specifying the target parent as provided in the column-names of dosage_matrix. Target in this context means that you wish
-to estimate linkage between markers with an allele that is polymorphic and segregating in this parent.}
+\item{parent1}{Character string specifying the name of parent1 as provided in the column-names of dosage_matrix. By default, "P1".}
 
-\item{other_parent}{Character string specifying the other parent as provided in the column-names of dosage_matrix}
+\item{parent2}{Character string specifying the other parent as provided in the column-names of dosage_matrix. By default, "P2".}
+
+\item{which_parent}{Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively. For example, if you wish to estimate linkage between markers with alleles that 
+are polymorphic (i.e. segregating) and originates from parent1, then which_parent = 1. A bi-parental marker is a marker such as a 1x1 marker, so having
+a segregating allele in both parents. For linkage estimation between pairs of bi-parental markers, the result does not depend on this argument. For linkage estimation between e.g. a
+1x0 and 1x1 marker, then which_parent should be 1. Similarly, to calculate linkage between 0x1 and 1x1 markers, which_parent should be 2.}
+
+\item{ploidy}{Integer. The ploidy of the parent 1. If parent2 has the same ploidy level, then also the ploidy level of parent 2.}
+
+\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent2.}
 
 \item{G2_test}{Apply a G2 test (LOD of independence) in addition to the LOD of linkage.}
 
@@ -45,11 +54,8 @@ to estimate linkage between markers with an allele that is polymorphic and segre
 
 \item{LOD_threshold}{Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.}
 
-\item{ploidy}{Integer. The ploidy of the target parent (parent 1). If parent 2 has the same ploidy level, then also the ploidy level of parent 2.}
-
-\item{ploidy2}{Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.}
-
-\item{pairing}{Type of pairing. \code{"random"} or \code{"preferential"}.}
+\item{pairing}{Type of chromosomal pairing behaviour during meiosis, either \code{"random"} or \code{"preferential"}. By default, random pairing is assumed (i.e. polysomic inheritance) is assumed. Note that this default does not affect
+linkage estimation in a diploid, where pairing is arguably not random.}
 
 \item{prefPars}{The estimates for preferential pairing parameters for the target and other parent, respectively, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 See the function \code{\link{test_prefpairing}} and the vignette for more details.}
@@ -93,8 +99,7 @@ Returns a data.frame with columns:
 data("screened_data3")
 SN_SN_P1 <- linkage(dosage_matrix = screened_data3,
                    markertype1 = c(1,0),
-                   target_parent = "P1",
-                   other_parent = "P2",
+                   which_parent = 1,
                    ploidy = 4,
                    pairing = "random",
                    ncores = 1

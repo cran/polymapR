@@ -376,14 +376,16 @@ assign_SN_SN <- function(linkage_df,
 #' @param linkage_df2 Optional. A \code{linkage_df} specifying linkages between 1.0 and cross-parent markers in the other parent.
 #' Use this argument if cross-parent markers are used (e.g. when using 1.1, 2.1, 1.2 and/or 2.2 markers).
 #' The use of multiple types of cross-parent markers is allowed.
-#' @param LOD_threshold Integer. The LOD threshold specifying at which LOD score a link between 1.0 and bridge (e.g. 2.0) markers is used for clustering homologues.
+#' @param LOD_threshold Integer. The LOD threshold specifying at which LOD score a link between 1.0 and bridging-type marker (e.g. 2.0) is used for clustering homologues.
 #' @param automatic_clustering Logical. Should clustering be executed without user input?
 #' @param LG_number Integer. Expected number of chromosomes (linkage groups)
 #' @param parentname Name of the parent. Used in the main title of the plot.
 #' @param log Character string specifying the log filename to which standard output should be written. If NULL log is send to stdout.
-#' @param min_links The minimum number of cross-parent linkages for a marker to be considered.
-#' Make this number higher if there are a lot of spurious links.
-#' @param min_bridges The minimum number of linking markers to link two homologues together. 
+#' @param min_links The minimum number of links between a bridge marker and a cluster for that bridge to be considered. In the case
+#' of a 2x0 marker for example, this argument means that the 2x0 marker must have at least \code{min_links} linkages of at least a LOD of \code{LOD_threshold} with
+#' markers from each of the clusters involved, to be considered a single bridging link. Make this number higher if there are a lot of spurious links.
+#' @param min_bridges The minimum number of bridge markers needed to assign two homologues together as coming from the same chromosomal linkage group.
+#' See argument \code{min_links} for further details.
 #' @param only_coupling Logical, should only coupling linkages be used in the process? By default \code{FALSE}
 #' @return A data.frame with markers classified by homologue and linkage group.
 #' @examples
@@ -405,18 +407,18 @@ assign_SN_SN <- function(linkage_df,
 #'                  parentname="P1")
 #' @export
 bridgeHomologues <- function(
-  cluster_stack,
-  cluster_stack2 = NULL,
-  linkage_df,
-  linkage_df2 = NULL,
-  LOD_threshold = 5,
-  automatic_clustering = TRUE,
-  LG_number,
-  parentname = "",
-  min_links = 1,
-  min_bridges = 1,
-  only_coupling = FALSE,
-  log = NULL
+    cluster_stack,
+    cluster_stack2 = NULL,
+    linkage_df,
+    linkage_df2 = NULL,
+    LOD_threshold = 5,
+    automatic_clustering = TRUE,
+    LG_number,
+    parentname = "",
+    min_links = 1,
+    min_bridges = 1,
+    only_coupling = FALSE,
+    log = NULL
 ) {
   if (is.null(log)) {
     log.conn <- stdout()
@@ -445,12 +447,6 @@ bridgeHomologues <- function(
     combs <- tapply(linkage_df$marker_a, linkage_df$marker_b, function(x) x)
     
     dupcombs <- t(sapply(combs, function(x) table(homvec[x])))
-    
-    # Possible issue with this part from GvG May 2020, seems can be removed without issue (not fully checked)
-    # for(i in seq(nrow(dupcombs))){
-    #   tmp <- dupcombs[i,]
-    #   dupcombs[i, -order(tmp, decreasing = T)[1:2]] <- 0
-    # }
     
     pc <- t(combn(levels(homvec), 2))
     class(pc) <- "integer"
@@ -670,8 +666,6 @@ bridgeHomologues <- function(
 #'@return A list with for each different segregation type (segtype) one item.
 #'The names of the items are the names of the segtypes.
 #'Each item is itself a list with components:
-# (alternatives for itemize: enumerate and describe,
-# see https://cran.r-project.org/web/packages/roxygen2/vignettes/formatting.html)
 #'\describe{
 #'\item{freq}{A vector of the ploidy+1 fractions of the dosages in the F1}
 #'\item{intratios}{An integer vector with the ratios as the simplest integers}
@@ -1148,7 +1142,7 @@ checkF1 <- function(input_type = "discrete",
     #function within checkF1
     # saf <- getOption("stringsAsFactors") # deprecated March 2023 in R-devel
     # options(stringsAsFactors = FALSE) # deprecated March 2023 in R-devel
-
+    
     #create the results data frame for this batch:
     mat <- matrix(
       integer((2+ploidyF1+2+length(parent1)+length(parent2)+length(ancestors)) *
@@ -2230,10 +2224,12 @@ cluster_per_LG <- function(LG,
 #' @param LOD_sequence A numeric vector. Specifying a sequence of LOD thresholds at which clustering is performed.
 #' @param independence_LOD Logical. Should the LOD of independence be used for clustering? (by default, \code{FALSE}.)
 #' @param LG_number Expected number of chromosomes (linkage groups)
-#' @param ploidy Ploidy level of the plant species
+#' @param ploidy Ploidy level of the parent for which clustering is to be performed
 #' @param parentname Name of parent
 #' @param plot_network Logical. Should a network be plotted. Recommended FALSE with large number of marker combinations.
-#' @param min_clust_size Integer. The minimum cluster size to be plotted. This does not delete clusters. All clusters are returned.
+#' @param min_clust_size Integer. The minimum cluster size to be returned. By default, a minimum cluster size of 1 is used, meaning all
+#' markers are returned. Setting this to a higher number can be useful for cleaning out mini-clusters that don't show strong linkage
+#' to the rest of the marker set.
 #' @param plot_clust_size Logical. Should exact cluster size be plotted as vertex labels?
 #' @param max_vertex_size Integer. The maximum vertex size. Only used if \code{plot_clust_size=FALSE}.
 #' @param min_vertex_size Integer. The minimum vertex size. Only used if \code{plot_clust_size=FALSE}.
@@ -2250,7 +2246,7 @@ cluster_SN_markers <- function(linkage_df,
                                LG_number,
                                ploidy,
                                parentname = "",
-                               plot_network = F,
+                               plot_network = FALSE,
                                min_clust_size = 1,
                                plot_clust_size = TRUE,
                                max_vertex_size = 5,
@@ -2551,6 +2547,7 @@ cluster_SN_markers <- function(linkage_df,
       )
     )
   }
+  message(paste(expected,"clusters were expected."))
   
   # Indicate whether all chromosomes / homologues are (potentially) separated
   if (ngroups < expected) {
@@ -3539,7 +3536,9 @@ createTetraOriginInput <- function(maplist,
 #' @param marker_assignment.2 A marker assignment matrix for parent 2 with markernames as rownames and at least containing the column \code{"Assigned_LG"}.
 #' @param parent1 character vector with names of the samples of parent 1
 #' @param parent2 character vector with names of the samples of parent 2
-#' @param marker_conversion_info One of the list elements generated by the function \code{\link{convert_marker_dosages}}. Required if \code{original_coding} is \code{TRUE}.
+#' @param marker_conversion_info One of the list elements (named 'marker_conversion_info') generated by the function \code{\link{convert_marker_dosages}} when the argument \code{marker_conversion_info}
+#' was set to \code{TRUE} (not the default, so a user will typically have to re-run this step first).
+#' Required if \code{original_coding} is \code{TRUE}.
 #' @param log Character string specifying the log filename to which standard output should be written. If \code{NULL} log is send to stdout.
 #' @param verbose Logical, by default \code{TRUE}. Should details of the phasing process be given?
 #' @examples
@@ -3624,6 +3623,16 @@ create_phased_maplist <- function(input_type = "discrete",
           ploidy - ALL_MT[palindromes[ALL_MT[palindromes,parent1] > ALL_MT[palindromes,parent2]],]
       
     }
+  } else{
+    ## ploidy != ploidy2
+    if(input_type == "discrete"){
+      
+      palindromes <- NA # there are no palindromes in a triploid
+      
+    } else{
+      stop("Phasing function not yet extended to triploids using probabilistic genotypes, please use discrete genotypes instead!")
+    }
+    
   }
   
   # Begin by separating the SxN and NxS linkages:
@@ -4008,12 +4017,13 @@ define_LG_structure <- function(cluster_list,
 #' If \code{NULL} all combinations are used for which there are rf functions.
 #' Dosages of markers should be in the same order as specified in the names of rf functions.
 #' E.g. if using 1.0_2.0 and 1.0_3.0 types use: \code{matrix(c(1,0,2,0,1,0,3,0), byrow = TRUE, ncol = 4)}
-#' @param target_parent Character string specifying the target parent (in out-crossing species, linkage analysis is performed per parent).
-#' @param other_parent Character string specifying the other parent.
+#' @param parent1 Character string specifying the identifier of parent 1, by default "P1"
+#' @param parent2 Character string specifying the identifier of parent 2, by default "P2"
+#' @param which_parent Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively. 
+#' @param ploidy Integer ploidy level of parent1, and also by default parent2. Argument \code{ploidy2} can be used if parental ploidies differ.
+#' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent2. 
 #' @param convert_palindrome_markers Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?
-#' @param ploidy Integer ploidy level of target parent, and also by default other parent. Argument \code{ploidy2} can be used if parental ploidies differ.
-#' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of the other (non-target) parent. 
-#' @param pairing Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}.
+#' @param pairing Type of pairing at meiosis, with options \code{"random"} or \code{"preferential"}. By default, random pairing is assumned.
 #' @param prefPars The estimates for preferential pairing parameters for parent 1 and 2, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 #' See the function \code{\link{test_prefpairing}} and the vignette for more details.
 #' @param LG_number Number of linkage groups (chromosomes).
@@ -4026,8 +4036,9 @@ define_LG_structure <- function(cluster_list,
 #' data("screened_data3", "marker_assignments_P1")
 #' linkages_list_P1<-finish_linkage_analysis(marker_assignment=marker_assignments_P1,
 #'                                           dosage_matrix=screened_data3,
-#'                                           target_parent="P1",
-#'                                           other_parent="P2",
+#'                                           parent1="P1",
+#'                                           parent2="P2",
+#'                                           which_parent=1,
 #'                                           convert_palindrome_markers=FALSE,
 #'                                           ploidy=4,
 #'                                           pairing="random",
@@ -4040,24 +4051,26 @@ finish_linkage_analysis <- function(input_type = "discrete",
                                     probgeno_df,
                                     chk,
                                     marker_combinations = NULL,
-                                    target_parent = "P1",
-                                    other_parent = "P2",
-                                    convert_palindrome_markers = TRUE,
+                                    parent1 = "P1",
+                                    parent2 = "P2",
+                                    which_parent = 1,
                                     ploidy,
                                     ploidy2 = NULL,
-                                    pairing = c("random", "preferential"),
+                                    convert_palindrome_markers = TRUE,
+                                    pairing = "random",
                                     prefPars = c(0,0),
                                     LG_number,
                                     verbose = TRUE,
                                     log = NULL,
                                     ...) {
   input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
+  pairing <- match.arg(pairing, choices = c("random","preferential"))
   
   if(input_type == "discrete"){
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     
-    if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
-      stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+    if(!parent1 %in% colnames(dosage_matrix) | !parent2 %in% colnames(dosage_matrix))
+      stop("Incorrect column name identifiers supplied for parent(s). Please check!")
     
   } else{
     probgeno_df <- test_probgeno_df(probgeno_df)
@@ -4075,19 +4088,28 @@ finish_linkage_analysis <- function(input_type = "discrete",
   if(!is.null(ploidy2)){
     
     if(ploidy2 == ploidy) stop("ploidy2 only needs to be specified if it differs from ploidy, otherwise leave as default (NULL).")
-    # if(ploidy2 > ploidy) stop("Currently in cross-ploidy mapping, parent1 has to have the higher ploidy level.")
-    # if(!target_parent %in% c("P1","P2")) stop("To use cross-ploidy functionality, please rename parent1 as P1 and parent2 as P2 (e.g. in colnames() of your dosage_matrix).")
-    
+      
     ploidy.F1 <- (ploidy + ploidy2)/2
+    
+    target.ploidy <- c(ploidy,ploidy2)[which_parent] #updated 02.12.2023
+    other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
     
     # if(ploidy2 == 2 & target_parent != "P1") {
     #   sn.ignore <- "_1.0_"
     #   dip.ignore <- "_2.0_"
     # }
     
-    if(ploidy < ploidy2) {
-      sn.ignore <- "_1.0_"
-      dip.ignore <- "_2.0_"
+    # if(ploidy < ploidy2) {
+    #   sn.ignore <- "_1.0_"
+    #   dip.ignore <- "_2.0_"
+    # }
+    
+    if(target.ploidy < other.ploidy) {
+      sn.ignore <- "_4_1.0_"
+      dip.ignore <- "_4_"
+    } else{
+      sn.ignore <- "_2_1.0_"
+      dip.ignore <- "_2_"
     }
     
   }
@@ -4108,7 +4130,13 @@ finish_linkage_analysis <- function(input_type = "discrete",
     
     marker_combinations <- do.call(rbind, strsplit(rfuns,
                                                    "[_.]"))
-    marker_combinations <- marker_combinations[, -1]
+    
+    if(ploidy.F1 != 3){
+      marker_combinations <- marker_combinations[,-1, drop = FALSE]
+    } else{
+      marker_combinations <- marker_combinations[,-c(1,2), drop = FALSE] #extra column in case of triploids
+    }
+    
     class(marker_combinations) <- "integer"
   }
   
@@ -4159,11 +4187,12 @@ finish_linkage_analysis <- function(input_type = "discrete",
       markers <- rownames(marker_assignment)[marker_assignment[,"Assigned_LG"] == lg]
       
       if(input_type == "discrete"){
-        r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,],
+        r_LOD_list[[paste0("LG", lg)]] <- linkage(dosage_matrix[markers,], 
                                                   markertype1 = mtype1,
                                                   markertype2 = mtype2,
-                                                  target_parent = target_parent,
-                                                  other_parent = other_parent,
+                                                  parent1 = parent1,
+                                                  parent2 = parent2,
+                                                  which_parent = which_parent,
                                                   convert_palindrome_markers = convert_palindrome_markers,
                                                   ploidy = ploidy,
                                                   ploidy2 = ploidy2,
@@ -4184,7 +4213,7 @@ finish_linkage_analysis <- function(input_type = "discrete",
                                                        pardose = pardose.lg,
                                                        markertype1 = mtype1,
                                                        markertype2 = mtype2,
-                                                       target_parent = target_parent,
+                                                       target_parent = c(parent1,parent2)[which_parent],
                                                        prefPars = prefPars,
                                                        verbose = F,
                                                        ...)
@@ -4396,12 +4425,13 @@ gp_overview <- function(probgeno_df,
 #' @param assigned_markertypes List of integer vectors of length 2. Specifying the markertypes in the same order as assigned_list.
 #' @param SN_functions A vector of function names to be used. If NULL all remaining linkage functions with SN markers are used.
 #' @param LG_hom_stack A \code{data.frame} with markernames (\code{"SxN_Marker"}), linkage group (\code{"LG"}) and homologue (\code{"homologue"})
-#' @param target_parent A character string specifying the target parent.
-#' @param other_parent A character string specifying the other parent.
-#' @param convert_palindrome_markers Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?
+#' @param parent1 A character string specifying name of parent1.
+#' @param parent2 A character string specifying the name of parent2.
+#' @param which_parent Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively. 
 #' @param ploidy Ploidy level of parent 1. If parent 2 has the same ploidy level, then also the ploidy level of parent 2.
 #' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.
-#' @param pairing Type of pairing. Either \code{"random"} or \code{"preferential"}.
+#' @param convert_palindrome_markers Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3?
+#' @param pairing Type of pairing. Either \code{"random"} or \code{"preferential"}. By default random pairing is assumed.
 #' @param LG_number Expected number of chromosomes (linkage groups).
 #' @param LOD_threshold LOD threshold at which a linkage is considered significant.
 #' @param write_intermediate_files Logical. Write intermediate linkage files to working directory?
@@ -4426,11 +4456,12 @@ homologue_lg_assignment <- function(input_type = "discrete",
                                     assigned_markertypes,
                                     SN_functions = NULL,
                                     LG_hom_stack,
-                                    target_parent = "P1",
-                                    other_parent = "P2",
-                                    convert_palindrome_markers = TRUE,
+                                    parent1 = "P1",
+                                    parent2 = "P2",
+                                    which_parent = 1,
                                     ploidy,
                                     ploidy2 = NULL,
+                                    convert_palindrome_markers = TRUE,
                                     pairing = "random",
                                     LG_number,
                                     LOD_threshold = 3,
@@ -4440,10 +4471,12 @@ homologue_lg_assignment <- function(input_type = "discrete",
   input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
   LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
   
+  if(!which_parent %in% 1:2) stop("which_parent must be either 1 or 2!")
+  
   if(input_type == "discrete"){
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
-    if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
-      stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+    if(!parent1 %in% colnames(dosage_matrix) | !parent2 %in% colnames(dosage_matrix))
+      stop("Incorrect column name identifiers supplied for parent(s). Please check!")
   } else{
     probgeno_df <- test_probgeno_df(probgeno_df)
     pardose <- assign_parental_dosage(chk = chk, 
@@ -4469,6 +4502,8 @@ homologue_lg_assignment <- function(input_type = "discrete",
   sn.grep1 <- "_1.0_"
   sn.grep2 <- "_1.0_1.0"
   ploidy.F1 <- ploidy
+  target.ploidy <- c(ploidy,ploidy2)[which_parent] #updated 02.12.2023
+  other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
   
   if(!is.null(ploidy2)){ # Currently only for triploids
     if(ploidy2 == ploidy) stop("ploidy2 only needs to be specified if it differs from ploidy, otherwise leave as default (NULL).")
@@ -4482,9 +4517,12 @@ homologue_lg_assignment <- function(input_type = "discrete",
     #   sn.grep2 <- "_0.1_0.1"
     # }
     
-    if(ploidy < ploidy2) {
-      sn.grep1 <- "_0.1_"
-      sn.grep2 <- "_0.1_0.1"
+    if(target.ploidy < other.ploidy) { #updated 02.12.2023, v.1.1.5
+      sn.grep1 <- "_2_1.0_"
+      sn.grep2 <- "_2_1.0_1.0"
+    } else{
+      sn.grep1 <- "_4_1.0_"
+      sn.grep2 <- "_4_1.0_1.0" 
     }
     
   }
@@ -4509,7 +4547,13 @@ homologue_lg_assignment <- function(input_type = "discrete",
   
   marker_combinations <-
     do.call(rbind, strsplit(SN_functions, "[_.]"))
-  marker_combinations <- marker_combinations[,-1, drop = FALSE]
+  
+  if(ploidy.F1 != 3){
+    marker_combinations <- marker_combinations[,-1, drop = FALSE]
+  } else{
+    marker_combinations <- marker_combinations[,-c(1,2), drop = FALSE] #extra column in case of triploids
+  }
+  
   class(marker_combinations) <- "integer"
   
   if (is.null(log)) {
@@ -4530,8 +4574,6 @@ homologue_lg_assignment <- function(input_type = "discrete",
       )
   }
   
-  target.ploidy <- ploidy
-  
   # if(!is.null(ploidy2) & target_parent == "P2") target.ploidy <- ploidy2
   
   for (i in seq(nrow(marker_combinations))) {
@@ -4551,12 +4593,14 @@ homologue_lg_assignment <- function(input_type = "discrete",
     mtype2 <- marker_combinations[i, 3:4]
     
     if(input_type == "discrete"){
+      
       linkage_df <- linkage(
         dosage_matrix = filt_dosdat,
         markertype1 = mtype1,
         markertype2 = mtype2,
-        target_parent = target_parent,
-        other_parent = other_parent,
+        parent1 = parent1,
+        parent2 = parent2,
+        which_parent = which_parent,
         convert_palindrome_markers = convert_palindrome_markers,
         LOD_threshold = 0,
         ploidy = ploidy,
@@ -4572,13 +4616,21 @@ homologue_lg_assignment <- function(input_type = "discrete",
         pardose = pardose,
         markertype1 = mtype1,
         markertype2 = mtype2,
-        target_parent = target_parent,
+        target_parent = c(parent1,parent2)[which_parent],
         LOD_threshold = 0,
         # ploidy = ploidy,
         # ploidy2 = ploidy2,
         verbose = FALSE,
         ...
       )
+    }
+    
+    if(which_parent == 1){
+      target_parent <- parent1
+      other_parent <- parent2
+    } else{
+      target_parent <- parent2
+      other_parent <- parent1
     }
     
     if (write_intermediate_files) {
@@ -4651,19 +4703,23 @@ homologue_lg_assignment <- function(input_type = "discrete",
 #' Calculate recombination frequency, LOD and phase
 #' @description \code{linkage} is used to calculate recombination frequency, LOD and phase within one type of marker or between two types of markers.
 #' @param dosage_matrix An integer matrix with markers in rows and individuals in columns.
-#' @param markertype1 A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.
+#' @param markertype1 A vector of length 2 specifying the first markertype to compare. The first element specifies the dosage in \code{which_parent} (see below), the second in the other parent.
 #' @param markertype2 A vector of length 2 specifying the first markertype to compare. This argument is optional. If not specified, the function will calculate
 #' linkage within the markertype as specified by \code{markertype1}.
-#' The first element specifies the dosage in \code{target_parent}, the second in \code{other_parent}.
-#' @param target_parent Character string specifying the target parent as provided in the column-names of dosage_matrix. Target in this context means that you wish
-#' to estimate linkage between markers with an allele that is polymorphic and segregating in this parent. 
-#' @param other_parent Character string specifying the other parent as provided in the column-names of dosage_matrix
+#' The first element specifies the dosage in \code{which_parent} (see below), the second in the other parent.
+#' @param parent1 Character string specifying the name of parent1 as provided in the column-names of dosage_matrix. By default, "P1".
+#' @param parent2 Character string specifying the other parent as provided in the column-names of dosage_matrix. By default, "P2".
+#' @param which_parent Integer, either 1 or 2, with default 1, where 1 or 2 refers to parent1 or parent2 respectively. For example, if you wish to estimate linkage between markers with alleles that 
+#' are polymorphic (i.e. segregating) and originates from parent1, then which_parent = 1. A bi-parental marker is a marker such as a 1x1 marker, so having
+#' a segregating allele in both parents. For linkage estimation between pairs of bi-parental markers, the result does not depend on this argument. For linkage estimation between e.g. a
+#' 1x0 and 1x1 marker, then which_parent should be 1. Similarly, to calculate linkage between 0x1 and 1x1 markers, which_parent should be 2. 
+#' @param ploidy Integer. The ploidy of the parent 1. If parent2 has the same ploidy level, then also the ploidy level of parent 2.
+#' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent2.
 #' @param G2_test Apply a G2 test (LOD of independence) in addition to the LOD of linkage.
 #' @param convert_palindrome_markers Logical. Should markers that behave the same for both parents be converted to a workable format for that parent? E.g.: should 3.1 markers be converted to 1.3? If unsure, set to TRUE.
 #' @param LOD_threshold Minimum LOD score of linkages to report. Recommended to use for large number (> millions) of marker comparisons in order to reduce memory usage.
-#' @param ploidy Integer. The ploidy of the target parent (parent 1). If parent 2 has the same ploidy level, then also the ploidy level of parent 2.
-#' @param ploidy2 Integer, by default \code{NULL}. If parental ploidies differ, use this to specify the ploidy of parent 2. Note that in cross-ploidy situations, ploidy2 must be smaller than ploidy.
-#' @param pairing Type of pairing. \code{"random"} or \code{"preferential"}.
+#' @param pairing Type of chromosomal pairing behaviour during meiosis, either \code{"random"} or \code{"preferential"}. By default, random pairing is assumed (i.e. polysomic inheritance) is assumed. Note that this default does not affect
+#' linkage estimation in a diploid, where pairing is arguably not random.
 #' @param prefPars The estimates for preferential pairing parameters for the target and other parent, respectively, in range 0 <= p < 2/3. By default this is c(0,0) (so, no preferential pairing).
 #' See the function \code{\link{test_prefpairing}} and the vignette for more details.
 #' @param combinations_per_iter Optional integer. Number of marker combinations per iteration.
@@ -4696,8 +4752,7 @@ homologue_lg_assignment <- function(input_type = "discrete",
 #' data("screened_data3")
 #' SN_SN_P1 <- linkage(dosage_matrix = screened_data3,
 #'                    markertype1 = c(1,0),
-#'                    target_parent = "P1",
-#'                    other_parent = "P2",
+#'                    which_parent = 1,
 #'                    ploidy = 4,
 #'                    pairing = "random",
 #'                    ncores = 1
@@ -4706,14 +4761,15 @@ homologue_lg_assignment <- function(input_type = "discrete",
 linkage <- function(dosage_matrix,
                     markertype1 = c(1,0),
                     markertype2 = NULL,
-                    target_parent = "P1",
-                    other_parent = "P2",
+                    parent1 = "P1",
+                    parent2 = "P2",
+                    which_parent = 1,
+                    ploidy,
+                    ploidy2 = NULL,
                     G2_test = FALSE,
                     convert_palindrome_markers = TRUE,
                     LOD_threshold = 0,
-                    ploidy,
-                    ploidy2 = NULL,
-                    pairing = c("random", "preferential"),
+                    pairing = "random",
                     prefPars = c(0, 0),
                     combinations_per_iter = NULL,
                     iter_RAM = 500,
@@ -4721,14 +4777,18 @@ linkage <- function(dosage_matrix,
                     verbose = TRUE,
                     full_output = FALSE,
                     log = NULL) {
+  
   time_start <- Sys.time()
   dosage_matrix <- test_dosage_matrix(dosage_matrix)
-  if(!target_parent %in% colnames(dosage_matrix) | !other_parent %in% colnames(dosage_matrix))
-    stop("Incorrect column name identifiers supplied for parents (target_parents and/or other_parent). Please check!")
+  
+  if(!which_parent %in% 1:2) stop("which_parent must be either 1 or 2!")
+  
+  if(!parent1 %in% colnames(dosage_matrix) | !parent2 %in% colnames(dosage_matrix))
+    stop("Incorrect column name identifiers supplied for parent(s). Please check!")
   
   if(identical(markertype1, markertype2)) markertype2 <- NULL
   
-  pairing <- match.arg(pairing)
+  pairing <- match.arg(pairing,choices = c("random", "preferential"))
   
   if (is.null(log)) {
     log.conn <- stdout()
@@ -4748,8 +4808,19 @@ linkage <- function(dosage_matrix,
   
   if(is.null(ploidy2)) ploidy2 <- ploidy
   prog_ploidy <- (ploidy + ploidy2)/2
+  target.ploidy <- c(ploidy,ploidy2)[which_parent] #updated 02.12.2023
+  other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
   
   if(!prog_ploidy %in% c(2,3,4,6)) stop(paste("F1 populations of ploidy",prog_ploidy,"are not currently catered for."))
+  
+  if(which_parent == 1){
+    target_parent <- parent1
+    other_parent <- parent2
+  } else{
+    target_parent <- parent2
+    other_parent <- parent1
+  }
+  
   
   # Below does conversion from 3.1 to 1.3 in tetraploids
   # for hexaploids there are two of these cases: 5.1 and 4.2
@@ -4767,16 +4838,19 @@ linkage <- function(dosage_matrix,
     }
   }
   
-  # Current workaround for odd ploidy populations:
-  # if(ploidy != ploidy2 & target_parent == "P2") {
-  #   target_parent <- "P1"
-  #   other_parent <- "P2"
-  # }
+  # read the table with segregation data
+  seg.fname <- paste0("seg_p", prog_ploidy, "_", pairing)
+  seg <- get(seg.fname)#,envir = getNamespace("polymapR"))
+  segpar <- seg[, c("dosage1", "dosage2")]
+  segoff <- seg[, 3:ncol(seg)]
+  segpos <- c(0:prog_ploidy)
   
-  if(ploidy < ploidy2) {
-    temp <- target_parent
-    target_parent <- other_parent
-    other_parent <- temp
+  ## For 3x populations:
+  if(prog_ploidy == 3){
+    if(target.ploidy < other.ploidy) {
+      segpar <- seg[, c("dosage2", "dosage1")] #reverse the parental scores, updated 02.12.2023
+      colnames(segpar) <- c("dosage1","dosage2")
+    }
   }
   
   # Based on whether we look at within marker combinations or between
@@ -4825,17 +4899,25 @@ linkage <- function(dosage_matrix,
                         colnames(dosage_matrix) == target_parent |
                           colnames(dosage_matrix) == other_parent
                       ), drop = FALSE]
+    
+    
+    dosage_data1 <-
+      dosage_matrix[dosage_matrix[, target_parent] == markertype1[1] &
+                      dosage_matrix[, other_parent] == markertype1[2],-which(
+                        colnames(dosage_matrix) == target_parent |
+                          colnames(dosage_matrix) == other_parent
+                      ), drop = FALSE]
+    # test_data2 <-
+    #   dosage_matrix[dosage_matrix[, target_parent] == markertype2[1] &
+    #                   dosage_matrix[, other_parent] == markertype2[2],, drop = FALSE]
+    # test_data1 <-
+    #   dosage_matrix[dosage_matrix[, target_parent] == markertype1[1] &
+    #                   dosage_matrix[, other_parent] == markertype1[2],, drop = FALSE]
+    # test_data2[1:10,1:10]
+    # test_data1[1:10,1:10]
+    
     n1 <- nrow(dosage_data1)
     n2 <- nrow(dosage_data2)
-    
-    testNULLorZero <- function(x, y = 1){
-      if(is.null(x) | is.null(y)){
-        return(TRUE)
-      } else if (x == 0 | y == 0) {
-        return(TRUE)
-      }
-      return(FALSE)
-    }
     
     if(testNULLorZero(n1,n2)){
       if(verbose){
@@ -4855,13 +4937,6 @@ linkage <- function(dosage_matrix,
   }
   
   dosage_data <- t(dosage_data)
-  
-  # read the table with segregation data
-  seg.fname <- paste0("seg_p", prog_ploidy, "_", pairing)
-  seg <- get(seg.fname)#,envir = getNamespace("polymapR"))
-  segpar <- seg[, c("dosage1", "dosage2")]
-  segoff <- seg[, 3:ncol(seg)]
-  segpos <- c(0:prog_ploidy)
   
   # get the expected offspring dosages
   offspring_dosage1 <-
@@ -4933,12 +5008,34 @@ linkage <- function(dosage_matrix,
     pairing_abbr <- "p"
   }
   
-  fname <- paste0(pairing_abbr,
-                  prog_ploidy,
-                  "_",
-                  paste0(markertype1, collapse = "."),
-                  "_",
-                  paste0(markertype2, collapse="."))
+  # fname <- paste0(pairing_abbr,
+  #                 prog_ploidy,
+  #                 "_",
+  #                 paste0(markertype1, collapse = "."),
+  #                 "_",
+  #                 paste0(markertype2, collapse="."))
+  
+  if(prog_ploidy == 3){ #currently triploids are the only cross-ploidy population catered for in polymapR
+    # which_ploidy <- c(ploidy,ploidy2)[which_parent]
+    
+    ## The fnames for triploids in r3_functions.R have been adapted to accommodate this update, 02.12.2023
+    fname <- paste0(pairing_abbr,
+                    prog_ploidy,
+                    "_",
+                    target.ploidy,
+                    "_",
+                    paste0(markertype1, collapse = "."),
+                    "_",
+                    paste0(markertype2, collapse="."))
+    
+  } else{
+    fname <- paste0(pairing_abbr,
+                    prog_ploidy,
+                    "_",
+                    paste0(markertype1, collapse = "."),
+                    "_",
+                    paste0(markertype2, collapse="."))
+  }
   
   rfun <- get(fname)#,envir = getNamespace("polymapR"))
   
@@ -5043,7 +5140,6 @@ linkage <- function(dosage_matrix,
           r_list$logL_mat[r_over_0.5] <- NA
           phase_num <- vector(length = nrow(r_list$logL_mat))
           for (i in seq(nrow(r_list$logL_mat))) {
-            # print(i)
             max_logL <- which.max(r_list$logL_mat[i,])
             if (length(max_logL) == 0) {
               if(length(which.min(r_list$r_mat[i,])) == 0){ #Error, no estimation possible
@@ -5655,7 +5751,6 @@ marker_data_summary <- function(dosage_matrix,
                               NAmark, "\n"), collapse = "\n\n"), file = log.conn)
   }
   
-  
   pairing <- match.arg(pairing)
   
   add_P_to_table <- function(table) {
@@ -5687,6 +5782,9 @@ marker_data_summary <- function(dosage_matrix,
   
   parental_info <- add_P_to_table(parental_info)
   
+  if(is.null(ploidy2)) ploidy2 <- ploidy
+  prog_ploidy <- (ploidy + ploidy2)/2
+  
   if(!shortform){
     
     #Checking offspring compatibility
@@ -5700,13 +5798,20 @@ marker_data_summary <- function(dosage_matrix,
     
     nr_offspring <- ncol(progeny)
     
-    seg.fname <- paste0("seg_p", ploidy, "_", pairing)
+    seg.fname <- paste0("seg_p", prog_ploidy, "_", pairing)
     seg <- get(seg.fname)#,envir=getNamespace("polymapR"))
     segpar <- seg[, c("dosage1", "dosage2")]
     colnames(segpar) <- c("pmax", "pmin")
+    
+    # ## For 3x populations:
+    # if(ploidy < ploidy2) {
+    #     # segpar <- seg[, c("dosage2", "dosage1")] #reverse the parental scores, updated 05.12.2023
+    #   colnames(segpar) <- c("pmin", "pmax")
+    #   }
+    
     segoff <- seg[, 3:ncol(seg)]
     segoff <- segoff > 0
-    segpos <- c(0:ploidy)
+    segpos <- c(0:prog_ploidy)
     
     lu_min_max <- apply(segoff, 1, function(x) {
       a <- segpos[x]
@@ -5996,9 +6101,6 @@ overviewSNlinks <- function(linkage_df,
   # all plots have the same height width ratio as "Plots" tab:
   numCols <- ceiling(sqrt(nrow(homCombs) + 1))
   
-  # save default par
-  # default.mar <- par("mar") #deprecated..
-  
   ## Re-set par settings on exit (thanks to Gregor, CRAN)
   oldpar <- par(no.readonly = TRUE)   
   on.exit(par(oldpar))  
@@ -6028,10 +6130,6 @@ overviewSNlinks <- function(linkage_df,
       ymax = ymax
     ) #All repulsion. Don't join
   }
-  
-  # set back layout and graphical parameters - deprecated 15-12-2020
-  # layout(matrix(1))
-  # par(mar = default.mar, mfrow=c(1,1))
   
   if (!is.null(log)) {
     matc <- match.call()
@@ -6269,7 +6367,7 @@ phase_SN_diploid <- function(linkage_df,
       rep.clust <- Mode(chm.clust[chm.clust$marker %in% replinks.temp,"cluster"]) #polymapR:::Mode
       
       out <- setdiff(unique(chm.clust$cluster),rep.clust)
-        
+      
       if(length(out) == 0){ #we have only 1 other phase, so merker is in repulsion to all markers on that chromosome
         ## This poses a bit of a difficulty, as we need to create a new cluster number (which means a new factor level in groups$cluster also!). 
         ## Use a random number generator as a work-around to make a unique new cluster number:
@@ -6283,9 +6381,9 @@ phase_SN_diploid <- function(linkage_df,
         groups <- rbind(groups,data.frame("marker" = merker,"cluster" = out))
       }
       # else if(length(out) > 1){ #not possible to simply assign the marker to a single cluster, so: out <- NA}
-
+      
     }
-  
+    
   } else{
     write(paste("Complete phase assignment possible using only coupling information at LOD", LOD_chm),log.conn)
   }
@@ -6382,76 +6480,6 @@ plot_hom_vs_LG <- function(map_df,
 }
 
 
-#' Plot r versus LOD grouped by phase
-#' @description \code{plot_linkage_df} plots r versus LOD, colour separated for different phases.
-#' @param linkage_df A linkage data.frame as output of \code{\link{linkage}}.
-#' @param r_max Maximum r value to plot
-#' @param stepsize Size of window in recombination frequency to generate mean LOD score. Larger values will reduce plot density.
-#' @param add_legend Logical, should a legend be added to the plot?
-#' @param \dots Arguments passed to base plot function
-#' @examples
-#' data("SN_SN_P1")
-#' plot_linkage_df(SN_SN_P1)
-#' @export
-plot_linkage_df <- function(linkage_df,
-                            r_max = 0.5,
-                            stepsize = 0.001,
-                            add_legend = TRUE,
-                            ...){
-  
-  all_phases <- levels(as.factor(linkage_df$phase))
-  
-  ## Assume there are at most 9 phasings..
-  colours <-
-    c(
-      "limegreen",
-      "red3",
-      "darkgoldenrod2",
-      "darkorchid4",
-      "dodgerblue2",
-      "gray25",
-      "darkmagenta",
-      "darkorange1",
-      "cyan"
-    )
-  
-  ## There can be up to 9 phases with DxD + DxD pairs
-  linkage_df <- linkage_df[linkage_df[,"r"] <= r_max,]
-  
-  with(linkage_df,
-       plot(
-         NULL,
-         xlim = c(0, 0.5),
-         ylim = c(0, max(LOD[complete.cases(LOD)])),
-         xlab = "r",
-         ylab = "LOD",
-         ...
-       ))
-  
-  
-  for (p in 1:length(all_phases)) {
-    phase_level <- as.character(all_phases[p])
-    
-    temp.df <- linkage_df[linkage_df$phase == phase_level & complete.cases(linkage_df$LOD),]
-    
-    rseq <- seq(-0.01,0.51,stepsize)
-    bins <- findInterval(temp.df$r,rseq)
-    
-    LOD.means <- tapply(temp.df$LOD,bins,mean)
-    
-    points(rseq[as.numeric(names(LOD.means))], LOD.means, 
-           col = colours[p],...)
-    
-  }
-  
-  if(add_legend) legend("topright",
-                        col = colours[1:length(all_phases)],
-                        pch = 1,
-                        as.character(all_phases),
-                        cex=0.8)
-  
-} #plot_linkage_df 
-
 
 #' Plot linkage maps
 #' @description Makes a simple plot of a list of generated linkage maps
@@ -6468,9 +6496,10 @@ plot_linkage_df <- function(linkage_df,
 #' @param parent1 Character string specifying the first (usually maternal) parentname.
 #' @param parent2 Character string specifying the second (usually paternal) parentname.
 #' @param legend Logical. Should a legend be drawn?
-#' @param legend.x Optional. The x value of the coordinates of the legend.
-#' @param legend.y Optional. The y value of the coordinates of the legend.
 #' @param \dots Arguments passed to \code{\link{plot}}
+#' @param legend.args Optional extra arguments to pass to \code{\link{legend}}, by default a list with x = 1 and y = 120 (position of the legend). 
+#' Additional arguments should be passed using name = value, i.e. as a named list. Note that arguments \code{lty} (= 1) and \code{lwd} (= 2) have
+#' already been used internally (as well as \code{legend} and \code{col}), so cannot be re-specified without causing an error.
 #' @examples
 #' data("maplist_P1")
 #' plot_map(maplist = maplist_P1, colname_in_mark = "nnfit", bg_col = "white",
@@ -6494,9 +6523,8 @@ plot_map <- function(maplist,
                      parent1 = "P1",
                      parent2 = "P2",
                      legend = FALSE,
-                     legend.x = 1,
-                     legend.y = 120,
-                     ...) {
+                     ...,
+                     legend.args = list(x = 1, y = 120)) {
   if(!is.null(dosage_matrix)) dosage_matrix <- test_dosage_matrix(dosage_matrix)
   
   if(color_by_type & is.null(dosage_matrix)) stop("If color_by_type = TRUE, dosage_matrix should be specified")
@@ -6617,10 +6645,9 @@ plot_map <- function(maplist,
   
   if(legend) {
     if(!color_by_type) stop("Doesn't make sense to generate legend while color_by_type = FALSE")
-    # par(xpd=NA) #Allow legend to be outside the plot
-    legend(legend.x, legend.y, legend = levels(types), col = discrete_cols,#ncol = length(levels(types)),
-           lty = 1, lwd =2)
-    # par(xpd=FALSE)
+    do.call("legend", c(list(legend = levels(types), 
+                             col = discrete_cols,
+                             lty = 1, lwd =2), legend.args))
   }
 }
 
@@ -6711,6 +6738,10 @@ plot_phased_maplist <- function(phased.maplist,
 #' @param plot_main A character string specifying the main title
 #' @param chm Integer specifying chromosome
 #' @param r_max Maximum r value to plot
+#' @param tidyplot If \code{TRUE} (by default), an attempt is made to reduce the plot density using hexagonal binning from the \code{ggplot2} package. 
+#' This is recommended for large datasets, where the number of pairwise estimates becomes high.
+#' @param nbins The number of bins in each direction, passed to ggplot2::geom_hex. Only used if \code{tidyplot = TRUE}. Increasing this number
+#' can lead to slower but more accurate plotting.
 #' @examples
 #' data("SN_SN_P1")
 #' r_LOD_plot(SN_SN_P1)
@@ -6718,10 +6749,12 @@ plot_phased_maplist <- function(phased.maplist,
 r_LOD_plot <- function(linkage_df,
                        plot_main = "",
                        chm = NA,
-                       r_max = 0.5) {
+                       r_max = 0.5,
+                       tidyplot = TRUE,
+                       nbins = 200) {
   all_phases <- levels(as.factor(linkage_df$phase))
   
-  ## Assume there are at most 6 phasings..
+  ## There can be up to 9 phases with DxD + DxD pairs in a tetraploid.. can be even more in 6x, but not likely all needed.
   colours <-
     c(
       "limegreen",
@@ -6734,8 +6767,6 @@ r_LOD_plot <- function(linkage_df,
       "darkorange1",
       "cyan"
     )
-  ## There can be up to 9 phases with DxD + DxD pairs
-  
   
   if (!is.na(chm)) {
     plot_title <- paste(plot_main, "   -    chm", chm)
@@ -6743,29 +6774,53 @@ r_LOD_plot <- function(linkage_df,
     plot_title <- plot_main
   }
   linkage_df <- linkage_df[linkage_df[,"r"]<=r_max,]
+  linkage_df <- linkage_df[complete.cases(linkage_df$LOD),]
   
-  with(linkage_df,
-       plot(
-         NULL,
-         xlim = c(0, 0.5),
-         ylim = c(0, max(LOD[complete.cases(LOD)])),
-         xlab = "r",
-         ylab = "LOD",
-         main = plot_title
-       ))
-  for (p in 1:length(all_phases)) {
-    phase_level <- as.character(all_phases[p])
-    phase_col <- colours[p]
+  ## Work-around to pass CRAN check NOTE (update v.1.1.5):
+  # Undefined global functions or variables:
+  #   LOD phase r
+  LOD <- phase <- r <- NULL #I hate having to hack CRAN checks..
+  
+  if(!tidyplot){
+    with(linkage_df,
+         plot(
+           NULL,
+           xlim = c(0, 0.5),
+           ylim = c(0, max(LOD)),
+           xlab = "r",
+           ylab = "LOD",
+           main = plot_title
+         ))
+    for (p in 1:length(all_phases)) {
+      phase_level <- as.character(all_phases[p])
+      phase_col <- colours[p]
+      
+      temp_data <- linkage_df[linkage_df$phase == phase_level,]
+      
+      with(temp_data,
+           points(r, LOD, col = phase_col))
+    }
     
-    temp_data <- linkage_df[linkage_df$phase == phase_level,]
+    legend("topright",
+           col = colours[1:length(all_phases)],
+           pch = 1,
+           as.character(all_phases))
+  } else{
     
-    with(temp_data[complete.cases(temp_data$LOD),],
-         points(r, LOD, col = phase_col))
+    p <- ggplot2::ggplot(data = linkage_df, mapping = ggplot2::aes(x = r, y = LOD, fill = phase))
+    q <- p + ggplot2::geom_hex(stat = "binhex", bins = nbins) +
+      ggplot2::scale_fill_manual(values = colours[1:length(all_phases)]) +
+      ggplot2::labs(title = plot_title, x = "r", y = "LOD")
+    
+    ggplot2::theme_set(ggplot2::theme_bw())
+    ggplot2::theme_update(text = ggplot2::element_text(size=12),
+                          panel.grid.major = ggplot2::element_blank(),
+                          panel.grid.minor = ggplot2::element_blank(),
+                          strip.background = ggplot2::element_blank(),
+                          legend.position = c(0.85,0.85) #these may need to be adjusted.
+    )
+    print(q)
   }
-  legend("topright",
-         col = colours[1:length(all_phases)],
-         pch = 1,
-         as.character(all_phases))
   
 }
 
@@ -6786,7 +6841,7 @@ r_LOD_plot <- function(linkage_df,
 screen_for_duplicate_individuals <-
   function(dosage_matrix,
            cutoff = NULL,
-           plot_cor = T,
+           plot_cor = TRUE,
            log = NULL) {
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     cor.dosage_matrix <-
@@ -6858,8 +6913,8 @@ screen_for_duplicate_individuals <-
     }
     
     combsAboveCutoff <-
-      which(cor.dosage_matrix > cutoff, arr.ind = T)
-    nw <- igraph::graph.data.frame(combsAboveCutoff, directed = F)
+      which(cor.dosage_matrix > cutoff, arr.ind = TRUE)
+    nw <- igraph::graph.data.frame(combsAboveCutoff, directed = FALSE)
     gcl_nw <- igraph::groups(igraph::clusters(nw))
     
     if(length(unique(unlist(gcl_nw))) >= ncol(dosage_matrix) - 2) stop("At this threshold, whole population would be merged!")
@@ -6914,16 +6969,6 @@ screen_for_duplicate_individuals <-
     
     if (!is.null(log))
       close(log.conn)
-    
-    # if (!is.null(saveCOV)){
-    #   number <- length(corvec)
-    #   variation <- var(corvec)
-    #   rangec <- paste0(round(range(corvec),digits = 2), collapse = "_")
-    #   CovFile <- data.frame("Number" = number,
-    #                         "Variation" = variation,
-    #                         "Range" = rangec)
-    #   write.csv(CovFile, paste0(saveCOV,".csv"))
-    # }
     
     return(dosage_matrix)
   } #screen_for_duplicate_individuals
@@ -7412,7 +7457,7 @@ SNSN_LOD_deviations <- function(linkage_df,
   devs[is.na(devs)] <- 0
   
   if(plot_expected){
-    r_LOD_plot(linkage_df)
+    plot_linkage_df(linkage_df = linkage_df)
     s<-seq(0,0.5,0.01)
     
     if(phase=="coupling"){

@@ -4,7 +4,14 @@
 \alias{r_LOD_plot}
 \title{Plot r versus LOD}
 \usage{
-r_LOD_plot(linkage_df, plot_main = "", chm = NA, r_max = 0.5)
+r_LOD_plot(
+  linkage_df,
+  plot_main = "",
+  chm = NA,
+  r_max = 0.5,
+  tidyplot = TRUE,
+  nbins = 200
+)
 }
 \arguments{
 \item{linkage_df}{A linkage data.frame as output of \code{\link{linkage}}.}
@@ -14,6 +21,12 @@ r_LOD_plot(linkage_df, plot_main = "", chm = NA, r_max = 0.5)
 \item{chm}{Integer specifying chromosome}
 
 \item{r_max}{Maximum r value to plot}
+
+\item{tidyplot}{If \code{TRUE} (by default), an attempt is made to reduce the plot density using hexagonal binning from the \code{ggplot2} package. 
+This is recommended for large datasets, where the number of pairwise estimates becomes high.}
+
+\item{nbins}{The number of bins in each direction, passed to ggplot2::geom_hex. Only used if \code{tidyplot = TRUE}. Increasing this number
+can lead to slower but more accurate plotting.}
 }
 \description{
 \code{r_LOD_plot} plots r versus LOD, colour separated for different phases.

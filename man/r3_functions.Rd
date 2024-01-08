@@ -2,19 +2,19 @@
 % Please edit documentation in R/r3_functions.R
 \name{r3_functions}
 \alias{r3_functions}
-\alias{r3_0.1_0.1}
-\alias{r3_0.1_1.1}
-\alias{r3_0.1_2.1}
-\alias{r3_2.1_2.1}
-\title{Calculate recombination frequency, LOD and log-likelihood from frequency tables in a random pairing triploid from a tetraploid x diploid cross.}
+\alias{r3_2_1.0_1.0}
+\alias{r3_2_1.0_1.1}
+\alias{r3_2_1.0_1.2}
+\alias{r3_2_1.2_1.2}
+\title{Calculate recombination frequency, LOD and log-likelihood from frequency tables in a random pairing triploid from a 4x2 or 2x4 cross.}
 \usage{
-r3_0.1_0.1(x, ncores = 1)
+r3_2_1.0_1.0(x, ncores = 1)
 
-r3_0.1_1.1(x, ncores = 1)
+r3_2_1.0_1.1(x, ncores = 1)
 
-r3_0.1_2.1(x, ncores = 1)
+r3_2_1.0_1.2(x, ncores = 1)
 
-r3_2.1_2.1(x, ncores = 1)
+r3_2_1.2_1.2(x, ncores = 1)
 }
 \arguments{
 \item{x}{A frequency table of the different classes of dosages in the progeny. The column names start with \code{"n_"}. Followed by the dosage of the first marker and then of the second.}

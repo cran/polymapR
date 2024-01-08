@@ -11,7 +11,7 @@ cluster_SN_markers(
   LG_number,
   ploidy,
   parentname = "",
-  plot_network = F,
+  plot_network = FALSE,
   min_clust_size = 1,
   plot_clust_size = TRUE,
   max_vertex_size = 5,
@@ -29,13 +29,15 @@ cluster_SN_markers(
 
 \item{LG_number}{Expected number of chromosomes (linkage groups)}
 
-\item{ploidy}{Ploidy level of the plant species}
+\item{ploidy}{Ploidy level of the parent for which clustering is to be performed}
 
 \item{parentname}{Name of parent}
 
 \item{plot_network}{Logical. Should a network be plotted. Recommended FALSE with large number of marker combinations.}
 
-\item{min_clust_size}{Integer. The minimum cluster size to be plotted. This does not delete clusters. All clusters are returned.}
+\item{min_clust_size}{Integer. The minimum cluster size to be returned. By default, a minimum cluster size of 1 is used, meaning all
+markers are returned. Setting this to a higher number can be useful for cleaning out mini-clusters that don't show strong linkage
+to the rest of the marker set.}
 
 \item{plot_clust_size}{Logical. Should exact cluster size be plotted as vertex labels?}
 

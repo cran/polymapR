@@ -7,7 +7,7 @@
 screen_for_duplicate_individuals(
   dosage_matrix,
   cutoff = NULL,
-  plot_cor = T,
+  plot_cor = TRUE,
   log = NULL
 )
 }

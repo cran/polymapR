@@ -7,7 +7,22 @@
 
 ## ---- echo = FALSE------------------------------------------------------------
 library(polymapR)
-load("genoprobsdata.RData")
+data("gp_vignette_data")
+individuals <- gp_vignette_data$individuals
+parent1 <- gp_vignette_data$parent1
+parent2 <- gp_vignette_data$parent2
+geno.sub <- gp_vignette_data$geno.sub
+chk1.sub <- gp_vignette_data$chk1.sub
+pardose.sub <- gp_vignette_data$pardose.sub
+maxP.chk <- gp_vignette_data$maxP.chk
+SN_SN_P1.sub <- gp_vignette_data$SN_SN_P1.sub
+P1_homologues <- gp_vignette_data$P1_homologues
+P2_homologues <- gp_vignette_data$P2_homologues
+LGHomDf_P1 <- gp_vignette_data$LGHomDf_P1
+LGHomDf_P2 <- gp_vignette_data$LGHomDf_P2 
+LGHomDf_P1a <- gp_vignette_data$LGHomDf_P1a
+P1_SxS_Assigned <- gp_vignette_data$P1_SxS_Assigned
+P2_SxS_Assigned <- gp_vignette_data$P2_SxS_Assigned
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  knitr::kable(head(geno))
@@ -81,7 +96,7 @@ knitr::include_graphics("figures/maxPdist.png")
 knitr::include_graphics("figures/dup_indivs.png")
 
 ## ---- echo = FALSE------------------------------------------------------------
- write("\nNo duplicates found\n",stdout())
+write("\nNo duplicates found\n",stdout())
 
 ## -----------------------------------------------------------------------------
 nc <- parallel::detectCores() - 2
@@ -235,8 +250,8 @@ head(LGHomDf_P1a)
 
 ## -----------------------------------------------------------------------------
 LGHomDf_P2c <- consensus_LG_names(modify_LG = LGHomDf_P2, 
-                                 template_SxS = P1_SxS_Assigned, 
-                                 modify_SxS = P2_SxS_Assigned)
+                                  template_SxS = P1_SxS_Assigned, 
+                                  modify_SxS = P2_SxS_Assigned)
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  save(LGHomDf_P1a,LGHomDf_P2c, file = "LGHomDf_stacks.Rdata") #for example..

@@ -1,7 +1,7 @@
 ---
 title: "Using genotype probabilities in polymapR"
 author: "Peter M. Bourke, Yanlin Liao"
-date: "10-11-2021"
+date: "08-01-2024"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using genotype probabilities in polymapR}
@@ -86,7 +86,22 @@ geno <- read.csv("fitPoly_4x_output_2343_SNPs.csv")
 ```
 ```{r, echo = FALSE}
 library(polymapR)
-load("genoprobsdata.RData")
+data("gp_vignette_data")
+individuals <- gp_vignette_data$individuals
+parent1 <- gp_vignette_data$parent1
+parent2 <- gp_vignette_data$parent2
+geno.sub <- gp_vignette_data$geno.sub
+chk1.sub <- gp_vignette_data$chk1.sub
+pardose.sub <- gp_vignette_data$pardose.sub
+maxP.chk <- gp_vignette_data$maxP.chk
+SN_SN_P1.sub <- gp_vignette_data$SN_SN_P1.sub
+P1_homologues <- gp_vignette_data$P1_homologues
+P2_homologues <- gp_vignette_data$P2_homologues
+LGHomDf_P1 <- gp_vignette_data$LGHomDf_P1
+LGHomDf_P2 <- gp_vignette_data$LGHomDf_P2 
+LGHomDf_P1a <- gp_vignette_data$LGHomDf_P1a
+P1_SxS_Assigned <- gp_vignette_data$P1_SxS_Assigned
+P2_SxS_Assigned <- gp_vignette_data$P2_SxS_Assigned
 ```
 
 Have a look at the layout of the data, as this is generally the format that is expected for probabilistic genotypes:
@@ -202,7 +217,7 @@ geno2 <- screen_for_duplicate_individuals.gp(probgeno_df = geno1,
 knitr::include_graphics("figures/dup_indivs.png")
 ```
 ```{r, echo = FALSE}
- write("\nNo duplicates found\n",stdout())
+write("\nNo duplicates found\n",stdout())
 ```
 
 ### 4.4. Screen for duplicate markers
@@ -439,8 +454,8 @@ We can now directly compare the assignments in both parents to get a "consensus"
 
 ```{r}
 LGHomDf_P2c <- consensus_LG_names(modify_LG = LGHomDf_P2, 
-                                 template_SxS = P1_SxS_Assigned, 
-                                 modify_SxS = P2_SxS_Assigned)
+                                  template_SxS = P1_SxS_Assigned, 
+                                  modify_SxS = P2_SxS_Assigned)
 ```
 
 Overall, looking at the diagonal in the lower table (these are the number of 1x1 markers that have been assigned to this linkage group in both parents), it is clear which linkage groups correspond across parents. 

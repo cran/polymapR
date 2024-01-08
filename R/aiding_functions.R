@@ -2267,6 +2267,75 @@ Mode <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 } #Mode
 
+
+#' Plot r versus LOD grouped by phase
+#' @description \code{plot_linkage_df} plots r versus LOD, colour separated for different phases.
+#' @param linkage_df A linkage data.frame as output of \code{\link{linkage}}.
+#' @param r_max Maximum r value to plot
+#' @param stepsize Size of window in recombination frequency to generate mean LOD score. Larger values will reduce plot density.
+#' @param add_legend Logical, should a legend be added to the plot?
+#' @param \dots Arguments passed to base plot function
+#' @noRd
+plot_linkage_df <- function(linkage_df,
+                            r_max = 0.5,
+                            stepsize = 0.001,
+                            add_legend = TRUE,
+                            ...){
+  
+  all_phases <- levels(as.factor(linkage_df$phase))
+  
+  ## Assume there are at most 9 phasings..
+  colours <-
+    c(
+      "limegreen",
+      "red3",
+      "darkgoldenrod2",
+      "darkorchid4",
+      "dodgerblue2",
+      "gray25",
+      "darkmagenta",
+      "darkorange1",
+      "cyan"
+    )
+  
+  ## There can be up to 9 phases with DxD + DxD pairs
+  linkage_df <- linkage_df[linkage_df[,"r"] <= r_max,]
+  
+  with(linkage_df,
+       plot(
+         NULL,
+         xlim = c(0, 0.5),
+         ylim = c(0, max(LOD[complete.cases(LOD)])),
+         xlab = "r",
+         ylab = "LOD",
+         ...
+       ))
+  
+  
+  for (p in 1:length(all_phases)) {
+    phase_level <- as.character(all_phases[p])
+    
+    temp.df <- linkage_df[linkage_df$phase == phase_level & complete.cases(linkage_df$LOD),]
+    
+    rseq <- seq(-0.01,0.51,stepsize)
+    bins <- findInterval(temp.df$r,rseq)
+    
+    LOD.means <- tapply(temp.df$LOD,bins,mean)
+    
+    points(rseq[as.numeric(names(LOD.means))], LOD.means, 
+           col = colours[p],...)
+    
+  }
+  
+  if(add_legend) legend("topright",
+                        col = colours[1:length(all_phases)],
+                        pch = 1,
+                        as.character(all_phases),
+                        cex=0.8)
+  
+} #plot_linkage_df 
+
+
 #' Plot links between 1.0 markers
 #' @description Make a plot with recombination frequency versus LOD score.
 #' @param linkage_df A linkage data.frame.
@@ -2293,17 +2362,9 @@ plot_SNlinks <- function(linkage_df,LG_hom_stack,
   
   if(nrow(plotdata) > 0){
     
-    plot_linkage_df(linkage_df = plotdata, #there was droplevels() here..removed July 2020
-                    main=paste0("LG",LG," h",h1," & h",h2), 
-                    add_legend = F)
+    r_LOD_plot(linkage_df = plotdata, 
+                    plot_main=paste0("LG",LG," h",h1," & h",h2))
     
-    # plot(NULL,xlab="r",ylab="LOD",
-    #      xlim=c(0,0.5),ylim=c(0,ymax),
-    #      main=paste0("LG",LG," h",h1," & h",h2))
-    # with(plotdata[plotdata$phase=="coupling",],
-    #      points(r,LOD,pch=19,col="limegreen"))
-    # with(plotdata[plotdata$phase=="repulsion",],
-    #      points(r,LOD,pch=19,col="dodgerblue"))
   } else{
     warning(paste("No SxN linkage found between h",h1," and h",h2," (LOD too low?)",sep=""))
   }
@@ -2578,6 +2639,18 @@ test_linkage_df <- function(linkage_df){
   return(linkage_df)
 } #test_linkage_df
 
+#' Internal function used in linkage function
+#' @param x A dosage score to test
+#' @param y A dosage score to test
+#' @noRd
+testNULLorZero <- function(x, y = 1){
+  if(is.null(x) | is.null(y)){
+    return(TRUE)
+  } else if (x == 0 | y == 0) {
+    return(TRUE)
+  }
+  return(FALSE)
+}
 
 
 #' Error and warning handling for probgeno_df data-frame of probabilistic genotypes (scores)
@@ -2648,7 +2721,7 @@ write.logheader <- function(matc, log){
   if(mod=="w") write(c("<style type=\"text/css\">.table {width: 40%;}</style>",
                        "## polymapR log file",
                        "This file is written in [markdown](https://en.wikipedia.org/wiki/Markdown).",
-                       "Use knitr or [Markable](https://markable.in) to export it as a nicely formatted html or word file."),
+                       "Use knitr to export it as a nicely formatted html or word file."),
                      log.conn)
   close(log.conn)
   mod <- "a"

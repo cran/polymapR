@@ -18,9 +18,8 @@ plot_map(
   parent1 = "P1",
   parent2 = "P2",
   legend = FALSE,
-  legend.x = 1,
-  legend.y = 120,
-  ...
+  ...,
+  legend.args = list(x = 1, y = 120)
 )
 }
 \arguments{
@@ -49,11 +48,11 @@ limits in cM from and to which the plotted chromosomes should be highlighted.}
 
 \item{legend}{Logical. Should a legend be drawn?}
 
-\item{legend.x}{Optional. The x value of the coordinates of the legend.}
-
-\item{legend.y}{Optional. The y value of the coordinates of the legend.}
-
 \item{\dots}{Arguments passed to \code{\link{plot}}}
+
+\item{legend.args}{Optional extra arguments to pass to \code{\link{legend}}, by default a list with x = 1 and y = 120 (position of the legend). 
+Additional arguments should be passed using name = value, i.e. as a named list. Note that arguments \code{lty} (= 1) and \code{lwd} (= 2) have
+already been used internally (as well as \code{legend} and \code{col}), so cannot be re-specified without causing an error.}
 }
 \description{
 Makes a simple plot of a list of generated linkage maps

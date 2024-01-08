@@ -33,7 +33,7 @@ Use this argument if cross-parent markers are used (e.g. when using 1.1 markers)
 Use this argument if cross-parent markers are used (e.g. when using 1.1, 2.1, 1.2 and/or 2.2 markers).
 The use of multiple types of cross-parent markers is allowed.}
 
-\item{LOD_threshold}{Integer. The LOD threshold specifying at which LOD score a link between 1.0 and bridge (e.g. 2.0) markers is used for clustering homologues.}
+\item{LOD_threshold}{Integer. The LOD threshold specifying at which LOD score a link between 1.0 and bridging-type marker (e.g. 2.0) is used for clustering homologues.}
 
 \item{automatic_clustering}{Logical. Should clustering be executed without user input?}
 
@@ -41,10 +41,12 @@ The use of multiple types of cross-parent markers is allowed.}
 
 \item{parentname}{Name of the parent. Used in the main title of the plot.}
 
-\item{min_links}{The minimum number of cross-parent linkages for a marker to be considered.
-Make this number higher if there are a lot of spurious links.}
+\item{min_links}{The minimum number of links between a bridge marker and a cluster for that bridge to be considered. In the case
+of a 2x0 marker for example, this argument means that the 2x0 marker must have at least \code{min_links} linkages of at least a LOD of \code{LOD_threshold} with
+markers from each of the clusters involved, to be considered a single bridging link. Make this number higher if there are a lot of spurious links.}
 
-\item{min_bridges}{The minimum number of linking markers to link two homologues together.}
+\item{min_bridges}{The minimum number of bridge markers needed to assign two homologues together as coming from the same chromosomal linkage group.
+See argument \code{min_links} for further details.}
 
 \item{only_coupling}{Logical, should only coupling linkages be used in the process? By default \code{FALSE}}
 

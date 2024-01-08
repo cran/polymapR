@@ -1,8 +1,8 @@
 Package: polymapR
 Type: Package
 Title: Linkage Analysis in Outcrossing Polyploids
-Version: 1.1.4
-Date: 2023-11-04
+Version: 1.1.5
+Date: 2023-12-27
 Authors@R: c(person("Peter","Bourke", email = "pbourkey@gmail.com", role = c("aut","cre")),
              person("Geert","van Geest", role = "aut"),
              person("Roeland","Voorrips", role = "ctb"),
@@ -22,11 +22,11 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: TRUE
 NeedsCompilation: no
-Packaged: 2023-11-04 12:02:52 UTC; bourk001
+Packaged: 2024-01-08 14:45:16 UTC; bourk001
 Author: Peter Bourke [aut, cre],
   Geert van Geest [aut],
   Roeland Voorrips [ctb],
   Yanlin Liao [ctb]
 Maintainer: Peter Bourke <pbourkey@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-11-04 19:10:02 UTC
+Date/Publication: 2024-01-08 21:30:03 UTC
