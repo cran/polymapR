@@ -1616,15 +1616,14 @@ checkF1 <- function(input_type = "discrete",
 } #checkF1
 
 
-#' Check the quality of a linkage map using heatplots
-#' @description Perform a series of checks on a linkage map and visualise the results using heatplots. Also shows the discrepency between
-#' the pairwise and multi-point r estimates, plotted against the LOD of the pairwise estimate.
+#' Check the quality of a linkage map
+#' @description Perform a series of checks on a linkage map and visualise the results using heatplots. The difference between
+#' the pairwise and multi-point r estimates are also plotted against the LOD of the pairwise estimate. The weighted root mean square error 
+#' of these differences (weighted by the LOD scores) is printed on the console.
 #' @param linkage_list A named \code{list} with r and LOD of markers within linkage groups.
 #' @param maplist A list of maps. In the first column marker names and in the second their position.
 #' @param mapfn The map function used in generating the maps, either one of "haldane" or "kosambi". By default "haldane" is assumed.
 #' @param lod.thresh Numeric. Threshold for the LOD values to be displayed in heatmap, by default 5 (set at 0 to display all values)
-#' @param tidyplot If \code{TRUE}, an attempt is made to reduce the plot density, using the \code{hexbin} package. 
-#' This can have a considerable performance impact for high-density maps
 #' @param detail Level of detail for heatmaps, by default 1 cM. Values less than 0.5 cM can have serious performance implications.
 #' @param plottype Option to specify graphical device for plotting, (either png or pdf), or by default "", in which case plots are directly plotted within R
 #' @param prefix Optional prefix appended to plot names if outputting plots.
@@ -1637,8 +1636,7 @@ checkF1 <- function(input_type = "discrete",
 check_map <- function (linkage_list, 
                        maplist, 
                        mapfn = "haldane", 
-                       lod.thresh = 5, 
-                       tidyplot = TRUE, 
+                       lod.thresh = 5,  
                        detail = 1, 
                        plottype=c("", "pdf", "png")[1],
                        prefix="") { 
@@ -1675,7 +1673,6 @@ check_map <- function (linkage_list,
                        ll$LOD), 
                      ncol = 4)
     
-    
     # sort the rows to have the positions in ascending order
     # (so for plot B the LOD and r of all marker pairs at the same positions
     #  are averaged):
@@ -1689,62 +1686,21 @@ check_map <- function (linkage_list,
     
     dev <- ll$r - expected.recom
     wRMSE <- sqrt(mean((abs(dev) * ll$LOD)^2))
-    # Plot A: LOD vs delta_r
+    # Plot: LOD vs delta_r
     if (plottype=="pdf") {
-      pdf(paste0(prefix, lgname, "_check_map_plotA.pdf"), 
-          height = 5, width = 5)
+      pdf(paste0(prefix, lgname, "_map_check.pdf"), 
+          height = 5, width = 12)
     } else if (plottype=="png") {
-      png(paste0(prefix, lgname, "_check_map_plotA.png"), 
-          height = 500, width = 500)
+      png(paste0(prefix, lgname, "_map_check.png"), 
+          height = 500, width = 1200)
       
     }
-    if (tidyplot) {
-      hbin <- hexbin::hexbin(dev, ll$LOD, 
-                             xbins = 150)
-      
-      ############################################################################################
-      # The following code caused a Fatal Error when R was updated to version > 4.1.0 
-      # Error message:
-      # Error in if (nchar(main) > 0) grid.text(main, y = unit(1, "npc") + unit(1.5,  : 
-      # the condition has length > 1
-      # suppressWarnings(hexbin::plot(hbin, ylab = "LOD", 
-      #                               xlab = expression(delta(r)), legend = FALSE, 
-      #                               main = bquote(.(lgname) ~ ": r"["pairwise"] ~ 
-      #                                               "- r"["map"])))
-      # Replaced with a simpler version of main using expression() instead of bquote(), 
-      # seems to work fine now... (03/10/2023)
-      ############################################################################################
-      
-      suppressWarnings(hexbin::plot(hbin, ylab = "LOD", 
-                                    xlab = expression(delta(r)), legend = FALSE, 
-                                    main = expression("|r"["pairwise"] ~ 
-                                                        "- r"["map"] ~ "|")))
-    } else {
-      plot(dev, ll$LOD, ylab = "LOD", 
-           xlab = expression(delta(r)), cex.lab = 1.25, 
-           main = expression("|r"["pairwise"] ~ 
-                               "- r"["map"] ~ "|"))
-    }
-    
+
     message(paste0(lgname, " weighted RMSE = ", round(wRMSE, 3)))
-    if (plottype %in% c("pdf", "png")) {
-      dev.off()
-      Sys.sleep(0.5)
-    }  
-    if (plottype=="pdf") {
-      pdf(paste0(prefix, lgname, "_check_map_plotB.pdf"), 
-          height = 5, width = 8)
-    } else if (plottype=="png") {
-      png(paste0(prefix, lgname, "_check_map_plotB.png"), 
-          height = 500, width = 1000)
-      
-    }
-    
-    layout(matrix(1:4, ncol = 4, byrow = TRUE), widths = c(1,0.2, 1, 0.2))
+
+    layout(matrix(1:5, ncol = 5, byrow = TRUE), widths = c(1,0.2, 1, 0.2,1))
     par(oma = c(0, 0, 3, 0))
     
-    #ds1 <- seq(min(posmat[, 1]), max(posmat[, 1]), detail) # position marker_a steps
-    #ds2 <- seq(min(posmat[, 2]), max(posmat[, 2]), detail) # position marker_b steps
     ds <- seq(min(posmat[,1]), max(posmat[,2]), detail) # position steps; position1 always <= position2
     fi1 <- findInterval(posmat[, 1], ds) # in which interval is the position of the lowest marker
     fi2 <- findInterval(posmat[, 2], ds) # in which interval is the position of the highest marker
@@ -1757,26 +1713,6 @@ check_map <- function (linkage_list,
     L1[which(is.na(L1))] <- 0
     r1 <- tapply(posmat[, 3], INDEX = list(fi1, fi2), mean) # mean r
     r1[which(is.na(r1))] <- 0.5 #fix 22-12-2020, 0.5 will be screened out at end
-    
-    #This is causing bad behaviour, replace:
-    # expandmatrix <- function(m, size, default, symmetric) {
-    #   # if m has missing rows or columns, insert these and fill with default value
-    #   if (nrow(m) < size | ncol(m) < size) {
-    #     x <- matrix(0, nrow=size, ncol=ncol(m))
-    # 
-    #     x[as.integer(rownames(m)),] <- m
-    #     cn <- as.integer(colnames(m))
-    #     m <- matrix(0, nrow=nrow(x), ncol=size)
-    #     m[, cn] <- x
-    #   }
-    #   if (symmetric) {
-    #     # convert the triangular data to symmetric data
-    #     m <- m + t(m)
-    #     # works because the empty cells, including one triangle and the diagonal,
-    #     # are zeroes
-    #   }
-    #   m
-    # }
     
     # Simplify this function, 22-12-2020:
     expandmatrix <- function(m, size, names, default){
@@ -1855,6 +1791,14 @@ check_map <- function (linkage_list,
                cex.ticks = 0.8)
     mtext(text = paste0(lgname, " map diagnostics"), 
           side = 3, outer = TRUE, cex = 2)
+    par(mar = orig.mar)
+    
+    ## Update 11.03.2024 -> replace use of hexbins package with smoothScatter function
+    smoothScatter(dev, ll$LOD, ylab = "LOD", 
+                    xlab = expression(delta(r)), cex.lab = 1.25, 
+                    main = expression("r"["pairwise"] ~ 
+                                        "- r"["map"]))
+    
     if (plottype %in% c("pdf", "png")) {
       dev.off()
     }
@@ -4473,6 +4417,14 @@ homologue_lg_assignment <- function(input_type = "discrete",
   
   if(!which_parent %in% 1:2) stop("which_parent must be either 1 or 2!")
   
+  if(which_parent == 1){
+    target_parent <- parent1
+    other_parent <- parent2
+  } else{
+    target_parent <- parent2
+    other_parent <- parent1
+  }
+  
   if(input_type == "discrete"){
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     if(!parent1 %in% colnames(dosage_matrix) | !parent2 %in% colnames(dosage_matrix))
@@ -4623,14 +4575,6 @@ homologue_lg_assignment <- function(input_type = "discrete",
         verbose = FALSE,
         ...
       )
-    }
-    
-    if(which_parent == 1){
-      target_parent <- parent1
-      other_parent <- parent2
-    } else{
-      target_parent <- parent2
-      other_parent <- parent1
     }
     
     if (write_intermediate_files) {

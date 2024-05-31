@@ -1,7 +1,7 @@
-b8f3fc3bdfc0c28dbfbbc68291cdb096 *DESCRIPTION
+747f9f6303f6b9dd2bb880df7ad54b70 *DESCRIPTION
 0b9b351793f4ab4fcc7c2386cd6b2b31 *NAMESPACE
 65ce8d95700675329f3d7ec62de5c602 *R/aiding_functions.R
-6ad4d982ea65047383aa8af985784664 *R/exported_functions.R
+22c3c509804d1eb072a7e2122906714e *R/exported_functions.R
 6d7df7870655acb3c185e80b9c0d9a69 *R/p4_functions.R
 5851a321988249abe1bedb2630456e50 *R/polymapR-package.R
 5756f992e2fe114e40522790f31e4806 *R/r2_functions.R
@@ -10,8 +10,8 @@ f1848dc2f6781111e8b3057057cd0ffe *R/r3_functions.R
 b7d8ec75868c884e9e94fa1fd2c147fc *R/r6_functions.R
 51116ebb4bba3ceb8923fa2b75123ac0 *R/roxygen_datasets.R
 121f4576a0451346129c7524c72414e0 *R/sysdata.rda
-2836b2c5db38c9819380bd093383d89d *build/partial.rdb
-851232fda5040af459a626cff474e03b *build/vignette.rds
+24bc7c3f5a645905c53152bd3d0b8f61 *build/partial.rdb
+c92cff3b199625f11f63848501ee9141 *build/vignette.rds
 2e017d9d11d73c2d111f37daf2f8edad *data/ALL_dosages.rda
 875baa62048b4ccbe6d5d99ea36ce30c *data/LGHomDf_P1_1.rda
 e24dd9040a6224689e156171e73221af *data/LGHomDf_P2_1.rda
@@ -55,12 +55,12 @@ e42532fd70f97436f54ec370c60c20c6 *data/screened_data.rda
 8df63499b0b88f760be1ef610799c053 *data/screened_data3.rda
 b2f9679c28f0792f5455a84baa0c4149 *data/segregating_data.rda
 8d840f9ffc27a0beee9d934e99f0eed6 *inst/CITATION
-baaae381d5df937f71dc3575811704a5 *inst/doc/Vignette_genotype_probabilities.R
+e22f163bc74b9c88cfd058f653423296 *inst/doc/Vignette_genotype_probabilities.R
 14a3792fe04e2242af5442f165e70838 *inst/doc/Vignette_genotype_probabilities.Rmd
 90c93ad5be9ddf5253181baa67531f2b *inst/doc/Vignette_genotype_probabilities.html
-fbb1a1d1e76269e0ab9fc4816547db57 *inst/doc/Vignette_polymapR.R
-e2e5a2627f9e87f924dc0600968765cc *inst/doc/Vignette_polymapR.Rmd
-d8775cd7932df88e121cb21e7740ea11 *inst/doc/Vignette_polymapR.html
+2f0996e027fb8d6570d667a397d13784 *inst/doc/Vignette_polymapR.R
+1f41250c97dac15f10bf3c5fe0fd2569 *inst/doc/Vignette_polymapR.Rmd
+ef3382783b3862da82985e5308d6be21 *inst/doc/Vignette_polymapR.html
 3e40662a7200976af6e9f3fe9a9f3a4b *man/ALL_dosages.Rd
 8277578ddc23b54648a5bd4ea61fb955 *man/LGHomDf_P1_1.Rd
 25d8d2b2c0ff77e4825c2b37b20d171a *man/MDSMap_from_list.Rd
@@ -76,7 +76,7 @@ bdfcd6b1a03f6a09c96e9e2d3c379de1 *man/assign_linkage_group.Rd
 a8b9f37dccca7c17771328be021d5c10 *man/bridgeHomologues.Rd
 a8bc07e3fa67ce2c9bf5968ffda9d3da *man/calcSegtypeInfo.Rd
 450562ab9069414c36b23bcf1c21562e *man/checkF1.Rd
-f4b69b83a480d77e27bb0f64c9b50b27 *man/check_map.Rd
+983c0e7a08d008bd27e46f6525f5d8a5 *man/check_map.Rd
 84d5de68f11d84501b10f8a73d3246a9 *man/check_marker_assignment.Rd
 b798403fe6cf213b75a310a4b0b9cce5 *man/check_maxP.Rd
 b87bb3e040c16cdcc821b93cc85cc2e9 *man/chk1.Rd
@@ -135,7 +135,7 @@ a9d987c8e2786ece522553bb640a8fc0 *man/write.pwd.Rd
 2a60e42fd8d8544f7940b9581628bc20 *man/write_nested_list.Rd
 84937cc1d4fe8254ef1a8d59d352a755 *man/write_pwd_list.Rd
 14a3792fe04e2242af5442f165e70838 *vignettes/Vignette_genotype_probabilities.Rmd
-e2e5a2627f9e87f924dc0600968765cc *vignettes/Vignette_polymapR.Rmd
+1f41250c97dac15f10bf3c5fe0fd2569 *vignettes/Vignette_polymapR.Rmd
 7320318f1b6440305b53fdd9c96bc587 *vignettes/bibliography.bib
 2a525a4d0bfde9865b47c532ce586782 *vignettes/biomed-central.csl
 5dc658364062570363f2d3e716151347 *vignettes/data

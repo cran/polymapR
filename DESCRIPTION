@@ -1,8 +1,8 @@
 Package: polymapR
 Type: Package
 Title: Linkage Analysis in Outcrossing Polyploids
-Version: 1.1.5
-Date: 2023-12-27
+Version: 1.1.6
+Date: 2024-05-30
 Authors@R: c(person("Peter","Bourke", email = "pbourkey@gmail.com", role = c("aut","cre")),
              person("Geert","van Geest", role = "aut"),
              person("Roeland","Voorrips", role = "ctb"),
@@ -15,18 +15,18 @@ Depends: R (>= 3.5.0)
 License: GPL
 Imports: doParallel, foreach, graphics, grDevices, igraph, knitr,
         MDSMap, stats, utils
-RoxygenNote: 7.2.3
-Suggests: ggplot2, hexbin, Hmisc, RColorBrewer, reshape2, rmarkdown,
-        polyRAD, updog, mappoly
+RoxygenNote: 7.3.1
+Suggests: ggplot2, Hmisc, RColorBrewer, reshape2, rmarkdown, polyRAD,
+        updog, mappoly
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: TRUE
 NeedsCompilation: no
-Packaged: 2024-01-08 14:45:16 UTC; bourk001
+Packaged: 2024-05-30 10:05:31 UTC; bourk001
 Author: Peter Bourke [aut, cre],
   Geert van Geest [aut],
   Roeland Voorrips [ctb],
   Yanlin Liao [ctb]
 Maintainer: Peter Bourke <pbourkey@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-01-08 21:30:03 UTC
+Date/Publication: 2024-05-31 13:50:13 UTC

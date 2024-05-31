@@ -2,14 +2,13 @@
 % Please edit documentation in R/exported_functions.R
 \name{check_map}
 \alias{check_map}
-\title{Check the quality of a linkage map using heatplots}
+\title{Check the quality of a linkage map}
 \usage{
 check_map(
   linkage_list,
   maplist,
   mapfn = "haldane",
   lod.thresh = 5,
-  tidyplot = TRUE,
   detail = 1,
   plottype = c("", "pdf", "png")[1],
   prefix = ""
@@ -24,9 +23,6 @@ check_map(
 
 \item{lod.thresh}{Numeric. Threshold for the LOD values to be displayed in heatmap, by default 5 (set at 0 to display all values)}
 
-\item{tidyplot}{If \code{TRUE}, an attempt is made to reduce the plot density, using the \code{hexbin} package. 
-This can have a considerable performance impact for high-density maps}
-
 \item{detail}{Level of detail for heatmaps, by default 1 cM. Values less than 0.5 cM can have serious performance implications.}
 
 \item{plottype}{Option to specify graphical device for plotting, (either png or pdf), or by default "", in which case plots are directly plotted within R}
@@ -34,8 +30,9 @@ This can have a considerable performance impact for high-density maps}
 \item{prefix}{Optional prefix appended to plot names if outputting plots.}
 }
 \description{
-Perform a series of checks on a linkage map and visualise the results using heatplots. Also shows the discrepency between
-the pairwise and multi-point r estimates, plotted against the LOD of the pairwise estimate.
+Perform a series of checks on a linkage map and visualise the results using heatplots. The difference between
+the pairwise and multi-point r estimates are also plotted against the LOD of the pairwise estimate. The weighted root mean square error 
+of these differences (weighted by the LOD scores) is printed on the console.
 }
 \examples{
 \dontrun{
