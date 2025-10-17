@@ -548,9 +548,9 @@ bridgeHomologues <- function(
   
   edges <- edges[edges$weights >= min_bridges,]
   # make network between SN x SN clusters
-  nw <- igraph::graph.data.frame(edges[,c("h1", "h2")], directed = F)
+  nw <- igraph::graph_from_data_frame(edges[,c("h1", "h2")], directed = F)
   nw <- igraph::set_edge_attr(nw, "weight", value = edges[,"weights"])
-  gcl <- igraph::groups(igraph::clusters(nw))
+  gcl <- igraph::groups(igraph::components(nw))
   
   # plot network
   igraph::plot.igraph(
@@ -1237,9 +1237,9 @@ checkF1 <- function(input_type = "discrete",
     maxmrk <- min(length(mrknames), batchsize*batchnr)
     
     if(input_type == "discrete"){
-      batchscores <- dosage_matrix[mrknames[minmrk:maxmrk],] #only 260 * 2 sec
+      batchscores <- dosage_matrix[mrknames[minmrk:maxmrk],,drop = FALSE] #only 260 * 2 sec
     } else{
-      batchscores <- probgeno_df[probgeno_df$MarkerName %in% mrknames[minmrk:maxmrk],]
+      batchscores <- probgeno_df[probgeno_df$MarkerName %in% mrknames[minmrk:maxmrk],,drop = FALSE]
     }
     
     bres <- createResultsdf(maxmrk - minmrk + 1) #bres: batchresults
@@ -2006,8 +2006,8 @@ cluster_per_LG <- function(LG,
   on.exit(par(oldpar))            
   
   # make a network (graph)
-  nw <- igraph::graph.data.frame(edges, directed = F)
-  gcl <- igraph::groups(igraph::clusters(nw))
+  nw <- igraph::graph_from_data_frame(edges, directed = F)
+  gcl <- igraph::groups(igraph::components(nw))
   len_init_gcl <- length(gcl)
   size_init_gcl <- lengths(gcl)
   
@@ -2033,7 +2033,7 @@ cluster_per_LG <- function(LG,
     if (!is.null(device))
       device(...)
     
-    group_mem <- igraph::clusters(nw)$membership
+    group_mem <- igraph::components(nw)$membership
     l <- igraph::layout.circle(nw, order = order(group_mem))
     rownames(l) <- igraph::V(nw)$name
     names.layout <- igraph::V(nw)$name
@@ -2052,7 +2052,7 @@ cluster_per_LG <- function(LG,
           )
         )
       edgesi <- edgesi[check.layout,]
-      nwi <- igraph::graph.data.frame(edgesi, directed = F)
+      nwi <- igraph::graph_from_data_frame(edgesi, directed = F)
       names <- igraph::V(nwi)$name
       igraph::plot.igraph(
         nwi,
@@ -2114,8 +2114,8 @@ cluster_per_LG <- function(LG,
     if (length(LOD_sequence) > 1) {
       for (cut in LOD_sequence) {
         edgesi <- SN_sub[SN_sub$LOD > cut, c("marker_a", "marker_b")]
-        nwi <- igraph::graph.data.frame(edgesi, directed = F)
-        g <- igraph::groups(igraph::clusters(nwi))
+        nwi <- igraph::graph_from_data_frame(edgesi, directed = F)
+        g <- igraph::groups(igraph::components(nwi))
         gcl <- c(gcl, g)
       }
       
@@ -2225,7 +2225,7 @@ cluster_SN_markers <- function(linkage_df,
   }
   
   if(max(linkage_df[,LODscore]) < max(LOD_sequence)){
-    LOD_sequence <- LOD_sequence[LOD_sequence >= max(linkage_df[,LODscore])]
+    LOD_sequence <- LOD_sequence[LOD_sequence <= max(linkage_df[,LODscore])]
     if(length(LOD_sequence) == 0) {
       stop(paste("LOD_sequence only contains LOD values higher than present in the data. 
            Clustering only possible up to",max(linkage_df[,LODscore])))
@@ -2242,8 +2242,8 @@ cluster_SN_markers <- function(linkage_df,
   write(paste("Total number of edges:", nrow(edges)), stdout())
   
   # make a network (graph)
-  nw <- igraph::graph.data.frame(edges, directed = F)
-  gcl <- igraph::groups(igraph::clusters(nw))
+  nw <- igraph::graph_from_data_frame(edges, directed = F)
+  gcl <- igraph::groups(igraph::components(nw))
   clsizes <- sapply(gcl,length)
   gcl <- gcl[clsizes >= min_clust_size] 
   
@@ -2268,10 +2268,10 @@ cluster_SN_markers <- function(linkage_df,
                            c("marker_a", "marker_b")]
       
       # make a network (graph)
-      nwi <- igraph::graph.data.frame(edgesi, directed = F)
+      nwi <- igraph::graph_from_data_frame(edgesi, directed = F)
       
       # define groups in network
-      g <- igraph::groups(igraph::clusters(nwi))
+      g <- igraph::groups(igraph::components(nwi))
       
       gcl <- c(gcl, g)
       if (LOD_sequence[i] == max(LOD_sequence))
@@ -2365,7 +2365,7 @@ cluster_SN_markers <- function(linkage_df,
     # only unique rows
     edges <- unique(edges)
     
-    nw.cl <- igraph::graph.data.frame(edges, directed = FALSE)
+    nw.cl <- igraph::graph_from_data_frame(edges, directed = FALSE)
     
     minLOD <- min(LOD_sequence)
     
@@ -4413,6 +4413,7 @@ homologue_lg_assignment <- function(input_type = "discrete",
                                     log = NULL,
                                     ...) {
   input_type <- match.arg(input_type, choices = c("discrete","probabilistic"))
+  # LG_hom_stack <- polymapR:::test_LG_hom_stack(LG_hom_stack) #debug
   LG_hom_stack <- test_LG_hom_stack(LG_hom_stack)
   
   if(!which_parent %in% 1:2) stop("which_parent must be either 1 or 2!")
@@ -4426,6 +4427,7 @@ homologue_lg_assignment <- function(input_type = "discrete",
   }
   
   if(input_type == "discrete"){
+    # dosage_matrix <- polymapR:::test_dosage_matrix(dosage_matrix) #debug
     dosage_matrix <- test_dosage_matrix(dosage_matrix)
     if(!parent1 %in% colnames(dosage_matrix) | !parent2 %in% colnames(dosage_matrix))
       stop("Incorrect column name identifiers supplied for parent(s). Please check!")
@@ -4453,21 +4455,14 @@ homologue_lg_assignment <- function(input_type = "discrete",
   
   sn.grep1 <- "_1.0_"
   sn.grep2 <- "_1.0_1.0"
-  ploidy.F1 <- ploidy
-  target.ploidy <- c(ploidy,ploidy2)[which_parent] #updated 02.12.2023
-  other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
   
   if(!is.null(ploidy2)){ # Currently only for triploids
-    if(ploidy2 == ploidy) stop("ploidy2 only needs to be specified if it differs from ploidy, otherwise leave as default (NULL).")
-    # if(ploidy2 > ploidy) stop("Currently in cross-ploidy mapping, parent1 has to have the higher ploidy level.")
-    # if(!target_parent %in% c("P1","P2")) stop("To use cross-ploidy functionality, please rename parent1 as P1 and parent2 as P2 in colnames() of your dosage_matrix.")
+    if(ploidy2 == ploidy) stop("ploidy2 only needs to be specified if it differs from ploidy, otherwise please leave as NULL.")
     
     ploidy.F1 <- (ploidy + ploidy2)/2
     
-    # if(ploidy2 == 2 & target_parent != "P1") {
-    #   sn.grep1 <- "_0.1_"
-    #   sn.grep2 <- "_0.1_0.1"
-    # }
+    target.ploidy <- c(ploidy,ploidy2)[which_parent] 
+    other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
     
     if(target.ploidy < other.ploidy) { #updated 02.12.2023, v.1.1.5
       sn.grep1 <- "_2_1.0_"
@@ -4477,6 +4472,12 @@ homologue_lg_assignment <- function(input_type = "discrete",
       sn.grep2 <- "_4_1.0_1.0" 
     }
     
+  } else{ #ploidy2 is NULL, this was a bug in v.1.1.5 and v.1.1.6
+    ploidy2 <- ploidy
+    ploidy.F1 <- (ploidy + ploidy2)/2
+    
+    target.ploidy <- c(ploidy,ploidy2)[which_parent] #updated 01.07.2024
+    other.ploidy <- c(ploidy,ploidy2)[setdiff(c(1,2),which_parent)]
   }
   
   avail_funs <- ls(getNamespace("polymapR"))
@@ -5512,8 +5513,8 @@ marker_binning <-
                             linkage_df$r < r_thresh,
                           c("marker_a", "marker_b")]
       
-      nw <- igraph::graph.data.frame(edges, directed = F)
-      gcl <- igraph::groups(igraph::clusters(nw))
+      nw <- igraph::graph_from_data_frame(edges, directed = F)
+      gcl <- igraph::groups(igraph::components(nw))
       
       count_NA_values <- function(marker_genotypes) {
         sum(is.na(marker_genotypes))
@@ -5960,8 +5961,8 @@ merge_homologues <-
           as.numeric(strsplit(x, "-")[[1]]))
     }
     edges <- do.call(rbind, mergeList)
-    nw <- igraph::graph.data.frame(edges, directed = F)
-    gcl <- igraph::groups(igraph::clusters(nw))
+    nw <- igraph::graph_from_data_frame(edges, directed = F)
+    gcl <- igraph::groups(igraph::components(nw))
     
     # built in error message if two combinations harbor the same homolog?
     for (combination in gcl) {
@@ -6276,8 +6277,8 @@ phase_SN_diploid <- function(linkage_df,
   write(paste("Total number of edges:", nrow(edges)), stdout())
   
   # make a network (graph)
-  nw <- igraph::graph.data.frame(edges, directed = F)
-  gcl <- igraph::groups(igraph::clusters(nw))
+  nw <- igraph::graph_from_data_frame(edges, directed = F)
+  gcl <- igraph::groups(igraph::components(nw))
   ngroups <- length(gcl)
   groups <- stack(gcl)
   colnames(groups) <- c("marker", "cluster")
@@ -6858,8 +6859,8 @@ screen_for_duplicate_individuals <-
     
     combsAboveCutoff <-
       which(cor.dosage_matrix > cutoff, arr.ind = TRUE)
-    nw <- igraph::graph.data.frame(combsAboveCutoff, directed = FALSE)
-    gcl_nw <- igraph::groups(igraph::clusters(nw))
+    nw <- igraph::graph_from_data_frame(combsAboveCutoff, directed = FALSE)
+    gcl_nw <- igraph::groups(igraph::components(nw))
     
     if(length(unique(unlist(gcl_nw))) >= ncol(dosage_matrix) - 2) stop("At this threshold, whole population would be merged!")
     
@@ -7055,7 +7056,7 @@ screen_for_duplicate_markers <- function(dosage_matrix,
   }
   
   nw <- igraph::graph_from_data_frame(d= as.data.frame(clmat), directed = FALSE)
-  gcl_nw <- igraph::groups(igraph::clusters(nw))
+  gcl_nw <- igraph::groups(igraph::components(nw))
   
   if(length(gcl_nw) == 0) { #No groups detected (no duplicates), effective abort:
     return(list(bin_list = NULL, filtered_dosage_matrix = dosage_matrix))
